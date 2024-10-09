@@ -1,0 +1,172 @@
+<template>
+	
+	<div class="gallery">
+		
+		<swiper
+			:spaceBetween="16"
+			:navigation="true"
+			:style="{
+		      '--swiper-navigation-color': '#fff',
+		      '--swiper-pagination-color': '#fff',
+            }"
+			:pagination="{
+                 type: 'fraction',
+             }"
+			@swiper="getSwiperInstance"
+			:modules="[Pagination, Navigation, Scrollbar, Thumbs, FreeMode]"
+			class="swiper-multiply"
+		>
+			<swiper-slide
+				v-for="photo of listingPhotos"
+				class="swiper-multiply__slide"
+				@click="openGalleryModal(photo.id)"
+			>
+				<v-card>
+					<v-img cover :alt="listing.title"  class="swiper-multiply__img" :src="photo.urlFull" >
+						<v-chip color="#FFFF" @click="openGalleryModal(photo.id)" density="comfortable" variant="flat" class="gallery__btn" prepend-icon="mdi-image-multiple">Галерея</v-chip>
+					</v-img>
+				</v-card>
+			</swiper-slide>
+		</swiper>
+	</div>
+
+	
+</template>
+
+<script setup lang="ts">
+// Import Swiper Vue.js components
+	import { Swiper, SwiperSlide  } from 'swiper/vue';
+	import { Scrollbar, FreeMode, Thumbs, Pagination, Navigation } from 'swiper/modules';
+	import useListing from "~/components/pages/Listing/useListing";
+
+
+	import 'swiper/css';
+	
+	import 'swiper/css/free-mode';
+	import 'swiper/css/navigation';
+	import 'swiper/css/thumbs';
+
+	import useCurrentPhoto from "~/components/gallery/useCurrentPhoto";
+	
+	
+	const currentPhoto = useCurrentPhoto()
+	
+	function openGalleryModal(index: number) {
+		currentPhoto.value.index = index
+		currentPhoto.value.modal = true
+	}
+	
+	const {listingPhotos, listing} = useListing();
+
+	
+	const swiperController = ref();
+	//@ts-ignore
+	const getSwiperInstance = (swiper) => {
+		swiperController.value = swiper;
+	}
+
+	
+	watch(currentPhoto, () => {
+		swiperController.value.slideTo(currentPhoto.value.index, 0)
+	}, {
+		deep: true
+	})
+
+
+	
+</script>
+
+
+<style lang="scss">
+
+	.swiper-button-next:after, .swiper-button-prev:after {
+	    color: #FFFFFF !important;;
+		padding: 16px;
+	}
+	.swiper-pagination-fraction {
+		color: #FFFFFF !important;
+	}
+	.actions {
+		position: relative;
+		height: 100%;
+		
+	}
+	.gallery {
+		display: grid;
+		margin-bottom: 16px;
+		position: relative;
+		&__btn {
+			position: absolute;
+			right: 16px;
+			top: 16px;
+			z-index: 10;
+		}
+		
+		@media screen  and (max-width: 630px){
+			
+			margin: -16px -16px -4px;
+		}
+	}
+	.swiper-multiply {
+		width: 100%;
+		height: 450px;
+		
+		@media screen and (max-width: 500px) {
+			height: 300px;
+
+			&__img {
+				height: 300px !important;
+			}
+		}
+		
+		&__slide {
+			width: 100%;
+			cursor: zoom-in;
+		}
+
+		&__img {
+			width: 100%;
+			height: 450px;
+			border-radius: 10px;
+			@media screen  and (max-width: 630px){
+				border-radius: 0;
+			}
+		}
+		
+		
+	}
+	.swiper-slide-thumb-active .thumbs__img {
+		border: 2px solid $accent-blue;
+	}
+	
+	.thumbs {
+		margin-top: 16px;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	.swiper-pagination-fraction {
+		color: #FFFFFF;
+	}
+	
+	.thumbs__slide {
+		width: 90px;
+		height: 65px;
+	}
+	.thumbs__img {
+		border-radius: 10px;
+		border: 2px solid rgba(0,0,0,0);
+		width: 85px;
+		height: 60px;
+		//object-fit: cover;
+	}
+
+	
+	.btns {
+		
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		
+	}
+</style>
