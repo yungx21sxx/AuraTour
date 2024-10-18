@@ -13,6 +13,10 @@ export default defineNuxtConfig({
     }
   },
 
+  dir: {
+    app: 'app'
+  },
+
   runtimeConfig: {
     cookieName: process.env.COOKIE_NAME || "__session",
     cookieSecret: process.env.COOKIE_SECRET || "secret",

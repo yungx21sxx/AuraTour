@@ -2,8 +2,8 @@
 
 import useFavorites from "~/components/pages/Favorites/useFavorites";
 
-const authUser = useAuthUser();
-const {authModalIsOpen, logout} = useAuth();
+
+
 const {favoriteListingIDs} = useFavorites();
 
 const isAdmin = useAdmin();

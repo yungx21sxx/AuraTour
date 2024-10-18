@@ -1,9 +1,8 @@
 <template>
-	<NuxtLoadingIndicator/>
+	<NuxtLoadingIndicator color="#7059FF"/>
 	<NuxtLayout>
 		<NuxtPage/>
 	</NuxtLayout>
-	<AuthModal/>
 </template>
 
 

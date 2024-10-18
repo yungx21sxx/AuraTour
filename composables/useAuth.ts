@@ -11,37 +11,11 @@ export const useAuth = () => {
 	};
 
 
-	const authModalIsOpen = useState(() => false)
-
-	const getUserById = async (userId: number) => {
-		try {
-			const user = await $fetch(`/api/user/${userId}`)
-			return user;
-		} catch (e: any) {
-			throw new Error(e.message)
-		}
-	}
 
 	const setCookie = (cookie: any) => {
 		cookie.value = cookie;
 	};
 
-	const login = async (
-		dto: UserLoginDTO | AdminLoginDTO,
-		role: 'ADMIN' | 'USER'
-	): Promise<UserAuthResponse | null> => {
-
-		const user = await $fetch(
-			role === 'ADMIN' ? '/api/admin/login' : '/api/user/login',
-			{
-				method: "POST",
-				body: dto,
-			}
-			);
-		//@ts-ignore
-		setUser(user);
-		return authUser.value;
-	};
 
 	const logout = async () => {
 		const data = await $fetch("/api/auth/logout", {
@@ -51,10 +25,10 @@ export const useAuth = () => {
 		setUser(null);
 	};
 
-	const me = async () => {
+	const getUserInfo = async () => {
 		if (!authUser.value) {
 			try {
-				const data = await $fetch("/api/auth/me", {
+				const data = await $fetch("/api/auth/profile", {
 					headers: useRequestHeaders(["cookie"]) as HeadersInit,
 				});
 				setUser(data);

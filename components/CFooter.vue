@@ -1,16 +1,6 @@
 <script setup lang="ts">
 	const {isMobile} = useDevice();
-	const authUser = useAuthUser();
-	const {authModalIsOpen} = useAuth()
-	const goToLK = async () => {
-		if (authUser.value) {
-			await navigateTo({
-				path: '/lk/bookings'
-			})
-			return;
-		}
-		authModalIsOpen.value = true
-	}
+
 
 </script>
 
@@ -106,7 +96,7 @@
 					<NuxtLink to="/favorites" class="footer__link">Избранное</NuxtLink>
 					<NuxtLink to="/help" class="footer__link">Помощь</NuxtLink>
 					<NuxtLink to="/contacts" class="footer__link">Контакты и реквизиты</NuxtLink>
-					<NuxtLink @click="goToLK" class="footer__link">Личный кабинет</NuxtLink>
+					<NuxtLink  class="footer__link">Личный кабинет</NuxtLink>
 				</div>
 			
 			</div>
