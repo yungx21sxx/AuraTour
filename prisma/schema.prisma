@@ -1,10 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider        = "prisma-client-js"
-  binaryTargets   = ["native", "debian-openssl-3.0.x"]
   previewFeatures = ["fullTextSearch"]
+  binaryTargets   = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
@@ -26,7 +23,6 @@ model City {
   listings Listing[]
 }
 
-// тип объекта жилья
 model ListingType {
   id       Int       @id @default(autoincrement())
   name     String
@@ -34,7 +30,6 @@ model ListingType {
   listings Listing[]
 }
 
-// удобавства
 model Amenity {
   id       Int              @id @default(autoincrement())
   name     String
@@ -45,8 +40,8 @@ model Amenity {
 model ListingAmenity {
   listingId Int
   amenityId Int
-  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
   amenity   Amenity @relation(fields: [amenityId], references: [id], onDelete: Cascade)
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
 
   @@id([listingId, amenityId])
 }
@@ -61,92 +56,84 @@ model Food {
 model ListingFood {
   listingId Int
   foodId    Int
-  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
   food      Food    @relation(fields: [foodId], references: [id], onDelete: Cascade)
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
 
   @@id([listingId, foodId])
 }
 
-// объект жилья
 model Listing {
   id           Int              @id @default(autoincrement())
   title        String
   description  String
-  minPrice     Int // Минимальная цена, если даты не указаны
+  minPrice     Int
   cityId       Int
-  city         City             @relation(fields: [cityId], references: [id])
   typeId       Int
-  type         ListingType      @relation(fields: [typeId], references: [id])
-  amenities    ListingAmenity[]
-  bookings     Booking[]
-  reviews      Review[]
-  rooms        Room[] // Связь с номерами для гостевых домов
-  pricePeriods PricePeriod[]
   address      String           @default("Не указан")
-  food         ListingFood[]
-  photos       Photo[]
   places       Int?             @default(2)
-  note         String?
-  // Важно!!! Это на самом деле для количства комнат, ебал я такие миграции
   badCount     Int?             @default(1)
-  //*********************
-
-  minDaysOrder Int      @default(3)
+  minDaysOrder Int              @default(3)
   seaDistance  Int
   area         Int?
-  coords       Coords?
   floor        Int?
   maxFloor     Int?
   elevator     Boolean?
-
-  phoneRaw   String
-  phone      String
-  renterName String
-  createdAt  DateTime @default(now())
+  phoneRaw     String
+  phone        String
+  renterName   String
+  createdAt    DateTime         @default(now())
+  note         String?
+  bookings     Booking[]
+  coords       Coords?
+  type         ListingType      @relation(fields: [typeId], references: [id])
+  city         City             @relation(fields: [cityId], references: [id])
+  amenities    ListingAmenity[]
+  food         ListingFood[]
+  photos       Photo[]
+  pricePeriods PricePeriod[]
+  reviews      Review[]
+  rooms        Room[]
 }
 
 model Coords {
-  id Int @id @default(autoincrement())
-
+  id        Int     @id @default(autoincrement())
   longitude Float
   width     Float
-
-  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
   listingId Int     @unique
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
 }
 
 model Photo {
   id        Int      @id @default(autoincrement())
   urlMin    String
   urlFull   String
-  position  Int?     @default(2)
-  listing   Listing? @relation(fields: [listingId], references: [id], onDelete: Cascade)
   listingId Int?
-  room      Room?    @relation(fields: [roomId], references: [id], onDelete: Cascade)
   roomId    Int?
+  position  Int?     @default(2)
+  room      Room?    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  listing   Listing? @relation(fields: [listingId], references: [id], onDelete: Cascade)
 }
 
 model Room {
   id           Int           @id @default(autoincrement())
   listingId    Int
-  listing      Listing       @relation(fields: [listingId], references: [id], onDelete: Cascade)
   name         String
   places       Int
   area         Int
   badCount     Int           @default(1)
   minPrice     Int
-  pricePeriods PricePeriod[]
   Booking      Booking[]
   photos       Photo[]
+  pricePeriods PricePeriod[]
+  listing      Listing       @relation(fields: [listingId], references: [id], onDelete: Cascade)
   amenities    RoomAmenity[]
 }
 
 model RoomAmenity {
-  id   Int    @id @default(autoincrement())
-  name String
-
-  room   Room @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  id     Int    @id @default(autoincrement())
+  name   String
   roomId Int
+  room   Room   @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }
 
 model PricePeriod {
@@ -155,9 +142,9 @@ model PricePeriod {
   startDate DateTime
   endDate   DateTime
   listingId Int?
-  listing   Listing? @relation(fields: [listingId], references: [id], onDelete: Cascade)
   roomId    Int?
   room      Room?    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  listing   Listing? @relation(fields: [listingId], references: [id], onDelete: Cascade)
 }
 
 model Booking {
@@ -174,53 +161,46 @@ model Booking {
   transferComment String?
   listingId       Int
   roomId          Int?
-  listing         Listing? @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  room            Room?    @relation(fields: [roomId], references: [id], onDelete: Cascade)
   userId          Int?
+  totalPrice      Int?
+  prepay          Int?
+  createdAt       DateTime @default(now())
   user            User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  totalPrice Int?
-  prepay     Int?
-
-  createdAt DateTime @default(now())
+  room            Room?    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  listing         Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id         Int     @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   name       String?
   surname    String?
   patronymic String?
   userFrom   String?
-
-  phoneRaw String    @unique
-  phone    String    @unique
-  bookings Booking[]
-  reviews  Review[]
-
-  createdAt DateTime @default(now())
+  phoneRaw   String    @unique
+  phone      String    @unique
+  createdAt  DateTime  @default(now())
+  bookings   Booking[]
+  reviews    Review[]
 }
 
 model Review {
-  id        Int     @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   comment   String?
   rating    Int
   listingId Int
-  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
   userId    Int?
-  user      User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  userName String?
-  userFrom String?
-
+  userName  String?
+  userFrom  String?
   createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
 }
 
 model Admin {
-  id           Int    @id @default(autoincrement())
-  login        String @unique
+  id           Int      @id @default(autoincrement())
+  login        String   @unique
   passwordHash String
-
-  createdAt DateTime @default(now())
+  createdAt    DateTime @default(now())
 }
 
 model SmsCode {

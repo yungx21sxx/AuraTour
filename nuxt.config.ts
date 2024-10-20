@@ -13,10 +13,6 @@ export default defineNuxtConfig({
     }
   },
 
-  dir: {
-    app: 'app'
-  },
-
   runtimeConfig: {
     cookieName: process.env.COOKIE_NAME || "__session",
     cookieSecret: process.env.COOKIE_SECRET || "secret",
@@ -29,8 +25,8 @@ export default defineNuxtConfig({
     '@nuxtjs/device',
     'nuxt-icons',
     '@nuxt/devtools',
-    'nuxt-simple-sitemap',
-    'nuxt-simple-robots',
+    // 'nuxt-simple-sitemap',
+    // 'nuxt-simple-robots',
     'vue-yandex-maps/nuxt',
     'nuxt-swiper',
     'yandex-metrika-module-nuxt3',
@@ -50,7 +46,6 @@ export default defineNuxtConfig({
       preprocessorOptions: {
         scss: {
           additionalData: '@use "@/assets/scss/_var.scss" as *;',
-          silenceDeprecations: ["legacy-js-api"],
         }
       }
     },
@@ -63,13 +58,12 @@ export default defineNuxtConfig({
   //   accurateTrackBounce:true,
   //   webvisor:true,
   // },
-  site: {
-    url: 'https://aura-tour-abkhazia.ru/',
-  },
+  // site: {
+  //   url: 'https://aura-tour-abkhazia.ru/',
+  // },
 
   routeRules: {
     '/api/**': {cors: true},
-    '/admin/**': {robots: false},
     '/lk/**': {ssr: false}
   },
 
@@ -101,7 +95,6 @@ export default defineNuxtConfig({
 
   features: {
     inlineStyles: true,
-    importAttributes: true
   },
 
   app: {

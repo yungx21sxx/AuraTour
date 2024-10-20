@@ -1,18 +1,19 @@
 {
-  "name": "aura-tour",
+  "name": "nuxt-app",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev --host",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
-  "devDependencies": {
-    "@babel/plugin-syntax-import-attributes": "^7.25.6",
+  "dependencies": {
     "@faker-js/faker": "^9.0.1",
     "@nuxt/devtools": "^1.4.2",
-    "@prisma/client": "^5.19.1",
+    "@popperjs/core": "^2.11.8",
+    "@prisma/client": "^5.20.0",
     "@tiptap/pm": "^2.2.4",
     "@tiptap/starter-kit": "^2.2.4",
     "@tiptap/vue-3": "^2.2.4",
@@ -21,40 +22,29 @@
     "@types/uuid": "^9.0.8",
     "bcryptjs": "^2.4.3",
     "fuse.js": "^7.0.0",
-    "greensms": "^1.9.1",
+    "jsonwebtoken": "^9.0.2",
     "lodash.debounce": "^4.0.8",
     "maska": "^2.1.11",
     "nodemailer": "^6.9.15",
-    "nuxt": "^3.13.2",
-    "nuxt-icons": "^3.2.1",
-    "nuxt-simple-robots": "^4.0.0-rc.14",
-    "nuxt-simple-sitemap": "^4.4.1",
+    "nuxt": "^3.13.0",
     "nuxt-swiper": "^1.2.2",
-    "nuxt-vite-legacy": "^1.2.0",
-    "otp-generator": "^4.0.1",
-    "prisma": "^5.19.1",
+    "prisma": "^5.20.0",
     "swiper": "^11.1.14",
-    "typescript": "^5.6.2",
     "ufo": "^1.5.4",
-    "uuid": "^9.0.1",
     "v-calendar": "^3.1.2",
-    "vue": "^3.4.15",
-    "vue-router": "^4.2.5",
-    "vue-tsc": "^2.1.6",
-    "vue-yandex-maps": "^2.0.0",
-    "vuedraggable": "^4.1.0",
+    "vue": "latest",
+    "vue-router": "latest",
+    "vue-yandex-maps": "^2.1.4",
+    "vuedraggable": "^2.24.3",
     "vuetify-nuxt-module": "^0.2.4",
     "zod": "^3.23.8"
   },
-  "dependencies": {
+  "devDependencies": {
     "@mdi/js": "^7.4.47",
     "@nuxtjs/device": "^3.2.4",
-    "jsonwebtoken": "^9.0.2",
+    "nuxt-icons": "^3.2.1",
     "sass": "1.77.6",
     "sharp": "^0.33.5",
     "yandex-metrika-module-nuxt3": "^1.5.3"
-  },
-  "prisma": {
-    "seed": "node prisma/seed.js"
   }
 }
