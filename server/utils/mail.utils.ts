@@ -1,4 +1,6 @@
 import nodemailer from 'nodemailer';
+import {prisma} from "~/server/service/prisma.service";
+
 
 const logoSVG = `
     <svg width="158" height="35" viewBox="0 0 158 35" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -71,3 +73,26 @@ export async function sendEmailVerificationCode(email: string, code: string) {
     }
 
 }
+
+export async function generateVerificationCode(userId: number): Promise<string> {
+    // Генерируем код
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Устанавливаем время истечения кода
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+
+    // Сохраняем код в базе данных
+    await prisma.emailVerificationCode.create({
+        data: {
+            code,
+            userId,
+            expiresAt,
+            used: false,
+            attempts: 0,
+            lastAttempt: new Date(0),
+        },
+    });
+
+    return code;
+}
+

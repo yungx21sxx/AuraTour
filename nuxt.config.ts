@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
+
 const ONE_DAY = 60 * 60 * 24 * 1000;
 const ONE_WEEK = ONE_DAY * 7;
 
@@ -13,26 +14,24 @@ export default defineNuxtConfig({
     }
   },
 
+
+
   runtimeConfig: {
-    cookieName: process.env.COOKIE_NAME || "__session",
-    cookieSecret: process.env.COOKIE_SECRET || "secret",
-    cookieExpires: parseInt(process.env.COOKIE_REMEMBER_ME_EXPIRES || ONE_DAY.toString(), 10), // 1 day
-    cookieRememberMeExpires: parseInt(process.env.COOKIE_REMEMBER_ME_EXPIRES || ONE_WEEK.toString(), 10), // 7 days
+    jwtSecret: process.env.JWT_SECRET,
   },
 
-  modules: [
-    'vuetify-nuxt-module',
-    '@nuxtjs/device',
-    'nuxt-icons',
-    '@nuxt/devtools',
-    // 'nuxt-simple-sitemap',
-    // 'nuxt-simple-robots',
-    'vue-yandex-maps/nuxt',
-    'nuxt-swiper',
-    'yandex-metrika-module-nuxt3',
-    // 'nuxt-vite-legacy',
-  ],
-
+  modules: ['vuetify-nuxt-module', '@nuxtjs/device', // 'nuxt-simple-sitemap',
+  'nuxt-icons', // 'nuxt-simple-robots',
+  '@nuxt/devtools', // 'nuxt-vite-legacy',
+  'vue-yandex-maps/nuxt', 'nuxt-swiper', 'yandex-metrika-module-nuxt3', '@nuxtjs/google-fonts', '@nuxt/image'],
+  features: {
+    inlineStyles: false
+  },
+  googleFonts: {
+    families: {
+      Poppins: true,
+    }
+  },
   // legacy: {
   //   targets: ["chrome 69"],
   //   modernPolyfills: ['es.global-this', 'es.object.from-entries', 'es.array.flat-map', 'es.array.flat', 'es.array.at']
@@ -51,39 +50,30 @@ export default defineNuxtConfig({
     },
   },
 
-  // yandexMetrika: {
-  //   id: '96929944',
-  //   clickmap:true,
-  //   trackLinks:true,
-  //   accurateTrackBounce:true,
-  //   webvisor:true,
-  // },
-  // site: {
-  //   url: 'https://aura-tour-abkhazia.ru/',
-  // },
+  yandexMetrika: {
+    id: '96929944',
+    clickmap:true,
+    trackLinks:true,
+    accurateTrackBounce:true,
+    webvisor:true,
+    consoleLog: false,
+    defer: true,
+  },
+  site: {
+    url: 'https://aura-tour-abkhazia.ru/',
+  },
 
   routeRules: {
     '/api/**': {cors: true},
     '/lk/**': {ssr: false}
   },
 
+
   vuetify: {
-    moduleOptions: {
-      /* module specific options */
-    },
     vuetifyOptions: {
-      directives: ['Ripple'],
-      defaults: {
-        VTextField: {
-          variant: 'outlined',
-          density: 'comfortable'
-        },
-        VSelect: {
-          hideDetails: true,
-          variant: 'outlined',
-          density: 'compact'
-        },
-      }
+      icons: {
+        defaultSet: 'mdi-svg'
+      },
     }
   },
 
@@ -127,21 +117,21 @@ export default defineNuxtConfig({
     },
   },
 
-  webpack: {
-    extractCSS: true,
-    optimization: {
-      splitChunks: {
-        cacheGroups: {
-          styles: {
-            name: 'styles',
-            test: /\.(css|vue)$/,
-            chunks: 'all',
-            enforce: true
-          }
-        }
-      }
-    }
-  },
+  // webpack: {
+  //   extractCSS: true,
+  //   optimization: {
+  //     splitChunks: {
+  //       cacheGroups: {
+  //         styles: {
+  //           name: 'styles',
+  //           test: /\.(css|vue)$/,
+  //           chunks: 'all',
+  //           enforce: true
+  //         }
+  //       }
+  //     }
+  //   }
+  // },
 
   compatibilityDate: '2024-09-19',
 })

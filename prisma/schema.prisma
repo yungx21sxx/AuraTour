@@ -19,8 +19,25 @@ model City {
   id       Int       @id @default(autoincrement())
   name     String    @unique
   regionId Int
+  slug     String?
   region   Region    @relation(fields: [regionId], references: [id])
   listings Listing[]
+  seoPages SeoPage[]
+}
+
+model SeoPage {
+  id            Int          @id @default(autoincrement())
+  path          String
+  title         String
+  description   String
+  lastModified  DateTime     @updatedAt
+  priority      Float        @default(0.8)
+  changefreq    String       @default("monthly")
+  isIndexable   Boolean      @default(true)
+  cityId        Int?
+  listingTypeId Int?
+  ListingType   ListingType? @relation(fields: [listingTypeId], references: [id])
+  city          City?        @relation(fields: [cityId], references: [id])
 }
 
 model ListingType {
@@ -28,6 +45,7 @@ model ListingType {
   name     String
   value    String
   listings Listing[]
+  seoPages SeoPage[]
 }
 
 model Amenity {
@@ -63,36 +81,65 @@ model ListingFood {
 }
 
 model Listing {
-  id           Int              @id @default(autoincrement())
-  title        String
-  description  String
-  minPrice     Int
-  cityId       Int
-  typeId       Int
-  address      String           @default("Не указан")
-  places       Int?             @default(2)
-  badCount     Int?             @default(1)
-  minDaysOrder Int              @default(3)
-  seaDistance  Int
-  area         Int?
-  floor        Int?
-  maxFloor     Int?
-  elevator     Boolean?
-  phoneRaw     String
-  phone        String
-  renterName   String
-  createdAt    DateTime         @default(now())
-  note         String?
-  bookings     Booking[]
-  coords       Coords?
-  type         ListingType      @relation(fields: [typeId], references: [id])
-  city         City             @relation(fields: [cityId], references: [id])
-  amenities    ListingAmenity[]
-  food         ListingFood[]
-  photos       Photo[]
-  pricePeriods PricePeriod[]
-  reviews      Review[]
-  rooms        Room[]
+  id             Int                @id @default(autoincrement())
+  validated      Boolean            @default(true)
+  title          String
+  description    String
+  minPrice       Int
+  address        String             @default("Не указан")
+  places         Int                @default(2)
+  badCount       Int                @default(1)
+  minDaysOrder   Int                @default(3)
+  seaDistance    Int
+  area           Int?
+  phoneRaw       String
+  phone          String
+  renterName     String
+  ownerId        Int?
+  managerId      Int?
+  createdAt      DateTime           @default(now())
+  note           String?
+  typeId         Int
+  cityId         Int
+  bookings       Booking[]
+  coords         Coords?
+  flatProperties FlatProperties?
+  city           City               @relation(fields: [cityId], references: [id])
+  type           ListingType        @relation(fields: [typeId], references: [id])
+  manager        User?              @relation("ManagerRelation", fields: [managerId], references: [id])
+  owner          User?              @relation("OwnerRelation", fields: [ownerId], references: [id])
+  amenities      ListingAmenity[]
+  food           ListingFood[]
+  statistics     ListingStatistic[]
+  photos         Photo[]
+  pricePeriods   PricePeriod[]
+  reviews        Review[]
+  rooms          Room[]
+}
+
+model FlatProperties {
+  floor    Int
+  maxFloor Int
+  elevator Boolean
+  flatId   Int     @unique
+  flat     Listing @relation(fields: [flatId], references: [id])
+}
+
+model ListingStatistic {
+  id        Int      @id @default(autoincrement())
+  listingId Int
+  date      DateTime @default(dbgenerated("CURRENT_DATE"))
+  views     Int      @default(0)
+  likes     Int      @default(0)
+  favorites Int      @default(0)
+  bookings  Int      @default(0)
+  submits   Int      @default(0)
+  revenue   Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@unique([listingId, date], name: "listingId_date")
 }
 
 model Coords {
@@ -110,8 +157,10 @@ model Photo {
   listingId Int?
   roomId    Int?
   position  Int?     @default(2)
-  room      Room?    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  userId    Int?     @unique
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   listing   Listing? @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  room      Room?    @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }
 
 model Room {
@@ -148,64 +197,91 @@ model PricePeriod {
 }
 
 model Booking {
-  id              Int      @id @default(autoincrement())
-  startDate       DateTime
-  endDate         DateTime
-  adults          Int
-  childrens       Int
-  surname         String
-  name            String
-  comment         String
-  phone           String
-  transfer        Boolean
-  transferComment String?
-  listingId       Int
-  roomId          Int?
-  userId          Int?
-  totalPrice      Int?
-  prepay          Int?
-  createdAt       DateTime @default(now())
-  user            User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  room            Room?    @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  listing         Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  id               Int               @id @default(autoincrement())
+  status           String
+  checkIn          DateTime
+  checkOut         DateTime
+  adults           Int
+  childrens        Int
+  comment          String?
+  transfer         Boolean
+  transferComment  String?
+  totalPrice       Int
+  prepay           Int
+  createdAt        DateTime          @default(now())
+  isAdminCreated   Boolean           @default(false)
+  roomId           Int?
+  listingId        Int
+  BonusTransaction BonusTransaction?
+  listing          Listing           @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  room             Room?             @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  user             User?             @relation("UserBookings", fields: [userId], references: [id], onDelete: Cascade)
+  userId           Int?
+  managedBy        User?             @relation("ManagedBookings", fields: [managerId], references: [id], onDelete: Cascade)
+  managerId        Int?
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  name       String?
-  surname    String?
-  patronymic String?
-  userFrom   String?
-  phoneRaw   String    @unique
-  phone      String    @unique
-  createdAt  DateTime  @default(now())
-  bookings   Booking[]
-  reviews    Review[]
+  id                Int                @id @default(autoincrement())
+  //Все роли: 'ADMIN', 'MANAGER', 'TOURIST', 'LANDLORD'
+  role              String             @default("TOURIST")
+  isTemporary       Boolean            @default(true)
+  name              String
+  surname           String?
+  email             String?            @unique
+  emailVerified     Boolean            @default(false)
+  phone             String?
+  vk_id             String?            @unique
+  vk_token          String?
+  bonusPoints       Int                @default(0)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  BonusTransaction  BonusTransaction[]
+  createdByAdmin    Boolean            @default(false)
+  userBookings      Booking[]          @relation("UserBookings")
+  manageredBookings Booking[]          @relation("ManagedBookings")
+
+  EmailVerificationCode EmailVerificationCode[]
+  managerListings       Listing[]               @relation("ManagerRelation")
+  ownerListings         Listing[]               @relation("OwnerRelation")
+  avatar                Photo?
+  reviews               Review[]
+}
+
+model EmailVerificationCode {
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  code        String
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime
+  used        Boolean  @default(false)
+  attempts    Int      @default(0) // Количество попыток ввода кода
+  lastAttempt DateTime @default(now()) // Время последней попытки
+}
+
+model BonusTransaction {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  bookingId   Int?     @unique
+  amount      Int
+  description String
+  createdAt   DateTime @default(now())
+  booking     Booking? @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Review {
-  id        Int      @id @default(autoincrement())
-  comment   String?
-  rating    Int
-  listingId Int
-  userId    Int?
-  userName  String?
-  userFrom  String?
-  createdAt DateTime @default(now())
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
-}
-
-model Admin {
-  id           Int      @id @default(autoincrement())
-  login        String   @unique
-  passwordHash String
-  createdAt    DateTime @default(now())
-}
-
-model SmsCode {
-  id        Int      @id @default(autoincrement())
-  userPhone String   @unique
-  otp       Int
-  createdAt DateTime @default(now())
+  id              Int       @id @default(autoincrement())
+  text            String
+  rating          Int
+  userName        String?
+  isAdminCreated  Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  listingCheckIn  DateTime?
+  listingCheckOut DateTime?
+  userId          Int?
+  listingId       Int
+  listing         Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  user            User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

@@ -1,10 +1,10 @@
 //@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
 //
-//* {
-//	font-family: "Rubik", sans-serif;
-//	font-optical-sizing: auto;
-//	font-style: normal;
-//}
+* {
+	font-family: "Poppins", sans-serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+}
 
 html {
 	scroll-behavior: smooth;
@@ -21,6 +21,22 @@ a {
 .v-application {
 	background: $bg !important;
 	color: $text-main !important;
+}
+
+.text-main {
+	color: $text-main !important;
+}
+
+.text-gray {
+	color: $text-gray !important;
+}
+
+.v-btn {
+	text-transform: capitalize !important;
+	font-size: 16px !important;
+	font-weight: 400 !important;
+	letter-spacing: 0 !important;
+
 }
 
 .nav__link .v-btn__content {

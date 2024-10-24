@@ -8,8 +8,17 @@ export const getUserFromToken = async (token: string) => {
             where: { id: decoded.userId },
             select: {
                 id: true,
+                name: true,
+                email: true,
+                surname: true,
+                phone: true,
                 role: true,
-                // Укажите необходимые поля
+                bonusPoints: true,
+                avatar: {
+                    select: {
+                        urlMin: true
+                    }
+                }
             },
         });
         return user;
@@ -20,3 +29,5 @@ export const getUserFromToken = async (token: string) => {
         throw createError({ statusCode: 401, message: 'Invalid token' });
     }
 };
+
+export const generateToken = (userId: number) => jwt.sign({ userId }, process.env.JWT_SECRET as string, { expiresIn: '21d' });

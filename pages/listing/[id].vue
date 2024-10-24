@@ -1,28 +1,21 @@
 <script setup lang="ts">
-	import type {IQueryBooking} from "~/types/query.types";
-	import useBooking from "~/components/Booking/useBooking";
-	import type {BookingInfoDTO} from "~/types/dto.types";
-	import ListingBookingForm from "~/components/pages/Listing/ListingBooking/ListingBookingForm.vue";
-	import useListing from "~/components/pages/Listing/useListing";
-	import ListingHeader from "~/components/pages/Listing/ListingHeader.vue";
-	import ListingDescription from "~/components/pages/Listing/ListingDescription.vue";
-	import ListingRules from "~/components/pages/Listing/ListingRules.vue";
-	import ListingYMap from "~/components/pages/Listing/ListingYMap.vue";
-	import {formatDays} from "../../utils/utils";
-	import ListingRooms from "~/components/pages/Listing/ListingRooms.vue";
-	import useListingBooking from "~/components/pages/Listing/ListingBooking/useListingBooking";
-	import ListingBookingConfirmModal from "~/components/pages/Listing/ListingBookingConfirmModal.vue";
-	import ListingReviews from "~/components/pages/Listing/ListingReviews.vue";
-	import ListingAdmin from "~/components/pages/Listing/ListingAdmin.vue";
-	import GalleryMainSlider from "~/components/gallery/GalleryMainSlider.vue";
-	import SimilarListings from "~/components/pages/Listing/SimilarListings.vue";
-	
-
-
+	import type {IQueryBooking} from "~/modules/Booking/types/query.types";
+	import useBooking from "~/modules/Booking/composables/useBooking";
+	import type {BookingInfoDTO} from "~/modules/Booking/types/dto.types";
+	import ListingHeader from "~/modules/Listing/components/ListingPage/ListingHeader.vue";
+	import ListingAdmin from "~/modules/Listing/components/ListingPage/ListingAdmin.vue";
+	import ListingDescription from "~/modules/Listing/components/ListingPage/ListingDescription.vue";
+	import ListingRules from "~/modules/Listing/components/ListingPage/ListingRules.vue";
+	import ListingRooms from "~/modules/Listing/components/ListingPage/ListingRooms.vue";
+	import ListingYMap from "~/modules/Listing/components/ListingPage/ListingYMap.vue";
+	import ListingBookingForm from "~/modules/Listing/components/ListingBooking/ListingBookingForm.vue";
+	import SimilarListings from "~/modules/Listing/components/ListingPage/SimilarListings.vue";
+	import useListing from "~/modules/Listing/composables/useListing";
+	import useListingBooking from "~/modules/Listing/composables/useListingBooking";
+	import ListingBookingConfirmModal from "~/modules/Listing/components/ListingPage/ListingBookingConfirmModal.vue";
 	const {isMobileOrTablet} = useDevice()
 	const route = useRoute();
 	const {parseBookingRouteQuery} = useBooking();
-	const isAdmin = useAdmin()
 	
 	const {listing, fetchListing, createBookingDTO, chosenRoomId, chosenRoom, listingModalMobile} = useListing()
 	const {setBookingQuery, getListingQueryLinkParameters, listingBookingConfirmModal, dateModal} = useListingBooking()
@@ -79,13 +72,12 @@
 				
 				<GalleryFullScreen/>
 				
-				<ListingAdmin v-if="isAdmin"/>
+				<ListingAdmin/>
 				<ListingDescription/>
 				<ListingRules/>
 				<ListingRooms/>
 				<ListingYMap id="map"/>
 				
-				<ListingReviews/>
 			</div>
 			<div class="listing__sidebar booking">
 				<ListingBookingForm target="sidebar"/>

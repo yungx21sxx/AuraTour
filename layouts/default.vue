@@ -1,7 +1,6 @@
 <template>
 	<v-app>
-		<MenuMobile v-if="isMobileOrTablet"/>
-		<MenuDesktop v-else/>
+		<MenuFixed/>
 		<div class="main">
 			<slot/>
 		</div>
@@ -19,6 +18,7 @@
 	
 	import MenuMobile from "~/components/Menu/MenuMobile.vue";
 	import MenuDesktop from "~/components/Menu/MenuDesktop.vue";
+	import MenuFixed from "~/modules/Menu/components/MenuFixed.vue";
 	
 	const { isMobileOrTablet } = useDevice()
 	

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 
-	import type {BookingResponse} from "~/types/response.types";
-	import useBooking from "~/components/Booking/useBooking";
+
+	
+	import type {BookingResponse} from "~/modules/Listing/types/response.types";
+	import useBooking from "~/modules/Booking/composables/useBooking";
 	
 	defineProps<{
 		booking: BookingResponse
