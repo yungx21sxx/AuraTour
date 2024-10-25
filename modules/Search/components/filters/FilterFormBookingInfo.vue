@@ -6,6 +6,8 @@ import type {IQueryBooking} from "~/modules/Booking/types/query.types";
 import type {FiltersDTO} from "~/modules/Search/types/dto.types";
 import useFilters from "~/modules/Search/composables/useFilters";
 import debounce from "lodash.debounce";
+import BookingSearchLocation from "~/modules/Booking/components/BookingSearchLocation.vue";
+import BookingSetDate from "~/modules/Booking/components/BookingSetDate.vue";
 
 
 const {

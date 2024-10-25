@@ -18,9 +18,6 @@
 		totalCount: number
 	}
 	
-	
-	
-	
 	const {bookingModals, closeLocationModal} = useBooking();
 	const {searchQuery, searchResults, popularCities, allCitiesWithListings} = useSearch();
 	

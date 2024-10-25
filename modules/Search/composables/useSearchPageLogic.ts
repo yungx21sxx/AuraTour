@@ -30,18 +30,18 @@ export default async function useSearchPageLogic() {
     const { loadSearchData } = useSearch();
 
     // Получаем параметры маршрута
-    const cityParam = route.params.city as string | undefined;
-    const typeParam = route.params.type as string | undefined;
+    const citySlug = route.params.citySlug as string | undefined;
+    const typeSlug = route.params.typeSlug as string | undefined;
 
     // Объединяем параметры из маршрута и query
     const query = { ...route.query };
 
-    if (cityParam) {
-        query.city = cityParam;
+    if (citySlug) {
+        query.citySlug = cityParam;
     }
 
-    if (typeParam) {
-        query.type = typeParam;
+    if (typeSlug) {
+        query.typeSlug = typeParam;
     }
 
     // Парсим query параметры, связанные с бронированием

@@ -71,8 +71,6 @@
 				<GalleryMainSlider/>
 				
 				<GalleryFullScreen/>
-				
-				<ListingAdmin/>
 				<ListingDescription/>
 				<ListingRules/>
 				<ListingRooms/>

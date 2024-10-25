@@ -6,6 +6,8 @@ import { mdiCalendarMonthOutline } from '@mdi/js';
 import { mdiAccountOutline } from '@mdi/js';
 import { mdiMinus, mdiPlus } from '@mdi/js';
 import { mdiArrowRightCircleOutline } from '@mdi/js';
+import BookingSearchLocation from "~/modules/Booking/components/BookingSearchLocation.vue";
+import BookingSetDate from "~/modules/Booking/components/BookingSetDate.vue";
 
 const {
 	peopleCount,

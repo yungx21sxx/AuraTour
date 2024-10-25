@@ -19,7 +19,7 @@ model City {
   id       Int       @id @default(autoincrement())
   name     String    @unique
   regionId Int
-  slug     String?
+  slug     String?   @unique
   region   Region    @relation(fields: [regionId], references: [id])
   listings Listing[]
   seoPages SeoPage[]

@@ -14,9 +14,6 @@ interface PopularCityWithPhoto extends SearchResult{
 	photo: string,
 
 }
-
-
-
 const popularCitiesList = ["Гагра", "Пицунда", "Цандрипш", "Гудаута", "Новый Афон", "Сухум"]
 
 const popularCitiesWithPhotoList = [

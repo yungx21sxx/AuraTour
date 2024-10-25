@@ -3,7 +3,7 @@
         <div class="wrapper nav__body">
             <MainLogo class="nav__logo" :variant="variant" />
             <div class="nav__links">
-                <v-menu open-on-hover transition="scale-transition">
+                <v-menu open-on-hover transition="scale-transition" class="nav__cities">
                     <template v-slot:activator="{ props }">
                         <v-btn
                             class="nav__search search"
@@ -148,10 +148,10 @@
         &__link {
             display: none;
         }
+	    
     }
-    @media screen and (max-width: 700px) {
-        &__right,
-        &__cities {
+    @media screen and (max-width: 730px) {
+        &__right {
             display: none;
         }
         &__logo {
@@ -164,6 +164,12 @@
             margin-right: -8px;
         }
     }
+	@media screen and (max-width: 500px) {
+		&__search {
+			display: none;
+		}
+	}
+	
 }
 </style>
 
