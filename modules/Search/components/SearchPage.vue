@@ -38,13 +38,102 @@ import FilterForm from "~/modules/Search/components/filters/FilterForm.vue";
 import FilterFormModal from "~/modules/Search/components/filters/FilterFormModal.vue";
 import ListingItemCatalog from "~/modules/Listing/components/shared/ListingItemCatalog.vue";
 import useSearchPageLogic from '~/modules/Search/composables/useSearchPageLogic';
+import type {TSearchType} from "~/modules/Search/types/search.types";
+import useBooking from '~/modules/Booking/composables/useBooking';
+import useSearch from '~/modules/Booking/composables/useSearch';
+
+import useCatalog from '~/modules/Search/composables/useCatalog';
+import useFilters from '~/modules/Search/composables/useFilters';
+
+import type { IQueryBooking } from '~/modules/Booking/types/query.types';
+import type { FiltersDTO } from '~/modules/Search/types/dto.types';
+
+const props = withDefaults(
+	defineProps<{
+		searchType: TSearchType
+	}>(),
+	{
+		searchType: 'ALL'
+	}
+)
+const route = useRoute();
+const router = useRouter();
 
 const {
+	setBookingQuery,
+	parseBookingRouteQuery,
+	bookingModals,
+	openSetDateModal,
+} = useBooking();
+
+const {
+	createBookingDTO,
+	loadListings,
 	listingsList,
 	sortBy,
-	sortSelect,
-	loadListings,
-} = await useSearchPageLogic();
+	initListings,
+	setFiltersDTO,
+} = useCatalog();
+
+const { fetchBookingFilters, parseQueryParams } = useFilters();
+const { loadSearchData, setChosenCityBySlug } = useSearch();
+
+// Получаем параметры маршрута
+const citySlug = route.params.citySlug as string | undefined;
+const typeSlug = route.params.typeSlug as string | undefined;
+
+// Объединяем параметры из маршрута и query
+const query = { ...route.query };
+
+// Парсим query параметры, связанные с бронированием
+const bookingParameters: IQueryBooking = parseBookingRouteQuery(query);
+
+
+// Загружаем данные для поиска города
+await loadSearchData();
+
+// Устанавливаем данные для бронирования (даты, гости)
+setBookingQuery(query);
+
+// Создаем тело запроса на сервер для фильтрации по информации о бронировании
+createBookingDTO(bookingParameters);
+
+// Парсим query для фильтрации
+const filtersQueryParameters: FiltersDTO = parseQueryParams(query);
+
+// Создаем тело запроса на сервер
+setFiltersDTO(filtersQueryParameters);
+
+// Загружаем параметры фильтрации и инициализируем списки
+await Promise.all([
+	fetchBookingFilters(bookingParameters),
+	initListings(),
+]);
+
+const sortSelect = [
+	{
+		text: 'По популярности',
+		value: 'popularity',
+	},
+	{
+		text: 'Близость к морю',
+		value: 'sea-distance',
+	},
+	{
+		text: 'По возрастанию цены',
+		value: 'increase',
+	},
+	{
+		text: 'По убыванию цены',
+		value: 'decrease',
+	},
+];
+
+watch(sortBy, () => {
+	initListings();
+});
+
+
 </script>
 
 <style scoped lang="scss">

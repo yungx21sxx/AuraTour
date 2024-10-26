@@ -18,6 +18,7 @@ export default async function useSearchPageLogic() {
         bookingModals,
         openSetDateModal,
     } = useBooking();
+
     const {
         createBookingDTO,
         loadListings,
@@ -26,6 +27,7 @@ export default async function useSearchPageLogic() {
         initListings,
         setFiltersDTO,
     } = useCatalog();
+
     const { fetchBookingFilters, parseQueryParams } = useFilters();
     const { loadSearchData } = useSearch();
 
@@ -37,11 +39,11 @@ export default async function useSearchPageLogic() {
     const query = { ...route.query };
 
     if (citySlug) {
-        query.citySlug = cityParam;
+        query.citySlug = citySlug;
     }
 
     if (typeSlug) {
-        query.typeSlug = typeParam;
+        query.typeSlug = typeSlug;
     }
 
     // Парсим query параметры, связанные с бронированием
@@ -51,7 +53,7 @@ export default async function useSearchPageLogic() {
     // Загружаем данные для поиска города
     await loadSearchData();
 
-    // Устанавливаем данные для бронирования
+    // Устанавливаем данные для бронирования (даты, гости)
     setBookingQuery(query);
 
     // Создаем тело запроса на сервер для фильтрации по информации о бронировании

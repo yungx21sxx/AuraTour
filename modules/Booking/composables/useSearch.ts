@@ -1,20 +1,9 @@
-import type {ISearchData} from "~/modules/Booking/types/response.types";
+import type {ICitySearchItem, ISearchInitResponse} from "~/modules/Booking/types/response.types";
 
-interface SearchResult {
-	regionName: string;
-	regionId: number;
-	cityName: string;
-	cityId: number,
-	count: number,
-	totalCount: number,
-	minPrice: number
-}
-
-interface PopularCityWithPhoto extends SearchResult{
+interface IPopularCityWithPhoto extends ICitySearchItem {
 	photo: string,
-
 }
-const popularCitiesList = ["Гагра", "Пицунда", "Цандрипш", "Гудаута", "Новый Афон", "Сухум"]
+
 
 const popularCitiesWithPhotoList = [
 	{"cityName": "Гагра", "photo": "/popular/gagra.jpg"},
@@ -24,101 +13,46 @@ const popularCitiesWithPhotoList = [
 	{"cityName": "Новый Афон", "photo": "/popular/afon.jpg"},
 	{"cityName": "Сухум", "photo": "/popular/suhum.jpg"}
 ]
+
+function mergeCityData(popularCities, cityData): IPopularCityWithPhoto[] {
+	return popularCities.map(city => {
+		const matchedCity = cityData.find(data => data.cityName === city.cityName);
+		return matchedCity
+			? { ...city, ...matchedCity }
+			: city; // Возвращаем исходный объект, если совпадение не найдено
+	});
+}
+
 export default () => {
 
-	const searchQuery = useState<string>('search-query', () => '');
-	const searchData = useState<ISearchData[]>('search-data');
-	let popularCities = useState<SearchResult[]>('search-popular');
-	const allCitiesWithListings = useState<SearchResult[]>('city-with-listings')
-
-	let popularCitiesWithPhoto = useState<PopularCityWithPhoto[]>()
-
+	const searchData = useState<ISearchInitResponse>('search-data');
+	const chosenCity = useState<ICitySearchItem | null>('chosen-city', () => null);
+	const popularCitiesWithPhoto = useState<IPopularCityWithPhoto[]>('popular-cities');
 
 	async function loadSearchData() {
-		const {data, error} = await useAsyncData('search-data', () => $fetch('/api/search/init'));
-		if (!data.value) return;
-		searchData.value = data.value.result;
+		try {
+			searchData.value = await $fetch<ISearchInitResponse>('/api/search/init');
+		} catch (error) {
+			throw error;
+		}
+		popularCitiesWithPhoto.value = mergeCityData(popularCitiesWithPhotoList, searchData.value.cities);
+	}
 
-		//@ts-ignore
-		popularCities.value = searchData.value.flatMap(region =>
-			region.cities
-				.filter(city => popularCitiesList.includes(city.cityName))
-				.map(city => ({
-					regionName: region.regionName,
-					regionId: region.regionId,
-					cityName: city.cityName,
-					cityId: city.cityId,
-					slug: city.slug,
-					totalCount: region.totalCount,
-					count: city.count,
-					minPrice: city.minPrice
-				}))
-		);
-		allCitiesWithListings.value = searchData.value.flatMap(region =>
-			region.cities
-				.filter(city => city.count > 0)
-				.map(city => ({
-					regionName: region.regionName,
-					regionId: region.regionId,
-					cityName: city.cityName,
-					cityId: city.cityId,
-					totalCount: region.totalCount,
-					count: city.count,
-					minPrice: city.minPrice
-				}))
-		);
-
-
-		//@ts-ignore
-		popularCitiesWithPhoto.value = popularCities.value?.map(item => {
-			// Находим соответствующий объект во втором массиве
-			const match = popularCitiesWithPhotoList.find(item2 => item2.cityName === item.cityName);
-			// Возвращаем новый объект, объединяющий поля из обоих объектов
-			return {
-				...item,
-				...match // Это перезаписывает/добавляет поля из match в объект item
-			};
-		})
+	const setChosenCityBySlug = (slug: string) => {
+		const searchedCity = searchData.value.cities.find(data => data.slug === slug);
+		if (searchedCity) {
+			chosenCity.value = searchedCity;
+		}
 	}
 
 
-	const searchResults = computed<SearchResult[] | null>(() => {
-		const query = searchQuery.value.trim().toLowerCase();
-		if (!query) return null;
-
-
-		let results: SearchResult[] = [];
-		if (!searchData.value) return null;
-		searchData.value.forEach(({ regionName, regionId, cities, totalCount }) => {
-			const matchedCities = cities.filter(city => city.cityName.toLowerCase().includes(query));
-			if (matchedCities.length > 0) {
-				// Для каждого совпадающего города добавляем объект с городом и регионом
-				matchedCities.forEach(city => results.push(
-					{
-						totalCount,
-						cityId: city.cityId,
-						regionId: regionId,
-						regionName,
-						cityName: city.cityName,
-						count: city.count,
-						minPrice: city.minPrice
-					}));
-			}
-		});
-
-		results = results.filter(city => city.count > 0)
-
-		return results.length > 0 ? results : null;
-	});
-
 
 	return {
-		searchQuery,
-		searchResults,
-		popularCities,
+		searchData,
 		loadSearchData,
-		allCitiesWithListings,
-		popularCitiesWithPhoto
+		popularCitiesWithPhoto,
+		setChosenCityBySlug,
+		chosenCity
 	};
 
 

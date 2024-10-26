@@ -4,12 +4,33 @@ const prisma = new PrismaClient();
 
 export default defineEventHandler(async event => {
 	const citiesWithCounts = await prisma.city.findMany({
-		select: {
-			id: true,
-			name: true,
-			regionId: true,
+		where: {
+			listings: {
+				some: {} // Это условие гарантирует, что будут выбраны только те города, у которых есть хотя бы один объект
+			}
+		},
+		include: {
 			_count: {
 				select: { listings: true },
+			},
+			region: true,
+			listings: {
+				orderBy: {
+					minPrice: 'asc'
+				},
+				take: 1,
+				select: {
+					minPrice: true
+				}
+			},
+			seoPages: true
+		},
+	});
+
+	const typesWithCounts = await prisma.listingType.findMany({
+		include: {
+			_count: {
+				select: {listings: true},
 			},
 			listings: {
 				orderBy: {
@@ -19,44 +40,33 @@ export default defineEventHandler(async event => {
 				select: {
 					minPrice: true
 				}
-			}
+			},
+			seoPages: true
 		},
-		orderBy: {
-			name: 'asc',
-		},
-	});
-
-	// Получаем регионы с их ID
-	const regions = await prisma.region.findMany({
-		select: {
-			id: true,
-			name: true,
-		},
-		orderBy: {
-			name: 'asc',
-		},
-	});
-	const totalCount = await prisma.listing.count();
-	// Сопоставляем города с регионами и форматируем вывод, включая общее количество объектов в регионе
-	const result = regions.map((region) => {
-		const cities = citiesWithCounts
-			.filter((city) => city.regionId === region.id && city._count.listings > 0)
-			.map((city) => ({
-				cityId: city.id,
-				cityName: city.name,
-				count: city._count.listings,
-				minPrice: city.listings[0].minPrice
-			}));
-		const totalCount = cities.reduce((acc, city) => acc + city.count, 0);
-
-		return {
-			regionId: region.id,
-			regionName: region.name,
-			cities,
-			totalCount,
-		};
-	});
+	})
 
 
-	return {totalCount, result};
+	const cities = citiesWithCounts.map(city => ({
+		id: city.id,
+		cityName: city.name,
+		regionName: city.region.name,
+		slug: city.slug,
+		listingsCount: city._count.listings,
+		minPrice: city.listings[0].minPrice,
+		seoPage: city.seoPages.length > 0
+	})).sort((a, b) => b.listingsCount - a.listingsCount);
+
+	const listingTypes = typesWithCounts.map(type => ({
+		id: type.id,
+		name: type.name,
+		slug: type.value,
+		listingsCount: type._count.listings,
+		minPrice: type.listings[0].minPrice,
+		seoPage: type.seoPages.length > 0
+	})).sort((a, b) => b.listingsCount - a.listingsCount);
+	return {
+		cities,
+		listingTypes,
+	}
+
 })

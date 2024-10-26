@@ -4,8 +4,7 @@ import type {IQueryBooking} from "~/modules/Booking/types/query.types";
 interface IBookingModals {
 	location: {
 		isOpen: boolean,
-		location: null | ChosenLocation,
-		housingTypesId: number[]
+		slug: null | string,
 	},
 	date: {
 		isOpen: boolean
@@ -20,12 +19,7 @@ interface IPeopleCount {
 	adults: number,
 	children: number
 }
-interface ChosenLocation {
-	regionName: string;
-	regionId: number,
-	cityName: string ; // cityName является необязательным, так как результат может быть только регионом
-	cityId: number;
-}
+
 
 export default () => {
 
@@ -41,8 +35,7 @@ export default () => {
 	const bookingModals = useState<IBookingModals>(() => ({
 		location: {
 			isOpen: false,
-			location: null,
-			housingTypesId: []
+			slug: null,
 		},
 		date: {
 			isOpen: false,
@@ -51,21 +44,20 @@ export default () => {
 		}
 	}))
 
+
+	//Это геттер фунция, которая вызываеться в момент когда мы переходим на страницу объекта
 	const getBookingQueryLinkParameters = computed(() => {
 		const { from: checkIn, to: checkOut } = bookingModals.value.date
 		const { location } = bookingModals.value.location
 		return {
 			checkIn: checkIn?.toDateString(),
 			checkOut: checkOut?.toDateString(),
-			region: location?.regionName,
-			regionId: location?.regionId,
-			city: location?.cityName || null,
-			cityId: location?.cityId || null,
 			adults: peopleCount.value.adults,
 			children: peopleCount.value.children
 		}
 	})
 
+	//Функция вызываеться для перехода с главной страницы на страницу каталога
 	async function goToCatalog(): Promise<void> {
 		const { from: checkIn, to: checkOut } = bookingModals.value.date
 		const { location } = bookingModals.value.location
@@ -74,13 +66,8 @@ export default () => {
 			query: {
 				checkIn: checkIn?.toDateString(),
 				checkOut: checkOut?.toDateString(),
-				region: location?.regionName,
-				regionId: location?.regionId,
-				city: location?.cityName || null,
-				cityId: location?.cityId || null,
 				adults: peopleCount.value.adults,
 				children: peopleCount.value.children,
-				housingTypesId: bookingModals.value.location.housingTypesId
 			},
 			replace: true,
 			force: true
@@ -142,6 +129,7 @@ export default () => {
 		return `${days} ${getDaysWord(days)}`
 	}
 
+	//Это нужно переделать, она парсит query параметры на странице search для инициализации DTO, вырежим все что связано с локацией
 	function parseBookingRouteQuery(routeQuery: LocationQuery): IQueryBooking {
 		const parseDate = (date: string | null) => date ? new Date(date) : null;
 		const getNumber = (value: string | (string | null)[] | null) => {
@@ -190,11 +178,6 @@ export default () => {
 		bookingModals.value.location.isOpen = true
 	}
 
-	const closeLocationModal = (location: ChosenLocation | null) => {
-		bookingModals.value.location.isOpen = false
-		if (location)
-			bookingModals.value.location.location = location
-	}
 
 	const openSetDateModal = () => {
 		bookingModals.value.date.isOpen = true
@@ -215,7 +198,6 @@ export default () => {
 		goToCatalog,
 		describedGroup,
 		openLocationModal,
-		closeLocationModal,
 		openSetDateModal,
 		closeSetDateModal,
 		beautifyDate,

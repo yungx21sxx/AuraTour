@@ -1,15 +1,24 @@
-export interface housingTypesResponse { id: number; name: string; value: string, count: number }
 
-interface City {
-    cityId: number,
-    cityName: string,
-    count: number,
-    minPrice: number
+export interface ICitySearchItem {
+    id: number;
+    cityName: string;
+    regionName: string;
+    slug: string;
+    listingsCount: number
+    minPrice: number;
+    seoPage: boolean;
 }
 
-export interface ISearchData {
-    regionId: number,
-    regionName: string,
-    cities: City[],
-    totalCount: number,
+export interface IListingTypeSearchItem {
+    id: number;
+    name: string;
+    slug: string;
+    listingsCount: number
+    minPrice: number;
+    seoPage: boolean;
+}
+
+export interface ISearchInitResponse {
+    cities: ICitySearchItem[];
+    listingTypes: IListingTypeSearchItem[];
 }

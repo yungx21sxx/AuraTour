@@ -3,7 +3,7 @@ import SearchPage from "~/modules/Search/components/SearchPage.vue";
 </script>
 
 <template>
-	<SearchPage searchType="LISTING-TYPE-ONLY" />
+	<SearchPage search-type="CITY-LISTING-TYPE"/>
 </template>
 
 <style scoped lang="scss">

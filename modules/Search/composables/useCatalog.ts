@@ -1,6 +1,6 @@
 
 import {type IQueryBooking} from "~/modules/Booking/types/query.types";
-import type {BookingInfoDTO} from "~/modules/Booking/types/query.types";
+import {type BookingInfoDTO} from "~/modules/Booking/types/dto.types";
 import type  {FiltersDTO, GetAvailableListingsDTO} from "~/modules/Search/types/dto.types";
 import {type IListingItemResponse} from "~/modules/Listing/types/response.types";
 import {type IListingCatalogResponse} from "~/modules/Search/types/response.types";
@@ -21,6 +21,7 @@ export default () => {
 	const listingsList = useState<IListingCatalogResponse>('catalog-page', () => shallowReactive(listingsListDefault))
 
 	const sortBy = useState<'increase' | 'decrease' | 'popularity' | 'sea-distance'>('sort-by', () => 'popularity');
+
 	function createBookingDTO(query: IQueryBooking): BookingInfoDTO {
 		bookingDTO.value = {
 			regionId: query.regionId,

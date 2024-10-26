@@ -1,6 +1,7 @@
 <script setup lang="ts">
 
 import useBooking from "~/modules/Booking/composables/useBooking";
+import useSearch from "~/modules/Booking/composables/useSearch";
 import { mdiMagnify } from '@mdi/js'
 import { mdiCalendarMonthOutline } from '@mdi/js';
 import { mdiAccountOutline } from '@mdi/js';
@@ -19,9 +20,11 @@ const {
 	goToCatalog,
 } = useBooking();
 
+const { chosenCity } = useSearch()
+
 const emit = defineEmits(['submit'])
 
-const location = computed(() => bookingModals.value.location.location);
+
 const dates = computed(() => {
 	const {from, to} = bookingModals.value.date
 	return {from, to}
@@ -39,14 +42,7 @@ async function onSubmit() {
 	await goToCatalog()
 }
 
-watchEffect(() => {
-	if (location.value) {
-		locationInputError.value = false;
-	}
-	if (dates.value.from || dates.value.to) {
-		dateInputError.value = false;
-	}
-})
+
 
 </script>
 
@@ -54,9 +50,9 @@ watchEffect(() => {
 	<div class="booking">
 		<v-card class="booking__input booking__input_first booking__location" :ripple="{ class: 'ripple-color' }"  @click="openLocationModal">
 			<v-icon :icon="mdiMagnify"/>
-			<span v-if="!location">Город | Тип жилья</span>
+			<span v-if="!chosenCity">Выберите курорт</span>
 			<div v-else>
-				<span>{{location.cityName}}</span>
+				<span>{{chosenCity.cityName}}</span>
 			</div>
 		</v-card>
 		<div :class="['booking__date', {
@@ -123,7 +119,7 @@ watchEffect(() => {
 		
 	</div>
 	
-	<BookingSearchLocation set-type/>
+	<BookingSearchLocation/>
 	<BookingSetDate/>
 </template>
 

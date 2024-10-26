@@ -1,0 +1,1 @@
+export type TSearchType = 'ALL' | 'CITY-ONLY' | 'CITY-LISTING-TYPE' | 'LISTING-TYPE-ONLY'
