@@ -1,6 +1,6 @@
 import listingsService from "~/server/service/listings.service";
-import type {BookingInfoDTO} from "~/types/dto.types";
-import type {IListingPreviewResponse} from "~/types/response.types";
+import type {BookingInfoDTO} from "~/modules/Booking/types/dto.types";
+
 
 export default defineEventHandler(async event => {
 	const listingId = getRouterParam(event, 'listingId');

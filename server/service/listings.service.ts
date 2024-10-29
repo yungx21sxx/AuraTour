@@ -1,12 +1,14 @@
 import type {
-	BookingInfoDTO,
 	FiltersDTO,
 	GetAvailableListingsDTO,
 	ListingCreateDTO,
 	RoomCreateDTO
 } from "~/types/dto.types";
+
+
 import {prisma} from "~/server/service/prisma.service";
 import type {Listing, PricePeriod, Prisma, Room} from "@prisma/client";
+import {BookingInfoDTO} from "~/modules/Booking/types/dto.types";
 
 class ListingsService {
 	private toUTCStartOfDay(dateString: Date): Date {
@@ -272,12 +274,14 @@ class ListingsService {
 	}
 
 
-	async searchFilteredListings(bookingInfo: BookingInfoDTO, sortFilters: FiltersDTO | null, sortBy: GetAvailableListingsDTO['sortBy'],  page: number) {
+	async searchFilteredListings(bookingInfo: BookingInfoDTO, sortFilters: FiltersDTO, sortBy: GetAvailableListingsDTO['sortBy'],  page: number) {
 		const pageSize: number = 10;
 
 
-		let queryConditions = bookingInfo.cityId ? {
-			cityId: bookingInfo.cityId,
+		let queryConditions = bookingInfo.citySlug ? {
+			city: {
+				slug: bookingInfo.citySlug
+			},
 			// places: { gte: bookingInfo.peoples },
 			AND: []
 		} : {

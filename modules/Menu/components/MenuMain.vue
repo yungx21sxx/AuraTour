@@ -15,9 +15,26 @@
                             Направления
                         </v-btn>
                     </template>
-                    <v-card min-width="300">
+                    <v-card max-width="350">
                         <v-card-item>
-	                       
+	                        <h4>Популярные направления</h4>
+	                        <v-chip-group column color="#7059FF">
+		                        <v-chip
+			                        v-for="city of searchData.cities.slice(0,8)"
+			                        :key="city.id"
+			                        color="#7059FF"
+			                        :href="`/search/city/${city.slug}`"
+		                        >{{city.cityName}}</v-chip>
+	                        </v-chip-group>
+	                        <h4>Типы жилья</h4>
+	                        <v-chip-group column color="#7059FF">
+		                        <v-chip
+			                        v-for="type of searchData.listingTypes.slice(0,5)"
+			                        :key="type.id"
+			                        color="#7059FF"
+			                        :href="`/search/type/${type.slug}`"
+		                        >{{type.name}}</v-chip>
+	                        </v-chip-group>
                         </v-card-item>
                     </v-card>
                 </v-menu>
@@ -174,6 +191,7 @@
 </style>
 
 <script setup lang="ts">
+import { mdiMapMarkerOutline } from '@mdi/js';
 import { mdiLogout } from '@mdi/js';
 import { mdiHomeVariantOutline } from '@mdi/js';
 import BurgerIcon from "../icons/BurgerIcon.vue";
@@ -187,12 +205,12 @@ import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 import type { MenuVariants } from "~/modules/Menu/types/menu.types";
 import MainLogo from "~/modules/Menu/icons/MainLogo.vue";
 import BtnSecondary from "~/modules/Common/UI/BtnSecondary.vue";
+import useSearch from "~/modules/Booking/composables/useSearch";
 
 const { open } = useBurgerMenu();
 const {openAuthModal} = useAuthModal();
 
 const authUser = useAuthUser();
-console.log(authUser.value)
 const props = withDefaults(
     defineProps<{
         variant?: MenuVariants;
@@ -202,13 +220,9 @@ const props = withDefaults(
     },
 );
 
-
+const {searchData} = useSearch()
 const color = computed(() => (props.variant === "light" ? "#fff" : "#333D46"));
 
-const popularCities = [
-	{
-		name: 'Гагры',
-		href: ''
-	}
-]
+
+
 </script>

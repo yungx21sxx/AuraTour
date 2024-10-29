@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import FilterFormBookingInfo from "~/modules/Search/components/filters/FilterFormBookingInfo.vue";
+import MenuMain from "~/modules/Menu/components/MenuMain.vue";
 
 const breadcrumbs = [
 	{
@@ -18,7 +19,8 @@ const breadcrumbs = [
 
 <template>
 	<div class="header">
-		<div class="wrapper">
+		<MenuMain/>
+		<div class="wrapper header__body">
 			<v-breadcrumbs :items="breadcrumbs" class="header__breadcrumbs"/>
 			<FilterFormBookingInfo/>
 		</div>
@@ -31,12 +33,14 @@ const breadcrumbs = [
 	.header {
 		background: $bg-card;
 		border-top: 1px solid $bg;
-		padding-top: 16px;
-		padding-bottom: 16px;
 	
 		
 		&__breadcrumbs {
 			margin-bottom: 16px;
+		}
+		
+		&__body {
+			margin-top: 24px;
 		}
 	}
 

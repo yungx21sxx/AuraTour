@@ -3,7 +3,11 @@
 	import useBooking from "~/modules/Booking/composables/useBooking";
 	import {getWordWithProperEnding} from "~/utils/utils";
 	import useFavorites from "~/components/pages/Favorites/useFavorites";
-	
+	import {mdiHeartOutline, mdiHeart, mdiMapMarker, mdiBed} from '@mdi/js'
+	import BedIcon from "~/modules/Listing/icons/BedIcon.vue";
+	import FitIcon from "~/modules/Listing/icons/FitIcon.vue";
+	import RoomsIcon from "~/modules/Listing/icons/RoomsIcon.vue";
+	import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 	const {listing} = defineProps<{
 		listing: IListingPreviewResponse,
 		mobile?: boolean
@@ -28,11 +32,10 @@
 </script>
 
 <template>
-	<v-card
+	<div
 		:class="['listing', {
 			'listing_mobile': mobile
 		}]"
-		elevation="0"
 		:key="listing.id"
 	>
 		<v-carousel
@@ -43,34 +46,51 @@
 			color="rgba(0,0,0,0)"
 		>
 			<v-btn class="carousel__btn"
-			       icon="mdi-heart-outline"
-			 
-			       color="rgba(255,255,255,.7)"
+			       :icon="mdiHeartOutline"
+			       density="comfortable"
+			       color="rgba(255,255,255,.8)"
 			       v-if="!inFavorite"
 			       @click="addToFavorites(listing.id)"
 			></v-btn>
 			<v-btn class="carousel__btn"
-			       icon="mdi-heart"
-		
-			       color="rgba(255,255,255,.7)"
+			       :icon="mdiHeartOutline"
+			       density="comfortable"
+			       color="rgba(255,255,255,.8)"
 			       v-else
 			       @click="removeFromFavorites(listing.id)"
 			></v-btn>
 			<v-carousel-item
 				v-for="photo of listing.photos"
 			>
-				<v-img @click.stop="goToListing" :src="photo" cover height="100%"/>
+				<v-img @click.stop="goToListing" :src="photo" cover/>
 			</v-carousel-item>
 		</v-carousel>
 		<div class="listing__info info">
-			<h3 class="info__title " @click="goToListing">{{listing.title}}</h3>
-			<v-chip variant="text" prepend-icon="mdi-map-marker" class="listing__address">{{listing.address}}</v-chip>
-			<p class="info__city">{{listing.city}}, {{listing.seaDistance}} м до моря</p>
-			<div class="info__adv mt-2" v-if="!listing.isHotelType">
-				<v-chip color="blue" prepend-icon="mdi-bed">{{getWordWithProperEnding( listing.places, 'место')}}</v-chip>
-				<v-chip color="blue" prepend-icon="mdi-ruler-square-compass">{{listing.area}} м<sup>2</sup></v-chip>
-				<v-chip color="blue">{{getRoomString(listing.badCount)}}</v-chip>
-<!--				<v-chip color="blue" class="chip-reviews">Нет отзывов</v-chip>-->
+			<div class="info__title text-main" @click="goToListing">{{listing.title}}</div>
+			<div class="listing__address">
+				<v-icon size="18px" color="#7059FF" :icon="mdiMapMarker"></v-icon>
+				<span>{{listing.address}}</span>
+			</div>
+			<p class="info__city text-main">{{listing.city}}, {{listing.seaDistance}} м до моря</p>
+			<div class="info__adv" v-if="!listing.isHotelType">
+				<div class="chip">
+					<BedIcon/>
+					<span>
+						{{getWordWithProperEnding( listing.places, 'место')}}
+					</span>
+				</div>
+				<div class="chip">
+					<FitIcon/>
+					<span>
+						{{listing.area}} м<sup>2</sup>
+					</span>
+				</div>
+				<div class="chip">
+					<RoomsIcon/>
+					<span>
+						{{getRoomString(listing.badCount)}}
+					</span>
+				</div>
 			</div>
 			<div class="listing__amenities mt-4">
 				<span
@@ -86,7 +106,7 @@
 <!--				<span>{{getWordWithProperEnding( listing.reviewCount, 'отзыв')}}</span>-->
 <!--			</div>-->
 		</div>
-		<div class="listing__order order">
+		<div class="listing__order order text-main">
 			<div class="order__info" v-if="listing.totalPrice">
 				<div class="order__price" v-if="listing.type !== 'guest-house' && listing.totalPrice">
 					<span class="price">{{listing.dailyPrice.toLocaleString('ru-RU')}} ₽</span>
@@ -100,18 +120,28 @@
 			</div>
 			<div class="order__info" v-else>
 				<div class="order__price">
-					<span class="price">от {{listing.dailyPrice.toLocaleString('ru-RU')}} ₽</span>
-					<span class="order__price_info">за сутки</span>
+					<div class="price">от {{listing.dailyPrice.toLocaleString('ru-RU')}} ₽</div>
+					<div class="order__price_info">за сутки</div>
 				</div>
 			</div>
-			<v-btn class="order__btn" color="#7059FF" @click="goToListing">Выбрать</v-btn>
+			<BtnPrimary class="order__btn" @click="goToListing">Выбрать</BtnPrimary>
 		</div>
-	</v-card>
+	</div>
 
 </template>
 
 <style scoped lang="scss">
 	
+	.chip {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 14px;
+		border-radius: 999px;
+		color: #626262;
+		background: #F1F3F9;
+		padding: 3px 12px;
+	}
 	.carousel__btn {
 		position: absolute;
 		z-index: 2;
@@ -126,20 +156,27 @@
 		display: grid;
 		grid-template-columns: 2fr 3fr 1.5fr;
 		margin-bottom: 16px;
+		box-shadow: 0 4px 12px 0 rgba(#002446,.1) !important;
+		border-radius: 16px;
+		
 		&__address {
+			display: flex;
+			align-items: center;
+			gap: 4px;
 			color: $text-gray;
-			margin-left: -10px;
+			margin-bottom: 8px;
+			font-size: 14px;
 		}
 		&__info, &__order {
 			margin: 12px;
 		}
 		&__carousel {
-			height: 220px !important;
+			height: 210px !important;
+			border-radius: 16px 0 0 16px !important;
 		}
 		&__amenities {
 			display: flex;
 			flex-wrap: wrap;
-			margin-bottom: 16px;
 		}
 		&__amenity {
 			color: $text-gray;
@@ -161,18 +198,26 @@
 	}
 	
 	.info {
-		margin-left: 20px;
+		margin-left: 16px;
 		
+		&__title {
+			font-size: 18px;
+			margin-bottom: 8px;
+		}
 		
 		&__address, &__reviews {
 			color: $text-gray;
 		}
 		
+		 &__city {
+			 font-size: 14px;
+		 }
+		
 		&__adv {
 			display: flex;
 			flex-wrap: wrap;
 			gap: 8px;
-			
+			margin-top: 8px;
 		}
 	}
 	
@@ -248,6 +293,7 @@
 			}
 			&__carousel {
 				height: 190px !important;
+				border-radius: 16px 16px 0 0 !important;
 			}
 		}
 		

@@ -21,12 +21,12 @@ export default () => {
 
 	function parseQueryParams(query: LocationQuery): FiltersDTO {
 		return {
-			priceFrom: parseInt(query.priceFrom as string),
-			priceTo: parseInt(query.priceTo as string),
+			priceFrom: query.priceFrom ? parseInt(query.priceFrom as string) : null,
+			priceTo: query.priceTo ? parseInt(query.priceTo as string) : null,
 			amenitiesId: query.amenitiesId ? (Array.isArray(query.amenitiesId) ? query.amenitiesId.map(Number) : [parseInt(query.amenitiesId)]) : [],
 			foodsId: query.foodsId ? (Array.isArray(query.foodsId) ? query.foodsId.map(Number) : [parseInt(query.foodsId)]) : [],
 			housingTypesId: query.housingTypesId ? (Array.isArray(query.housingTypesId) ? query.housingTypesId.map(Number) : [parseInt(query.housingTypesId)]) : [],
-			minRoomCount: parseInt(query.minRoomCount as string),
+			minRoomCount: query.minRoomCount ? parseInt(query.minRoomCount as string) : null,
 		};
 	}
 
@@ -41,10 +41,9 @@ export default () => {
 			filters.value = data;
 		}
 	}
-	async function fetchBookingFilters(query: IQueryBooking) {
-		const dto: BookingInfoDTO =  {
-			regionId: query.regionId,
-			cityId: query.cityId,
+	async function fetchBookingFilters(query: IQueryBooking, cityId?: number | null) {
+		const dto =  {
+			cityId: cityId || null,
 			checkIn: query.checkIn,
 			checkOut: query.checkOut,
 			peoples: query.adults

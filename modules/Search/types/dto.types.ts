@@ -1,17 +1,17 @@
 import type {BookingInfoDTO} from "~/modules/Booking/types/dto.types"
 
 export interface FiltersDTO {
-    priceFrom: number,
-    priceTo: number,
+    priceFrom: number | null,
+    priceTo: number | null,
     amenitiesId: number[],
     foodsId: number[],
     housingTypesId: number[],
-    minRoomCount: number
+    minRoomCount: number | null
 }
 
 
 export interface GetAvailableListingsDTO {
     booking: BookingInfoDTO,
-    filters: FiltersDTO | null,
+    filters: FiltersDTO,
     sortBy: 'increase' | 'decrease' | 'popularity' | 'sea-distance'
 }

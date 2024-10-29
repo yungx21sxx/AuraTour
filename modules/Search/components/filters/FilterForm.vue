@@ -1,67 +1,90 @@
 <script setup lang="ts">
-	
-	//сделать 2 версии формы, одна для ПК, 2 для мобилок. Для мобилок добавим
-	
+
 	import FilterCheckBoxes from "~/modules/Search/components/filters/FilterCheckBoxes.vue";
 	import useFilters from "~/modules/Search/composables/useFilters";
 	import useCatalog from "~/modules/Search/composables/useCatalog";
 	import useBooking from "~/modules/Booking/composables/useBooking";
 	import type {FiltersDTO} from "~/modules/Search/types/dto.types";
-	import debounce from "lodash.debounce";
-	import useShowListingCount from "~/composables/useShowListingCount";
+
 	
-	const {filters, encodeFiltersToQuery, parseQueryParams} = useFilters();
-	const {setFiltersDTO, initListings} = useCatalog()
-	const {getBookingQueryLinkParameters} = useBooking()
-	const costRange = shallowRef([3200, 12000]);
+	const {filters} = useFilters();
+	const {setFiltersDTO, isFiltering, debouncedRefreshListingList, filtersDTO, getRedirectPath, listingTypeSEOPage, cityListingTypeSEOPage} = useCatalog();
+	const {getBookingQueryLinkParameters} = useBooking();
 	
-	const route = useRoute()
+	//На основной странице котолога парситься query параметры для фильров,
+	// если какието из них отсутствуют то поля становяться null
+	const {priceFrom, priceTo, minRoomCount,  ...queryParams} = filtersDTO.value;
 	
+	const chosenHousingTypes = ref([...queryParams.housingTypesId]);
 	
+	async function performNavigation() {
+		const filtersDTO: FiltersDTO = {
+			priceFrom: chosenFilters.priceRange[0],
+			priceTo: chosenFilters.priceRange[1],
+			housingTypesId: chosenHousingTypes.value,
+			amenitiesId: chosenFilters.amenitiesId,
+			foodsId: chosenFilters.foodsId,
+			minRoomCount: chosenFilters.minRoomCount,
+		};
+		// Опции для навигации
+		const navigateOptions = {};
+		
+		const seoPage = listingTypeSEOPage.value || cityListingTypeSEOPage.value;
+		
+		if (seoPage) {
+			//@ts-ignore
+			navigateOptions.external = true;
+		} else {
+			isFiltering.value = true;
+		}
+		
+		await navigateTo(
+			{
+				path: getRedirectPath(),
+				query: {
+					...getBookingQueryLinkParameters.value,
+					...filtersDTO,
+				},
+			},
+			navigateOptions
+		);
+		
+		if (!seoPage) {
+			setFiltersDTO(filtersDTO);
+			debouncedRefreshListingList();
+		}
+	}
 	
-	const filtersQueryParameters: FiltersDTO = parseQueryParams(route.query);
-	setFiltersDTO(filtersQueryParameters);
-	
-	const {priceFrom, priceTo, minRoomCount, ...queryParams} = filtersQueryParameters;
-	
+	//Либо берем фильры из query параметров либо начальные данные с сервера
 	const filtersInitValue = {
 		priceRange: [priceFrom || filters.value.priceFrom, priceTo || filters.value.priceTo],
 		...queryParams,
-		minRoomCount: 1,
+		minRoomCount: minRoomCount || 1,
 	}
 	
+	//Тут все что выбервет пользователь, кроме типов жилья
 	const chosenFilters = reactive(filtersInitValue);
 	
+	//Только типы жилья
 	
-	watch(filters, () => {
-		chosenFilters.priceRange = [filters.value.priceFrom,filters.value.priceTo]
-	})
-	
-	watch(chosenFilters, debounce(async (updatedFilters) => {
-		const filtersDTO: FiltersDTO = {
-			priceFrom: updatedFilters.priceRange[0],
-			priceTo: updatedFilters.priceRange[1],
-			housingTypesId: updatedFilters.housingTypesId,
-			amenitiesId: updatedFilters.amenitiesId,
-			foodsId: updatedFilters.foodsId,
-			minRoomCount: updatedFilters.minRoomCount
-		}
-		await navigateTo({
-			path: '/search',
-			query: {
-				...getBookingQueryLinkParameters.value,
-				...filtersDTO
-			}
-		})
-		setFiltersDTO(filtersDTO);
-		await initListings();
-	}, 200), {
+	watch(chosenHousingTypes, async (updatedFilters) => {
+		await performNavigation()
+	}, {
 		deep: true
 	})
 	
-	const roomFiltersDisable = computed(() => chosenFilters.housingTypesId.includes(2) || chosenFilters.housingTypesId.includes(6) || chosenFilters.housingTypesId.includes(8))
+	watch(chosenFilters, async (updatedFilters) => {
+		await performNavigation()
+	}, {
+		deep: true
+	})
 	
-	const showTypes = ref(true);
+	const showRoomCountFilters = ref(true)
+	
+	const disabledHousingTypes = [2, 6, 8];
+	const roomFiltersDisable = computed(() =>
+		chosenFilters.housingTypesId.some(id => disabledHousingTypes.includes(id))
+	);
 	
 </script>
 
@@ -76,6 +99,7 @@
 					single-line
 					type="number"
 					density="compact"
+					:elevation="0"
 				></v-text-field>
 				<v-text-field
 					v-model="chosenFilters.priceRange[1]"
@@ -83,6 +107,8 @@
 					single-line
 					type="number"
 					density="compact"
+					
+					:eletation="0"
 				></v-text-field>
 			</div>
 			<v-range-slider
@@ -101,7 +127,7 @@
 			title="Типы жилья"
 			v-if="filters"
 			:variants="filters.housingTypes"
-			v-model="chosenFilters.housingTypesId"
+			v-model="chosenHousingTypes"
 		/>
 		<FilterCheckBoxes
 			title="Удобства"
@@ -118,13 +144,13 @@
 		<div class="filters__title">
 			<span>Количество комнат</span>
 			<v-btn
-				:icon="showTypes ? 'mdi-chevron-up' : 'mdi-chevron-down'"
-				@click="showTypes = !showTypes"
+				:icon="showRoomCountFilters ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+				@click="showRoomCountFilters = !showRoomCountFilters"
 				variant="text"
 			></v-btn>
 		</div>
 		<v-expand-transition>
-			<div v-show="showTypes">
+			<div v-show="showRoomCountFilters">
 				<v-radio-group v-model="chosenFilters.minRoomCount" class="filter__radio" :disabled="roomFiltersDisable">
 					<v-radio :value="1">
 						<template #label>

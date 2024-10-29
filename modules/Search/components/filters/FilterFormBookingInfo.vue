@@ -1,5 +1,5 @@
 <script setup lang="ts">
-
+import {mdiCalendarMonthOutline, mdiMagnify, mdiAccountOutline, mdiMinus, mdiPlus, mdiTuneVariant, mdiArrowRightCircleOutline} from "@mdi/js";
 import useBooking from "~/modules/Booking/composables/useBooking";
 import useCatalog from "~/modules/Search/composables/useCatalog";
 import type {IQueryBooking} from "~/modules/Booking/types/query.types";
@@ -8,7 +8,16 @@ import useFilters from "~/modules/Search/composables/useFilters";
 import debounce from "lodash.debounce";
 import BookingSearchLocation from "~/modules/Booking/components/BookingSearchLocation.vue";
 import BookingSetDate from "~/modules/Booking/components/BookingSetDate.vue";
+import useSearch from "~/modules/Booking/composables/useSearch";
+import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 
+const {light} = defineProps({
+	light: {
+		type: Boolean,
+		required: false,
+		default: false
+	}
+})
 
 const {
 	peopleCount,
@@ -20,70 +29,77 @@ const {
 	getBookingQueryLinkParameters,
 } = useBooking();
 
-const { initListings, bookingDTO } = useCatalog();
-const { parseQueryParams, filtersModalIsOpen, refreshBookingFilters } = useFilters();
+const { getRedirectPath } = useCatalog();
+const { parseQueryParams, filtersModalIsOpen } = useFilters();
+const {chosenCity} = useSearch();
 
 const route = useRoute()
 
-
-
-const location = computed(() => bookingModals.value.location.location);
 const dates = computed(() => {
 	const {from, to} = bookingModals.value.date
 	return {from, to}
 })
+const citySlug = computed(() => bookingModals.value.location.slug)
 
 const guestSetMenuIsOpen = ref(false);
 const guestSetMenuMobileIsOpen = ref(false);
 
-watch(getBookingQueryLinkParameters, debounce(async () => {
-	bookingDTO.value = {
-		//@ts-ignore
-		checkIn: new Date(getBookingQueryLinkParameters.value.checkIn),
-		//@ts-ignore
-		checkOut: new Date(getBookingQueryLinkParameters.value.checkOut),
-		cityId: getBookingQueryLinkParameters.value?.cityId ?? null,
-		peoples: getBookingQueryLinkParameters.value.adults ?? 2,
-		regionId: getBookingQueryLinkParameters.value?.regionId ?? null
-	}
+
+watch(citySlug, async () => {
+	await navigateTo({
+		path: getRedirectPath(citySlug.value),
+		query: {
+			...getBookingQueryLinkParameters.value,
+		}
+	}, {
+		external: true
+	})
+})
+
+
+watch(getBookingQueryLinkParameters, async () => {
 	const filtersQueryParameters: FiltersDTO = parseQueryParams(route.query);
 	await navigateTo({
-		path: '/search',
+		path: getRedirectPath(),
 		query: {
 			...getBookingQueryLinkParameters.value,
 			...filtersQueryParameters
 		}
+	}, {
+		external: true
 	})
-	await refreshBookingFilters(bookingDTO.value);
-	await initListings();
-}, 100))
+}, {
+	deep: true,
+})
 
 const scrollBottom = () => window.scrollBy(0, 140)
 </script>
 
 <template>
-	<div class="booking">
+	<div :class="['booking', {
+		'light': light,
+	}]">
 		<div class="booking__mobile">
 			<div class="search__bar">
 				<v-card class="booking__location" :ripple="{ class: 'ripple-color' }"  @click="openLocationModal">
-					<v-icon>mdi-magnify</v-icon>
-					<span v-if="!location">Выбрать курорт</span>
-					<span v-else-if="location.cityName && location.regionName">{{location.cityName}}, {{location.regionName}}</span>
-					<span v-else >{{location.regionName}}</span>
+					<v-icon :icon="mdiMagnify"></v-icon>
+					<span v-if="!chosenCity">Выберите курорт</span>
+					<div v-else>
+						<span>{{chosenCity.cityName}}</span>
+					</div>
 				</v-card>
 			</div>
 			<div class="search__chips">
-				<v-chip-group>
-	
-					<v-chip size="large" prepend-icon="mdi-calendar-month-outline" @click="openSetDateModal" v-if="dates.from && dates.to">
+				<div style="display: flex; gap: 16px; margin: 24px 0 32px 0;">
+					<v-chip :variant="light ? 'outlined' : 'tonal'" :color="light ? '#fff' : ''" size="large" :prepend-icon="mdiCalendarMonthOutline" @click="openSetDateModal" v-if="dates.from && dates.to">
 						{{beautifyDate(dates.from)}} - {{beautifyDate(dates.to)}}
 					</v-chip>
-					<v-chip size="large" prepend-icon="mdi-calendar-month-outline" @click="openSetDateModal" v-else>
+					<v-chip :variant="light ? 'outlined' : 'tonal'" :color="light ? '#fff' : ''" size="large" :prepend-icon="mdiCalendarMonthOutline" @click="openSetDateModal" v-else>
 						Выбрать даты
 					</v-chip>
 					<v-menu :close-on-content-click="false" v-model="guestSetMenuMobileIsOpen">
 						<template v-slot:activator="{ props }">
-							<v-chip size="large" prepend-icon="mdi-account-outline"  v-bind="props" >
+							<v-chip :variant="light ? 'outlined' : 'tonal'" :color="light ? '#fff' : ''" size="large" :prepend-icon="mdiAccountOutline"  v-bind="props" >
 								{{ describedGroup }}
 							</v-chip>
 						</template>
@@ -99,9 +115,9 @@ const scrollBottom = () => window.scrollBy(0, 140)
 										</span>
 									</div>
 									<div class="amount__range">
-										<v-btn icon="mdi-minus" density="comfortable" variant="tonal" color="#7059FF" @click="peopleCount.adults -= 1" :disabled="peopleCount.adults === 1"/>
+										<v-btn :icon="mdiMinus" density="comfortable" variant="tonal" color="#7059FF" @click="peopleCount.adults -= 1" :disabled="peopleCount.adults === 1"/>
 										<strong class="amount__output">{{ peopleCount.adults }}</strong>
-										<v-btn icon="mdi-plus" density="comfortable" variant="tonal" color="#7059FF" @click="peopleCount.adults += 1"/>
+										<v-btn :icon="mdiPlus" density="comfortable" variant="tonal" color="#7059FF" @click="peopleCount.adults += 1"/>
 									</div>
 								</div>
 								<div class="amount">
@@ -114,9 +130,9 @@ const scrollBottom = () => window.scrollBy(0, 140)
 							</span>
 									</div>
 									<div class="amount__range">
-										<v-btn icon="mdi-minus" density="comfortable" variant="tonal" color="#7059FF" @click="peopleCount.children -= 1" :disabled="peopleCount.children === 0"/>
+										<v-btn :icon="mdiMinus" density="comfortable" variant="tonal" color="#7059FF" @click="peopleCount.children -= 1" :disabled="peopleCount.children === 0"/>
 										<strong class="amount__output">{{ peopleCount.children }}</strong>
-										<v-btn icon="mdi-plus" density="comfortable" variant="tonal" color="#7059FF" @click="peopleCount.children += 1"/>
+										<v-btn :icon="mdiPlus" density="comfortable" variant="tonal" color="#7059FF" @click="peopleCount.children += 1"/>
 									</div>
 								
 								</div>
@@ -124,28 +140,28 @@ const scrollBottom = () => window.scrollBy(0, 140)
 							</v-card-item>
 						</v-card>
 					</v-menu>
-					<v-chip style="background: #7059FF"  size="large" variant="flat"  prepend-icon="mdi-tune-variant" class="search__filter-chip" @click="filtersModalIsOpen = true">Фильтры</v-chip>
-				</v-chip-group>
-				<v-btn  color="#7059FF"  prepend-icon="mdi-tune-variant" class="search__filter-btn mt-4" @click="filtersModalIsOpen = true">Фильтры жилья</v-btn>
+					<v-chip style="background: #7059FF"  size="large" variant="flat"  :prepend-icon="mdiTuneVariant" class="search__filter-chip" @click="filtersModalIsOpen = true">Фильтры</v-chip>
+				</div>
+				<BtnPrimary  color="#7059FF"  :prepend-icon="mdiTuneVariant" class="search__filter-btn" @click="filtersModalIsOpen = true">Фильтры жилья</BtnPrimary>
 			</div>
 		
 		</div>
 		<div class="booking__desktop">
 			<v-card class="booking__input booking__input_first booking__location" :ripple="{ class: 'ripple-color' }"  @click="openLocationModal">
-				<v-icon>mdi-magnify</v-icon>
-				<span v-if="!location">Выбрать жилье</span>
+				<v-icon :icon="mdiMagnify"></v-icon>
+				<span v-if="!chosenCity">Выберите курорт</span>
 				<div v-else>
-					<span>{{location.cityName}}</span>
+					<span>{{chosenCity.cityName}}</span>
 				</div>
 			</v-card>
 			<div :class="['booking__date']">
 				<v-card class="booking__input" :ripple="{ class: 'ripple-color' }"  @click="openSetDateModal">
-					<v-icon>mdi-calendar-month-outline</v-icon>
+					<v-icon :icon="mdiCalendarMonthOutline"></v-icon>
 					<span v-if="!dates.from">Заезд</span>
 					<span v-else>{{beautifyDate(dates.from)}}</span>
 				</v-card>
 				<v-card class="booking__input" :ripple="{ class: 'ripple-color' }"  @click="openSetDateModal">
-					<v-icon>mdi-calendar-month-outline</v-icon>
+					<v-icon :icon="mdiCalendarMonthOutline"></v-icon>
 					<span v-if="!dates.to">Выезд</span>
 					<span v-else>{{beautifyDate(dates.to)}}</span>
 				</v-card>
@@ -153,7 +169,7 @@ const scrollBottom = () => window.scrollBy(0, 140)
 			<v-menu :close-on-content-click="false" v-model="guestSetMenuIsOpen">
 				<template v-slot:activator="{ props }">
 					<v-card class="booking__input booking__input_people"  v-bind="props" :ripple="{ class: 'ripple-color' }">
-						<v-icon>mdi-account-outline</v-icon>
+						<v-icon :icon="mdiAccountOutline"></v-icon>
 						<span>{{ describedGroup }}</span>
 					</v-card>
 				</template>
@@ -169,9 +185,9 @@ const scrollBottom = () => window.scrollBy(0, 140)
 						</span>
 							</div>
 							<div class="amount__range">
-								<v-btn icon="mdi-minus" density="comfortable" variant="tonal" color="#7059FF" @click="peopleCount.adults -= 1" :disabled="peopleCount.adults === 1"/>
+								<v-btn :icon="mdiPlus" density="comfortable" variant="tonal" color="#7059FF" @click="peopleCount.adults -= 1" :disabled="peopleCount.adults === 1"/>
 								<strong class="amount__output">{{ peopleCount.adults }}</strong>
-								<v-btn icon="mdi-plus" density="comfortable" variant="tonal" color="#7059FF" @click="peopleCount.adults += 1"/>
+								<v-btn :icon="mdiPlus" density="comfortable" variant="tonal" color="#7059FF" @click="peopleCount.adults += 1"/>
 							</div>
 						</div>
 						<div class="amount">
@@ -184,9 +200,9 @@ const scrollBottom = () => window.scrollBy(0, 140)
 						</span>
 							</div>
 							<div class="amount__range">
-								<v-btn icon="mdi-minus" density="comfortable" variant="tonal" color="#7059FF" @click="peopleCount.children -= 1" :disabled="peopleCount.children === 0"/>
+								<v-btn :icon="mdiMinus" density="comfortable" variant="tonal" color="#7059FF" @click="peopleCount.children -= 1" :disabled="peopleCount.children === 0"/>
 								<strong class="amount__output">{{ peopleCount.children }}</strong>
-								<v-btn icon="mdi-plus" density="comfortable" variant="tonal" color="#7059FF" @click="peopleCount.children += 1"/>
+								<v-btn :icon="mdiPlus" density="comfortable" variant="tonal" color="#7059FF" @click="peopleCount.children += 1"/>
 							</div>
 						
 						</div>
@@ -195,7 +211,7 @@ const scrollBottom = () => window.scrollBy(0, 140)
 				</v-card>
 			</v-menu>
 			<div class="booking__submit">
-				<v-btn @click="scrollBottom" append-icon="mdi-arrow-right-circle-outline" width="100%" class="booking__submit_btn"  color="#7059FF"  >Найти жилье</v-btn>
+				<BtnPrimary @click="scrollBottom" :append-icon="mdiArrowRightCircleOutline" width="100%" class="booking__submit_btn"  color="#7059FF"  >Найти жилье</BtnPrimary>
 			</div>
 		</div>
 	
@@ -252,7 +268,7 @@ const scrollBottom = () => window.scrollBy(0, 140)
 	}
 	
 	.booking__location {
-		background: rgba(255, 255, 255, 0) !important;
+		background: rgba(255, 255, 255, .8) !important;
 		padding-left: 16px;
 		width: 100%;
 		display: flex;
@@ -262,7 +278,7 @@ const scrollBottom = () => window.scrollBy(0, 140)
 		
 		box-shadow: none !important;
 		border: 1px solid $light-gray;
-		border-radius: 10px;
+		border-radius: 16px;
 	}
 	
 	.search__bar {
@@ -325,6 +341,7 @@ const scrollBottom = () => window.scrollBy(0, 140)
 }
 
 .booking__desktop {
+	color: $text-main;
 	display: grid;
 	grid-template-columns: 270px 1fr .7fr 170px;
 	align-items: center;
@@ -332,7 +349,7 @@ const scrollBottom = () => window.scrollBy(0, 140)
 	border: 1px solid $light-gray;
 	//margin-top: 32px;
 	background: rgba(255, 255, 255, 0.90);
-	border-radius: 10px;
+	border-radius: 16px;
 	padding-right: 16px;
 	
 	.booking__input {

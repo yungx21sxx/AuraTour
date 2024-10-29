@@ -1,4 +1,4 @@
-import type {GetAvailableListingsDTO} from "~/types/dto.types";
+import type {GetAvailableListingsDTO} from "~/modules/Search/types/dto.types";
 import listingsService from "~/server/service/listings.service";
 
 export default defineEventHandler(async event => {

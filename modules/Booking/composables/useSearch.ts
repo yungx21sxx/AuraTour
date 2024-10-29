@@ -1,4 +1,4 @@
-import type {ICitySearchItem, ISearchInitResponse} from "~/modules/Booking/types/response.types";
+import type {ICitySearchItem, ISearchInitResponse, IListingTypeSearchItem} from "~/modules/Booking/types/response.types";
 
 interface IPopularCityWithPhoto extends ICitySearchItem {
 	photo: string,
@@ -38,21 +38,32 @@ export default () => {
 		popularCitiesWithPhoto.value = mergeCityData(popularCitiesWithPhotoList, searchData.value.cities);
 	}
 
-	const setChosenCityBySlug = (slug: string) => {
+	const setChosenCity = (city: ICitySearchItem) => {
+		chosenCity.value = city;
+	}
+
+	const setChosenCityBySlug = (slug: string | null) => {
+		if (!slug) return;
 		const searchedCity = searchData.value.cities.find(data => data.slug === slug);
 		if (searchedCity) {
 			chosenCity.value = searchedCity;
 		}
 	}
 
-
+	const getChosenTypeBySlug = (slug: string): IListingTypeSearchItem | null => {
+		const searchedType = searchData.value.listingTypes.find(data => data.slug === slug);
+		if (!searchedType) return null;
+		return searchedType;
+	}
 
 	return {
 		searchData,
 		loadSearchData,
 		popularCitiesWithPhoto,
 		setChosenCityBySlug,
-		chosenCity
+		chosenCity,
+		setChosenCity,
+		getChosenTypeBySlug,
 	};
 
 

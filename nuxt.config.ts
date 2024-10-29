@@ -24,12 +24,9 @@ export default defineNuxtConfig({
   'nuxt-icons', // 'nuxt-simple-robots',
   '@nuxt/devtools', // 'nuxt-vite-legacy',
   'vue-yandex-maps/nuxt', 'nuxt-swiper', 'yandex-metrika-module-nuxt3', '@nuxtjs/google-fonts', '@nuxt/image'],
-  features: {
-    inlineStyles: false
-  },
   googleFonts: {
     families: {
-      Poppins: true,
+      Rubik: true,
     }
   },
   // legacy: {
@@ -50,15 +47,15 @@ export default defineNuxtConfig({
     },
   },
 
-  yandexMetrika: {
-    id: '96929944',
-    clickmap:true,
-    trackLinks:true,
-    accurateTrackBounce:true,
-    webvisor:true,
-    consoleLog: false,
-    defer: true,
-  },
+  // yandexMetrika: {
+  //   id: '96929944',
+  //   clickmap:true,
+  //   trackLinks:true,
+  //   accurateTrackBounce:true,
+  //   webvisor:true,
+  //   consoleLog: false,
+  //   defer: true,
+  // },
   site: {
     url: 'https://aura-tour-abkhazia.ru/',
   },
@@ -117,21 +114,21 @@ export default defineNuxtConfig({
     },
   },
 
-  // webpack: {
-  //   extractCSS: true,
-  //   optimization: {
-  //     splitChunks: {
-  //       cacheGroups: {
-  //         styles: {
-  //           name: 'styles',
-  //           test: /\.(css|vue)$/,
-  //           chunks: 'all',
-  //           enforce: true
-  //         }
-  //       }
-  //     }
-  //   }
-  // },
+  webpack: {
+    extractCSS: true,
+    optimization: {
+      splitChunks: {
+        cacheGroups: {
+          styles: {
+            name: 'styles',
+            test: /\.(css|vue)$/,
+            chunks: 'all',
+            enforce: true
+          }
+        }
+      }
+    }
+  },
 
   compatibilityDate: '2024-09-19',
 })

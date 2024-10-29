@@ -20,3 +20,31 @@ export interface IListingCatalogResponse {
     count: number,
     listings: IListingItemResponse[]
 }
+
+export interface ISeoPage {
+    id: number;
+    path: string;
+    smallTitle: string;
+    photoUrl: string;
+    title: string;
+    description: string;
+    lastModified: Date;
+    priority: number;
+    changefreq: string;
+    isIndexable: boolean;
+    city: City | null;
+    listingType: ListingType | null;
+}
+
+interface City {
+    id: number;
+    name: string;
+    regionId: number;
+    slug: string;
+}
+
+interface ListingType {
+    id: number;
+    name: string;
+    value: string;
+}

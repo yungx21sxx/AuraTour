@@ -2,6 +2,9 @@
 import BookingMainForm from "~/modules/Booking/components/BookingMainForm.vue";
 import { mdiArrowRight } from "@mdi/js";
 import MenuMain from "~/modules/Menu/components/MenuMain.vue";
+import useSearch from "~/modules/Booking/composables/useSearch";
+
+const {searchData} = useSearch();
 </script>
 
 <template>
@@ -45,47 +48,12 @@ import MenuMain from "~/modules/Menu/components/MenuMain.vue";
                         >
                             Например
                         </div>
-                        <v-chip
-                           
-                            href="/"
-                          
-                            color="#fff"
-                            variant="outlined"
-                            >Гагра</v-chip
-                        >
-                        <v-chip
-                        
-                            color="#fff"
-                            variant="outlined"
-                            >Гагра</v-chip
-                        >
-                        <v-chip
-                          
-                            color="#fff"
-                            variant="outlined"
-                            >Гагра</v-chip
-                        >
-	                    <v-chip
-		                    
-		                    href="/"
-		                    
-		                    color="#fff"
-		                    variant="outlined"
-	                    >Гагра</v-chip
-	                    >
-	                    <v-chip
-		                    
-		                    color="#fff"
-		                    variant="outlined"
-	                    >Гагра</v-chip
-	                    >
-	                    <v-chip
-		                    
-		                    color="#fff"
-		                    variant="outlined"
-	                    >Гагра</v-chip
-	                    >
-                       
+                       <v-chip
+	                       v-for="city of searchData.cities.slice(0,6)"
+	                       variant="outlined"
+	                       :key="city.id"
+	                       :href="`/search/city/${city.slug}`"
+                       >{{city.cityName}}</v-chip>
                     </v-chip-group>
                 </div>
             </div>

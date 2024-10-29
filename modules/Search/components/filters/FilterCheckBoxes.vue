@@ -57,7 +57,6 @@
 	
 	&__label {
 		font-size: 14px;
-		font-weight: 600;
 	}
 	
 	&__title {

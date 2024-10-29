@@ -19,15 +19,19 @@ model City {
   id       Int       @id @default(autoincrement())
   name     String    @unique
   regionId Int
-  slug     String?   @unique
+  slug     String    @unique
   region   Region    @relation(fields: [regionId], references: [id])
   listings Listing[]
   seoPages SeoPage[]
+
+  @@unique([id, slug])
 }
 
 model SeoPage {
   id            Int          @id @default(autoincrement())
   path          String
+  photoUrl      String       @default("/seo/listing-type.jpg")
+  smallTitle    String?
   title         String
   description   String
   lastModified  DateTime     @updatedAt
@@ -81,30 +85,31 @@ model ListingFood {
 }
 
 model Listing {
-  id             Int                @id @default(autoincrement())
-  validated      Boolean            @default(true)
-  title          String
-  description    String
-  minPrice       Int
-  address        String             @default("Не указан")
-  places         Int                @default(2)
-  badCount       Int                @default(1)
-  minDaysOrder   Int                @default(3)
-  seaDistance    Int
-  area           Int?
-  phoneRaw       String
-  phone          String
-  renterName     String
-  ownerId        Int?
-  managerId      Int?
-  createdAt      DateTime           @default(now())
-  note           String?
-  typeId         Int
-  cityId         Int
+  id           Int      @id @default(autoincrement())
+  validated    Boolean  @default(true)
+  title        String
+  description  String
+  minPrice     Int
+  address      String   @default("Не указан")
+  places       Int      @default(2)
+  badCount     Int      @default(1)
+  minDaysOrder Int      @default(3)
+  seaDistance  Int
+  area         Int?
+  phoneRaw     String
+  phone        String
+  renterName   String
+  ownerId      Int?
+  managerId    Int?
+  createdAt    DateTime @default(now())
+  note         String?
+  typeId       Int
+
   bookings       Booking[]
   coords         Coords?
   flatProperties FlatProperties?
   city           City               @relation(fields: [cityId], references: [id])
+  cityId         Int
   type           ListingType        @relation(fields: [typeId], references: [id])
   manager        User?              @relation("ManagerRelation", fields: [managerId], references: [id])
   owner          User?              @relation("OwnerRelation", fields: [ownerId], references: [id])

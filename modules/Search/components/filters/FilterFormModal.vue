@@ -30,10 +30,7 @@ const {isMobile} = useDevice();
 				</v-toolbar-items>
 			</v-toolbar>
 			<v-card-item class="filters-modal">
-		
-					<FilterForm class="mb-12"/>
-	
-			
+				<FilterForm class="mb-12"/>
 			</v-card-item>
 			<div class="fixed-btn">
 				<v-btn width="100%"  color="#7059FF" @click="filtersModalIsOpen = false">Показать {{listingsList.count}} вариантов</v-btn>

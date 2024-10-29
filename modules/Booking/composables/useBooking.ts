@@ -1,11 +1,14 @@
 import type {LocationQuery} from "vue-router";
 import type {IQueryBooking} from "~/modules/Booking/types/query.types";
+import {Buffer} from "unenv/runtime/node/buffer/_buffer";
+import from = Buffer.from;
 
 interface IBookingModals {
 	location: {
 		isOpen: boolean,
 		slug: null | string,
 	},
+	typeSlug: null | string,
 	date: {
 		isOpen: boolean
 		from: Date | null,
@@ -37,6 +40,7 @@ export default () => {
 			isOpen: false,
 			slug: null,
 		},
+		typeSlug: null,
 		date: {
 			isOpen: false,
 			from: null,
@@ -44,11 +48,32 @@ export default () => {
 		}
 	}))
 
+	function getPath(params?: {firstLoad: boolean}) {
+		const citySlug = bookingModals.value.location.slug;
+		const typeSlug = bookingModals.value.typeSlug;
+
+		if (params?.firstLoad) {
+			if (citySlug && typeSlug) {
+				return `/search/city/${citySlug}/${typeSlug}`;
+			} else if (citySlug) {
+				return `/search/city/${citySlug}`;
+			} else if (typeSlug) {
+				return `/search/type/${typeSlug}`;
+			} else {
+				return `/search`;
+			}
+		} else {
+			if (citySlug) {
+				return `/search/city/${citySlug}`;
+			} else {
+				return `/search`;
+			}
+		}
+	}
 
 	//Это геттер фунция, которая вызываеться в момент когда мы переходим на страницу объекта
 	const getBookingQueryLinkParameters = computed(() => {
 		const { from: checkIn, to: checkOut } = bookingModals.value.date
-		const { location } = bookingModals.value.location
 		return {
 			checkIn: checkIn?.toDateString(),
 			checkOut: checkOut?.toDateString(),
@@ -57,20 +82,21 @@ export default () => {
 		}
 	})
 
+
+
 	//Функция вызываеться для перехода с главной страницы на страницу каталога
 	async function goToCatalog(): Promise<void> {
 		const { from: checkIn, to: checkOut } = bookingModals.value.date
-		const { location } = bookingModals.value.location
 		await navigateTo({
-			path: '/search',
+			path: getPath({firstLoad: true}),
 			query: {
 				checkIn: checkIn?.toDateString(),
 				checkOut: checkOut?.toDateString(),
 				adults: peopleCount.value.adults,
 				children: peopleCount.value.children,
 			},
-			replace: true,
-			force: true
+		}, {
+			external: true,
 		})
 	}
 
@@ -122,13 +148,13 @@ export default () => {
 			return 'дней';
 		}
 	}
+
 	function calculateDaysBetweenDates(startDate: Date, endDate: Date): string {
 		const oneDay = 24 * 60 * 60 * 1000; // Количество миллисекунд в одном дне
 		const differenceInTime = endDate.getTime() - startDate.getTime();
 		const days =  Math.round(differenceInTime / oneDay);
 		return `${days} ${getDaysWord(days)}`
 	}
-
 	//Это нужно переделать, она парсит query параметры на странице search для инициализации DTO, вырежим все что связано с локацией
 	function parseBookingRouteQuery(routeQuery: LocationQuery): IQueryBooking {
 		const parseDate = (date: string | null) => date ? new Date(date) : null;
@@ -146,10 +172,10 @@ export default () => {
 			checkIn: parseDate(routeQuery.checkIn as string) ?? null,
 			checkOut: parseDate(routeQuery.checkOut as string) ?? null,
 			children: getNumber(routeQuery.children),
-			city: routeQuery.city ?? null,
-			cityId: parseInt(<string>routeQuery.cityId) ?? null,
-			region: typeof routeQuery.region === 'string' ? routeQuery.region : '' ?? null,
-			regionId: parseInt(<string>routeQuery.regionId) ?? null,
+			// city: routeQuery.city ?? null,
+			// cityId: parseInt(<string>routeQuery.cityId) ?? null,
+			// region: typeof routeQuery.region === 'string' ? routeQuery.region : '' ?? null,
+			// regionId: parseInt(<string>routeQuery.regionId) ?? null,
 		};
 	}
 
@@ -205,6 +231,7 @@ export default () => {
 		setBookingQuery,
 		parseBookingRouteQuery,
 		getBookingQueryLinkParameters,
+		getPath
 	}
 
 }

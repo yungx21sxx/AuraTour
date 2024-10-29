@@ -2,56 +2,71 @@
 	import useBooking from "~/modules/Booking/composables/useBooking";
 	import useSearch from "~/modules/Booking/composables/useSearch";
 	import useShowListingCount from "~/composables/useShowListingCount";
+	import {mdiMagnify, mdiArrowLeftCircleOutline} from "@mdi/js"
 	import type {ICitySearchItem} from "~/modules/Booking/types/response.types";
 	
 	function levenshteinDistance(a, b) {
+		const an = a ? a.length : 0;
+		const bn = b ? b.length : 0;
+		if (an === 0) return bn;
+		if (bn === 0) return an;
+		
 		const matrix = [];
 		
-		for (let i = 0; i <= b.length; i++) {
+		// Инициализируем первую строку матрицы
+		for (let i = 0; i <= bn; i++) {
 			matrix[i] = [i];
 		}
-		for (let j = 0; j <= a.length; j++) {
+		// Инициализируем первую колонку матрицы
+		for (let j = 0; j <= an; j++) {
 			matrix[0][j] = j;
 		}
 		
-		for (let i = 1; i <= b.length; i++) {
-			for (let j = 1; j <= a.length; j++) {
-				if (b.charAt(i - 1) === a.charAt(j - 1)) {
-					matrix[i][j] = matrix[i - 1][j - 1];
-				} else {
-					matrix[i][j] = Math.min(
-						matrix[i - 1][j - 1] + 1, // Замена
-						matrix[i][j - 1] + 1,     // Вставка
-						matrix[i - 1][j] + 1      // Удаление
-					);
-				}
+		// Заполняем матрицу
+		for (let i = 1; i <= bn; i++) {
+			for (let j = 1; j <= an; j++) {
+				const cost = a[j - 1].toLowerCase() === b[i - 1].toLowerCase() ? 0 : 1;
+				matrix[i][j] = Math.min(
+					matrix[i - 1][j] + 1,      // Удаление
+					matrix[i][j - 1] + 1,      // Вставка
+					matrix[i - 1][j - 1] + cost // Замена
+				);
 			}
 		}
 		
-		return matrix[b.length][a.length];
+		return matrix[bn][an];
 	}
-	const searchQuery = ref<string>('');
-	const {searchData, setChosenCityBySlug} = useSearch();
 	
-	const MAX_DISTANCE = 2;
-	const searchResults = computed<ICitySearchItem>(() => {
+	const searchQuery = ref<string>('');
+	const {searchData, setChosenCity} = useSearch();
+	
+	const searchResults = computed<ICitySearchItem[]>(() => {
 		if (!searchQuery.value.trim()) {
 			return [];
 		}
 		
 		const query = searchQuery.value.toLowerCase();
 		
-		return searchData.value.cities.filter(city => {
+		const cities = searchData.value.cities
+		
+		return cities.filter((city) => {
 			const cityName = city.cityName.toLowerCase();
-			const regionName = city.regionName.toLowerCase();
 			
-			// Проверяем расстояние Левенштейна между строкой поиска и названиями городов и регионов
-			const distanceToCityName = levenshteinDistance(query, cityName);
-			const distanceToRegionName = levenshteinDistance(query, regionName);
+			// Если название города начинается с поискового запроса
+			if (cityName.startsWith(query)) {
+				return true;
+			}
 			
-			return (
-				distanceToCityName <= MAX_DISTANCE || distanceToRegionName <= MAX_DISTANCE
-			);
+			// Если длина поискового запроса меньше 3 символов, не используем расстояние Левенштейна
+			if (query.length < 3) {
+				return false;
+			}
+			
+			// Вычисляем расстояние Левенштейна
+			const distance = levenshteinDistance(query, cityName);
+			const threshold = Math.floor(cityName.length * 0.4); // Пороговое значение
+			
+			return distance <= threshold;
 		});
 	});
 	
@@ -66,9 +81,9 @@
 		bookingModals.value.location.isOpen = false;
 	}
 	
-	function onCitySelect(slug: string) {
-		bookingModals.value.location.slug = slug;
-		setChosenCityBySlug(slug);
+	function onCitySelect(city: ICitySearchItem) {
+		bookingModals.value.location.slug = city.slug;
+		setChosenCity(city)
 		closeModal();
 	}
 	
@@ -85,30 +100,30 @@
 		}]">
 			<v-card-item>
 				<div class="modal__header">
-					<v-btn color="#7059FF" icon="mdi-arrow-left-circle-outline" @click="closeModal" variant="tonal"/>
+					<v-btn color="#7059FF" :icon="mdiArrowLeftCircleOutline" @click="closeModal" variant="tonal"/>
 					<h3>Выберите направление</h3>
 				</div>
 				<div class="modal__search">
 					<v-text-field
 						v-model="searchQuery"
-						placeholder="Введите название города или района"
-						prepend-inner-icon="mdi-magnify"
-						outlined
+						placeholder="Введите название города"
+						:prepend-inner-icon="mdiMagnify"
+						variant="outlined"
 					></v-text-field>
 					
 					<div class="modal__search-res">
 						<v-list dense v-if="searchResults.length > 0 || searchQuery.length > 0">
 							<v-card
-								v-for="(result, index) in searchResults"
-								:key="index"
+								v-for="city of searchResults"
+								:key="city.id"
 								elevation="0"
-								@click="onCitySelect(result)"
+								@click="onCitySelect(city)"
 							>
 								<div class="search-res">
-									<v-icon>mdi-magnify</v-icon>
+									<v-icon :icon="mdiMagnify"></v-icon>
 									<div class="search-res__block">
-										<p class="search-res__city">{{ result.cityName }}, <span>{{ result.regionName }}</span></p>
-										<v-chip class="search-res__count" prepend-icon="mdi-home" v-if="showListingCount">{{result.count}}</v-chip>
+										<p class="search-res__city">{{ city.cityName }}, <span>{{ city.regionName }}</span></p>
+										<v-chip class="search-res__count" prepend-icon="mdi-home" v-if="showListingCount">{{city.listingsCount}}</v-chip>
 									</div>
 								</div>
 							</v-card>
@@ -117,19 +132,20 @@
 						<v-list dense v-else>
 							<h4>Популярные направления</h4>
 							<v-card
-								v-for="city in searchData.cities.slice(0,8)"
+								v-for="city in searchData.cities.slice(0,6)"
 								:key="city.id"
 								elevation="0"
-								@click="onCitySelect(city.slug)"
+								@click="onCitySelect(city)"
 							>
 								<div class="search-res">
-									<v-icon>mdi-magnify</v-icon>
+									<v-icon :icon="mdiMagnify"></v-icon>
 									<p>
 										{{ city.cityName }}, <span>{{ city.regionName }}</span>
 									</p>
 								</div>
 							</v-card>
 						</v-list>
+						
 					</div>
 				</div>
 			</v-card-item>
