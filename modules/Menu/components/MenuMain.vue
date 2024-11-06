@@ -1,7 +1,9 @@
 <template>
     <nav class="nav">
         <div class="wrapper nav__body">
-            <MainLogo class="nav__logo" :variant="variant" />
+	        <NuxtLink to="/" external style=" width: fit-content; display: flex; flex-direction: column; justify-content: center ">
+		        <MainLogo class="nav__logo" :variant="variant" />
+	        </NuxtLink>
             <div class="nav__links">
                 <v-menu open-on-hover transition="scale-transition" class="nav__cities">
                     <template v-slot:activator="{ props }">
@@ -17,7 +19,7 @@
                     </template>
                     <v-card max-width="350">
                         <v-card-item>
-	                        <h4>Популярные направления</h4>
+	                        <h4 class="mt-2 mb-2">Популярные направления</h4>
 	                        <v-chip-group column color="#7059FF">
 		                        <v-chip
 			                        v-for="city of searchData.cities.slice(0,8)"
@@ -26,7 +28,7 @@
 			                        :href="`/search/city/${city.slug}`"
 		                        >{{city.cityName}}</v-chip>
 	                        </v-chip-group>
-	                        <h4>Типы жилья</h4>
+	                        <h4 class="mt-4 mb-2">Типы жилья</h4>
 	                        <v-chip-group column color="#7059FF">
 		                        <v-chip
 			                        v-for="type of searchData.listingTypes.slice(0,5)"
@@ -59,6 +61,7 @@
 		            variant="text"
 		            :prepend-icon="mdiHeartOutline"
 		            :color="color"
+		            href="/favorites"
 	            >
 		            Избранное
 	            </v-btn>
@@ -103,6 +106,7 @@
 						            <BtnPrimary
 							            :prepend-icon="mdiAccountCircleOutline"
 							            v-if="['TOURIST', 'LANDLORD'].includes(authUser.role)"
+							            href="/admin/bookings"
 							            block
 						            >Личный кабинет</BtnPrimary>
 						            <BtnPrimary
@@ -129,8 +133,9 @@
                 density="comfortable"
                 variant="text"
                 class="nav__burger"
+                @click="open"
             >
-                <BurgerIcon :variant="props.variant" />
+                <BurgerIcon :variant="props.variant"/>
             </v-btn>
         </div>
     </nav>
@@ -206,6 +211,7 @@ import type { MenuVariants } from "~/modules/Menu/types/menu.types";
 import MainLogo from "~/modules/Menu/icons/MainLogo.vue";
 import BtnSecondary from "~/modules/Common/UI/BtnSecondary.vue";
 import useSearch from "~/modules/Booking/composables/useSearch";
+
 
 const { open } = useBurgerMenu();
 const {openAuthModal} = useAuthModal();

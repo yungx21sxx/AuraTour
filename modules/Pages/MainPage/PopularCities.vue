@@ -17,20 +17,6 @@
 		return `${count} ${wordForms[2]}`;
 	}
 	
-	//@ts-ignore
-	async function goToCity(city) {
-		await navigateTo({
-			path: '/search',
-			query: {
-				region: city.regionName,
-				regionId: city.regionId,
-				city: city.cityName,
-				cityId: city.cityId,
-				adults: 2,
-				children: 0
-			},
-		})
-	}
 
 </script>
 
@@ -41,19 +27,16 @@
 			<v-card
 				v-for="city of popularCitiesWithPhoto"
 				class="city"
-				@click="goToCity(city)"
+				:href="`/search/city/${city.slug}`"
 			>
 				<v-img
 					:src="city.photo"
 					cover
-					
 					gradient="to bottom, rgba(0,0,0,0), rgba(0,0,0,.5)"
 					height="200px"
 				>
 					<v-chip color="#7059FF" variant="flat"  class="city__count">от {{city.minPrice}} ₽</v-chip>
 					<div class="text-white city__content">
-						
-						
 						<div class="city__info">
 							<div class="city__title">{{city.cityName}}</div>
 							<v-chip variant="tonal" color="#FAAC37"  append-icon="mdi-arrow-right">Смотреть</v-chip>
@@ -68,9 +51,8 @@
 			<div
 				v-for="city of popularCitiesWithPhoto"
 				class="city"
-				
 			>
-				<v-card  @click="goToCity(city)">
+				<v-card :href="`/search/city/${city.slug}`" class="city-mobile-image">
 					<v-img aspect-ratio="1" class="city__img" cover :src="city.photo">
 						<v-chip color="#7059FF" variant="flat"  class="city__count">от {{city.minPrice}} ₽</v-chip>
 					</v-img>
@@ -86,15 +68,18 @@
 <style scoped lang="scss">
 
 	.popular {
-		margin-top: 24px;
+		margin-top: 42px;
 		
 		&__title {
 			text-align: center;
 		}
+		.city {
+			border-radius: 16px;
+		}
 		
 		
 		&__cities_desktop {
-			margin-top: 32px;
+			margin-top: 24px;
 			display: grid;
 			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 			gap: 16px;
@@ -111,26 +96,25 @@
 			}
 			&__cities_mobile {
 				display: grid;
-				margin-top: 32px;
+				margin-top: 24px;
 				grid-template-columns: 1fr 1fr;
 				gap: 16px;
 			}
 			
 			&__title {
 				font-size: 24px;
-				margin-bottom: -8px;
-				
 			}
 		}
 		
 	}
 	
 	.popular__cities_mobile .city {
+		border-radius: 16px;
 		&__img {
-			border-radius: 10px;
+			border-radius: 16px;
 		}
 		h4 {
-			margin-top: 4px;
+			margin-top: 7px;
 			text-align: center;
 		}
 		&__count {
@@ -138,6 +122,9 @@
 			top: 8px;
 			right: 8px;
 			color: #FFFFFF !important;
+		}
+		.city-mobile-image {
+			border-radius: 16px;
 		}
 	}
 	

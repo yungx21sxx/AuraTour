@@ -1,38 +1,59 @@
 <template>
 	<v-app>
-		<div class="wrapper wrapper_admin">
-			<slot/>
-		</div>
-		<v-bottom-navigation
-			v-model="currentPage"
-		>
-			<v-btn value="clients" href="/">
-				<v-icon>mdi-home-export-outline</v-icon>
-				<span>Назад</span>
-			</v-btn>
-			<v-btn value="clients" href="/admin/bookings" :active=" route.fullPath === '/admin/clients' ">
-				<v-icon>mdi-account-edit</v-icon>
-				<span>Бронирования</span>
-			</v-btn>
-			<v-btn value="portfolio" href="/admin/create-listing" :active=" route.fullPath === '/admin/portfolio' ">
-				<v-icon>mdi-home-plus</v-icon>
-				<span>Создать</span>
-			</v-btn>
-			<v-btn value="portfolio" href="/admin/search" :active=" route.fullPath === '/admin/portfolio' ">
-				<v-icon>mdi-magnify</v-icon>
-				<span>Поиск</span>
-			</v-btn>
+		<v-layout>
+			<v-app-bar
+				color="primary"
+			>
+				<v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+				
+				<v-toolbar-title>Админка</v-toolbar-title>
+				<v-spacer></v-spacer>
+				<v-btn :icon="mdiMagnify"></v-btn>
+			</v-app-bar>
 			
-		</v-bottom-navigation>
+			<v-navigation-drawer
+				v-model="drawer"
+				temporary
+			>
+				<v-list>
+					<v-list-item
+						:title="`${authUser.name} ${authUser.surname || ''}`"
+						:subtitle="authUser.email"
+					>
+						<template #prepend>
+							<v-avatar v-if="authUser.avatar" :src="authUser.avatar"/>
+							<v-avatar v-else color="#7059FF">{{authUser.name[0]}}</v-avatar>
+						</template>
+					</v-list-item>
+				</v-list>
+				<v-divider></v-divider>
+				<v-list density="compact" nav>
+					<v-list-item title="Бронирования" value="myfiles" href="/admin/bookings"></v-list-item>
+					<v-list-item title="Статистика" value="shared" href="/admin/statistics"></v-list-item>
+					<v-list-item title="Объекты на модерации" value="starred" href="/admin/moderation"></v-list-item>
+					<v-list-item title="Создать объект" value="starred" href="/admin/create-listing"></v-list-item>
+				</v-list>
+				<BtnSecondary block href="/">Назад на главную</BtnSecondary>
+			</v-navigation-drawer>
+			
+			<v-main>
+				<div class="admin-wrapper">
+					<slot/>
+				</div>
+			</v-main>
+		</v-layout>
 	</v-app>
  
 
 </template>
 
 <script setup lang="ts">
-
-	const { me } = useAuth()
+	import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
+	import {mdiMagnify} from "@mdi/js";
+	import BtnSecondary from "~/modules/Common/UI/BtnSecondary.vue";
 	
+	const authUser = useAuthUser();
+	const drawer = ref(false)
 	const route = useRoute();
 	const linkParts = route.fullPath.split('/')
 	const currentPage = ref<string>(
@@ -40,13 +61,13 @@
 	)
 	async function logout() {
 		await useFetch('/api/auth/logout');
-		await me();
 		navigateTo('/')
 	}
 </script>
 
 <style scoped>
-	.wrapper_admin {
-		margin-bottom: 100px;
+	.admin-wrapper {
+		max-width: 1150px;
+		margin: 0 auto;
 	}
 </style>

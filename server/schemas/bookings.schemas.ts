@@ -1,10 +1,12 @@
 import {z} from "zod";
 
 export const bookingSchema = z.object({
-    name: z.string().min(1, 'Имя обязательно для заполнения'),
-    surname: z.string().optional(),
-    email: z.string().email('Некорректный email').optional(),
-    phone: z.string().min(1, 'Телефон обязателен для заполнения').optional(),
+    userName: z.string().min(2, 'Имя обязательно для заполнения'),
+    status: z
+        .enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED'])
+        .optional(),
+    userSurname: z.string(),
+    userPhone: z.string().min(1, 'Телефон обязателен для заполнения'),
     checkIn: z.string().refine((date) => !isNaN(Date.parse(date)), {
         message: 'Некорректная дата заезда',
     }),
@@ -18,13 +20,22 @@ export const bookingSchema = z.object({
     transferComment: z.string().optional(),
     totalPrice: z.number().int().positive('Общая стоимость должна быть положительным числом'),
     prepay: z.number().int().nonnegative('Предоплата не может быть отрицательной'),
+    daysCount: z.number().int(),
     listingId: z.number().int().positive('ID объекта должен быть положительным числом'),
-    roomId: z.number().int().positive().optional(),
+    roomId: z.number().int().nullable().optional(),
+    userId: z.number().nullable().optional(),
+    bonusApplied: z.boolean(),
+    bonusAppliedCount: z.number().optional(),
+    totalPriceWithBonus: z.number().nonnegative().optional(),
+    prepayWithBonus: z.number().nonnegative().optional(),
 });
 
 export const bookingUpdateSchema = z.object({
-    listingId: z.number().int().positive().optional(),
-    roomId: z.number().int().positive().nullable().optional(),
+    userName: z.string().min(2, 'Имя обязательно для заполнения'),
+    userSurname: z.string(),
+    userPhone: z.string().min(1, 'Телефон обязателен для заполнения'),
+    listingId: z.number().int().positive(),
+    roomId: z.number().int().nullable().optional(),
     status: z
         .enum(['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED'])
         .optional(),
@@ -42,4 +53,10 @@ export const bookingUpdateSchema = z.object({
     transferComment: z.string().optional(),
     totalPrice: z.number().int().positive().optional(),
     prepay: z.number().int().nonnegative().optional(),
+    userId: z.number().nullable().optional(),
+    bonusApplied: z.boolean(),
+    bonusAppliedCount: z.number().optional(),
+    totalPriceWithBonus: z.number().nonnegative().optional(),
+    prepayWithBonus: z.number().nonnegative().optional(),
+    daysCount: z.number().int(),
 });

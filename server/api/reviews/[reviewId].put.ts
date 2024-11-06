@@ -17,11 +17,11 @@ export default defineEventHandler(async (event: H3Event) => {
         const existingReview = await prisma.review.findUnique({ where: { id } });
 
         if (!existingReview) {
-            throw createError({ statusCode: 404, message: 'Отзыв не найден' });
+            return createError({ statusCode: 404, message: 'Отзыв не найден' });
         }
 
         if (!isAdminOrManager && existingReview.userId !== user.id) {
-            throw createError({ statusCode: 403, message: 'Доступ запрещен' });
+            return createError({ statusCode: 403, message: 'Доступ запрещен' });
         }
 
         let dataToUpdate: any = {
@@ -41,7 +41,6 @@ export default defineEventHandler(async (event: H3Event) => {
 
         return { success: true, review: updatedReview };
     } catch (error) {
-        console.log(error)
         if (error instanceof z.ZodError) {
             return {
                 success: false,

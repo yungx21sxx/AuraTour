@@ -8,20 +8,9 @@ const {searchData} = useSearch();
 </script>
 
 <template>
-    <v-img
-        src="/main-page/banner.jpg"
+    <div
         class="banner"
-        alt="Аура Тур"
-        gradient="to bottom, rgba(0,0,0,.3), rgba(0,0,0,.1)"
-        cover
     >
-        <!--		<template #sources>-->
-        <!--			<source media="(max-width: 750px)" srcset="/main-page/banner-mobile1.webp">-->
-        <!--			&lt;!&ndash; Для ПК &ndash;&gt;-->
-        <!--			<source media="(min-width: 751px)" srcset="/main-page/banner-desktop1.webp">-->
-        <!--		-->
-        <!--		-->
-        <!--		</template>-->
         <div class="banner__body">
             <MenuMain variant="light" class="banner__menu" />
             <div class="banner__wrapper wrapper">
@@ -30,7 +19,7 @@ const {searchData} = useSearch();
                     посуточно
                 </h1>
                 <div class="banner__info">
-                    <p>Вернем <strong>10%</strong> от стомости бронирования</p>
+                    <p>Вернем до <strong>10%</strong> от стомости бронирования</p>
                     <button>
                         Узнать подробности
                         <v-icon :icon="mdiArrowRight" size="24" />
@@ -58,12 +47,16 @@ const {searchData} = useSearch();
                 </div>
             </div>
         </div>
-    </v-img>
+    </div>
 </template>
 
 <style lang="scss" scoped>
 .banner {
     height: 650px;
+	background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1)),
+		url("/main-page/banner.jpg");
+	background-size: cover;
+	background-position: center;
     &__menu {
         position: absolute;
         top: 0;

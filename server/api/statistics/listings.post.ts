@@ -22,13 +22,14 @@ export default defineEventHandler(async (event) => {
         endDate,
     } = body;
 
+
     // Проверка валидности параметров пагинации
     if (page < 1 || itemsPerPage < 1) {
         return sendError(event, createError({ statusCode: 400, statusMessage: 'Invalid pagination parameters' }));
     }
 
     // Список допустимых полей для сортировки
-    const allowedSortFields = ['id', 'views', 'likes', 'favorites', 'bookings', 'revenue'];
+    const allowedSortFields = ['id', 'views', 'favorites', 'submits', 'bookings', 'revenue'];
 
     // Проверка валидности поля сортировки
     if (!allowedSortFields.includes(sortBy)) {
@@ -78,14 +79,14 @@ export default defineEventHandler(async (event) => {
         // Агрегация статистики для каждого объекта
         const listingsWithStats = listings.map((listing) => {
             let totalViews = 0;
-            let totalLikes = 0;
+            let totalSubmits = 0
             let totalFavorites = 0;
             let totalBookings = 0;
             let totalRevenue = 0;
 
             listing.statistics.forEach((stat) => {
                 totalViews += stat.views;
-                totalLikes += stat.likes;
+                totalSubmits += stat.submits;
                 totalFavorites += stat.favorites;
                 totalBookings += stat.bookings;
                 totalRevenue += stat.revenue;
@@ -96,8 +97,8 @@ export default defineEventHandler(async (event) => {
                 title: listing.title,
                 // Добавьте другие поля объекта Listing при необходимости
                 views: totalViews,
-                likes: totalLikes,
                 favorites: totalFavorites,
+                submits: totalSubmits,
                 bookings: totalBookings,
                 revenue: totalRevenue,
             };

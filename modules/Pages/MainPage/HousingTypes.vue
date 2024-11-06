@@ -1,5 +1,6 @@
 <script setup>
 	import ListingsSlider from "~/modules/Listing/components/shared/ListingsSlider.vue";
+	import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 	
 	const {data: housingTypes, pending} = await useFetch('/api/listings/all-types', {
 		transform: housingTypes => housingTypes.filter(type => type.totalCount > 0)
@@ -11,8 +12,8 @@
 			path: '/search',
 			query: {
 				housingTypesId: [currentType.value]
-			}
-		})
+			},
+		}, {external: true})
 	}
 </script>
 
@@ -29,17 +30,15 @@
 				</v-tabs>
 				<v-window v-model="currentType" :touch="false" disabled>
 					<v-window-item  v-for="housingType of housingTypes" :value="housingType.id">
-						<div class="types__list" style="height: 425px">
+						<div class="types__list" style="height: 425px; margin-top: 16px;">
 							<v-lazy>
 								<ListingsSlider :listings="housingType.listings">
 									<template #action>
-										<v-btn @click="goToCategory" class="types__btn" color="#7059FF" elevation="0">Смотреть {{numberToVariantsString(housingType.totalCount)}}</v-btn>
+										<BtnPrimary @click="goToCategory" class="types__btn" color="#7059FF" elevation="0">Смотреть {{numberToVariantsString(housingType.totalCount)}}</BtnPrimary>
 									</template>
 								</ListingsSlider>
 							</v-lazy>
 						</div>
-						
-						
 					</v-window-item>
 				</v-window>
 			</div>
@@ -54,8 +53,7 @@
 	.types {
 		&__title {
 			font-size: 32px;
-			margin-top: 32px;
-			
+			margin-top: 42px;
 			text-align: center;
 		}
 		
@@ -71,11 +69,11 @@
 		@media screen and (max-width: 450px) {
 			&__title {
 				font-size: 24px;
-				text-align: center;
+				
 			}
 			
 			&__btn {
-				width: 100%;
+				width: 100% !important;
 			}
 		}
 	}

@@ -88,7 +88,6 @@ const roleOptions = [
 	{ label: 'Турист', value: 'TOURIST' },
 ];
 
-const { $fetch } = useNuxtApp();
 
 const submit = async () => {
 	if (formRef.value) {

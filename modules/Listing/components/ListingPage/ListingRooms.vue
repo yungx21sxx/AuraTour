@@ -1,18 +1,28 @@
 <script setup lang="ts">
 	import useListing from "~/modules/Listing/composables/useListing";
 	import {getBedString} from "~/modules/Listing/utils/stringTransformers";
-	import useCurrentPhoto from "~/components/gallery/useCurrentPhoto";
+	import useGallery from "~/modules/Listing/composables/useGallery";
+	import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
+	import useListingBooking from "~/modules/Listing/composables/useListingBooking";
+	import {mdiAccountOutline, mdiRulerSquareCompass} from "@mdi/js";
+	import {getWordWithProperEnding} from "~/utils/utils";
+	import FitIcon from "~/modules/Listing/icons/FitIcon.vue";
+	import RoomsIcon from "~/modules/Listing/icons/RoomsIcon.vue";
+	import BedIcon from "~/modules/Listing/icons/BedIcon.vue";
 	
-	const {listing, chosenRoomId, getRoomPhoto} = useListing();
-	const currentPhoto = useCurrentPhoto()
+	const {listing} = useListing();
+	const {openSetDateModal, chosenRoomId, listingBookingConfirmModal} = useListingBooking()
+	const {currentPhoto} = useGallery()
 	
 	function openGalleryModal(roomId: number, photoIndex: number) {
-		currentPhoto.value.room = {id: roomId, photoIndex}
+		currentPhoto.value.room = {roomId, photoIndex}
 		currentPhoto.value.modal = true
 	}
 	
-
-
+	function openBookingModal(roomId: number) {
+		chosenRoomId.value = roomId;
+		listingBookingConfirmModal.value = true;
+	}
 </script>
 
 <template>
@@ -23,22 +33,24 @@
 		>
 			<v-card
 				elevation="0"
+				v-for="room of listing.rooms"
 				:class="['room mt-8', {
 					'no-photos': room.photos.length === 0
 				}]"
-				v-for="room of listing.rooms"
+				
 			>
 				<div class="room__main">
 					<v-carousel
 						class="room__carousel"
 						height="200px"
-						hide-delimiter-background
+						hide-delimiters
 						show-arrows="hover"
 						v-if="room.photos.length > 0"
 					>
 						<v-carousel-item
-							v-for="photo of getRoomPhoto(room.id)"
-							:src="photo.urlFull"
+							v-for="photo of room.photos"
+							:src="photo.urlMin"
+							@click="openGalleryModal(room.id, photo.id)"
 							cover
 						></v-carousel-item>
 					</v-carousel>
@@ -53,30 +65,52 @@
 							>{{amenity}}</span>
 						</div>
 						<div class="listing-chips">
-							<v-chip prepend-icon="mdi-ruler-square-compass">{{room.area}} м <sup>2</sup></v-chip>
-							<v-chip prepend-icon="mdi-account-outline">{{getWordWithProperEnding(room.places, 'место')}}</v-chip>
-							<v-chip>{{getRoomString(room.badCount)}}</v-chip>
+							<div class="chip">
+								<BedIcon/>
+								<span>
+									{{getWordWithProperEnding( room.places, 'место')}}
+								</span>
+							</div>
+							<div class="chip">
+								<FitIcon/>
+								<span>
+									{{room.area}} м<sup>2</sup>
+								</span>
+							</div>
+							<div class="chip">
+								<RoomsIcon/>
+								<span>
+									{{getRoomString(room.badCount)}}
+								</span>
+							</div>
 						</div>
 						<div class="room__order order">
 							<div class="order__info">
-								<div class="order__price" v-if="room.totalPrice">
-									<div class="price">{{room.totalPrice?.toLocaleString('ru-RU')}} ₽</div>
-									<span class="order__price_info">Цена за {{formatDays(listing.daysCount)}}</span>
+								<div class="order__price" v-if="room.calculatedPrices">
+									<div class="price">{{room.calculatedPrices.totalPrice?.toLocaleString('ru-RU')}} ₽</div>
+									<span class="order__price_info">Цена за {{formatDays(room.calculatedPrices.daysCount)}}</span>
 								</div>
 								<div class="order__price" v-else>
-									<div class="price">от {{room.dailyPrice?.toLocaleString('ru-RU')}} ₽</div>
+									<div class="price">от {{room.minPrice.toLocaleString('ru-RU')}} ₽</div>
 									<span class="order__price_info">Цена за 1 ночь</span>
 								</div>
 							</div>
-							<v-btn
+							<BtnPrimary
 								class="order__btn"
 								color="#7059FF"
-								:variant="chosenRoomId === room.id ? 'tonal' : 'elevated'"
-								@click="chosenRoomId = room.id"
-								:prepend-icon="chosenRoomId === room.id ? 'mdi-check' : ''"
+								v-if="room.calculatedPrices"
+								@click="openBookingModal(room.id)"
 							>
-								{{chosenRoomId === room.id ? 'Выбран' : 'Выбрать'}}
-							</v-btn>
+								Оставить заявку
+							</BtnPrimary>
+							<BtnPrimary
+								class="order__btn"
+								color="#7059FF"
+								v-else
+								@click="openBookingModal(room.id)"
+							>
+								Проверить цены
+							</BtnPrimary>
 						</div>
 					</div>
 				</div>
@@ -97,6 +131,17 @@
 			grid-template-columns: 1fr !important;
 		}
 	}
+}
+
+.chip {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 14px;
+	border-radius: 999px;
+	color: #626262;
+	background: #F1F3F9;
+	padding: 3px 12px;
 }
 
 .rooms__title {

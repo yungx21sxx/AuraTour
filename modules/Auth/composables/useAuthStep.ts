@@ -3,13 +3,21 @@ import {IAuthStep} from "~/modules/Auth/types/auth.types";
 export default () => {
 
     const authStep = useState<IAuthStep>(() => ({
-        step: 'CONFIRM-CODE',
+        step: 'AUTH-PENDING',
         authType: 'LOGIN',
-        email: 'yungx21sxx@gmail.com',
+        email: null,
     } as IAuthStep))
 
     const updateAuthStep = (auth: IAuthStep) => {
         authStep.value = auth
+    };
+
+    const resetAuthStep = () => {
+        updateAuthStep({
+            step: 'AUTH-PENDING',
+            authType: 'LOGIN',
+            email: null,
+        })
     }
 
     watch(authStep, () => {
@@ -17,7 +25,10 @@ export default () => {
     })
 
     onMounted(() => {
-        const authStepCache = JSON.parse(localStorage.getItem('authStep'))
+        const authStepCacheJSON = localStorage.getItem('authStep')
+        if (!authStepCacheJSON) return;
+
+        const authStepCache = JSON.parse(authStepCacheJSON)
         if (!authStepCache) return;
 
          updateAuthStep(
@@ -27,6 +38,7 @@ export default () => {
 
     return {
         authStep,
-        updateAuthStep
+        updateAuthStep,
+        resetAuthStep
     }
 }

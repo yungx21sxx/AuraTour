@@ -1,0 +1,129 @@
+<script setup lang="ts">
+	import BookingsAdminList from "~/modules/Admin/Listing/components/BookingsAdminList.vue";
+	import {ListingBookingApi} from "~/modules/Admin/Listing/api/listingBookingApi";
+	import useListing from "~/modules/Listing/composables/useListing";
+	import BookingCalendar from "~/modules/Admin/Listing/components/BookingCalendarModal.vue";
+	import TextEditor from "~/modules/Common/UI/TextEditor.vue";
+	import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
+	import {mdiPencil, mdiDeleteForeverOutline, mdiPlus} from "@mdi/js"
+	import ListingStatistic from "~/modules/Admin/Listing/components/ListingStatistic.vue";
+	
+	const {listing} = useListing()
+	const tabs = [
+		{
+			value: 1,
+			name: 'Броинрования',
+			disabled: false
+		},
+		{
+			value: 2,
+			name: 'Заметки',
+			disabled: false
+		},
+		{
+			value: 3,
+			name: 'Статистика',
+			disabled: false
+		},
+	]
+	const currentTab = ref(1);
+	const {data, refresh, error} = await useAsyncData('listing-bookings', () => ListingBookingApi.fetchBookings(listing.value.id));
+	
+	const {data: listingNote} = await useFetch(`/api/listing-note/${listing.value.id}`)
+	
+	const noteText = ref(listingNote.value.note ?? '');
+	
+	const createNote = async () => {
+		await useFetch(`/api/listing-note/${listing.value.id}`, {
+			method: 'POST',
+			body: {
+				note: noteText.value
+			}
+		})
+	}
+	
+	async function deleteListing() {
+		await useFetch(`/api/listing/admin/${listing.value.id}`, {
+			method: 'DELETE'
+		})
+		alert('Объект удален');
+		await navigateTo({
+			path: '/search'
+		})
+	}
+	
+	const listingDeleteSnackBar = ref(false)
+</script>
+
+<template>
+	<div class="listing-block">
+		<div class="mb-5 menu">
+			<v-btn color="green" :href="`/admin/edit-listing/${listing.id}`" :prepend-icon="mdiPencil">Редактировать объект</v-btn>
+			<v-btn color="blue" href="/admin/create-listing" :prepend-icon="mdiPlus">Создать объект</v-btn>
+			<v-btn color="red" @click="listingDeleteSnackBar = true"  :prepend-icon="mdiDeleteForeverOutline">Удалить объект</v-btn>
+		</div>
+		<v-tabs
+			v-model="currentTab"
+			align-tabs="center"
+			color="deep-purple-accent-4"
+		>
+			<v-tab
+				v-for="tab of tabs"
+				:value="tab.value"
+			>{{tab.name}}</v-tab>
+		</v-tabs>
+		<v-window v-model="currentTab">
+			<v-window-item :value="1">
+				<BookingsAdminList v-if="data" :bookings="data.bookings"/>
+			</v-window-item>
+			<v-window-item :value="2">
+				<TextEditor class="mt-4" v-model="noteText"/>
+				<BtnPrimary @click="createNote">Сохранить</BtnPrimary>
+			</v-window-item>
+			<v-window-item :value="3">
+			
+				<ListingStatistic/>
+				
+			</v-window-item>
+		</v-window>
+	
+	</div>
+	<v-snackbar
+		v-model="listingDeleteSnackBar"
+		multi-line
+	>
+		Точно хотите удалить?
+		
+		<template v-slot:actions>
+			<v-btn
+				color="red"
+				variant="text"
+				class="mr-5"
+				@click="deleteListing"
+			>
+				Да
+			</v-btn>
+			<v-btn
+				variant="text"
+				@click="listingDeleteSnackBar = false"
+			>
+				Нет
+			</v-btn>
+		</template>
+	</v-snackbar>
+	
+</template>
+
+<style scoped lang="scss">
+
+	.menu {
+		display: flex;
+		gap: 16px;
+		justify-content: center;
+		
+		@media screen and (max-width: 600px) {
+			flex-direction: column;
+		}
+	}
+
+</style>

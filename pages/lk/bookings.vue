@@ -5,7 +5,7 @@ import LKHeader from "~/components/pages/lk/LKHeader.vue";
 
 <template>
 	<LKHeader/>
-
+	
 </template>
 
 <style scoped lang="scss">

@@ -8,8 +8,8 @@
 
 	
 	const range = ref({
-		start: dateModal.value.from,
-		end: dateModal.value.to
+		start: dateModal.value.checkIn,
+		end: dateModal.value.checkOut
 	});
 	const error = ref(false)
 	function save() {
@@ -23,7 +23,6 @@
 	
 	
 </script>
-
 <template>
 	<v-dialog v-model="dateModal.isOpen" :fullscreen="isMobileOrTablet" width="600px" min-height="600px">
 		<v-card>

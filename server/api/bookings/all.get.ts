@@ -6,13 +6,10 @@ export default defineEventHandler(async (event) => {
         const {
             page = '1',
             pageSize = '10',
-            checkInStart,
-            checkInEnd,
-            checkOutStart,
-            checkOutEnd,
             cityId,
             managerId,
             status,
+            sortBy = 'createdAt', //
         } = getQuery(event);
 
         const pageNumber = parseInt(page as string, 10);
@@ -22,26 +19,6 @@ export default defineEventHandler(async (event) => {
 
         // Формирование условий фильтрации
         const filters: any = {};
-
-        if (checkInStart || checkInEnd) {
-            filters.checkIn = {};
-            if (checkInStart) {
-                filters.checkIn.gte = new Date(checkInStart as string);
-            }
-            if (checkInEnd) {
-                filters.checkIn.lte = new Date(checkInEnd as string);
-            }
-        }
-
-        if (checkOutStart || checkOutEnd) {
-            filters.checkOut = {};
-            if (checkOutStart) {
-                filters.checkOut.gte = new Date(checkOutStart as string);
-            }
-            if (checkOutEnd) {
-                filters.checkOut.lte = new Date(checkOutEnd as string);
-            }
-        }
 
         if (managerId) {
             filters.managerId = parseInt(managerId as string, 10);
@@ -57,33 +34,72 @@ export default defineEventHandler(async (event) => {
             };
         }
 
+        // Определение поля для сортировки
+        const validSortFields = ['createdAt', 'checkIn'];
+        const sortField = validSortFields.includes(sortBy as string) ? (sortBy as string) : 'createdAt';
+
         // Получение общего количества записей
         const totalCount = await prisma.booking.count({
             where: filters,
         });
 
-        // Получение списка бронирований с учётом пагинации и фильтров
+        // Получение списка бронирований с учётом пагинации, фильтров и сортировки
         const bookings = await prisma.booking.findMany({
             where: filters,
             skip,
             take,
+            orderBy: {
+                [sortField]: 'desc', // Сортировка по выбранному полю в порядке убывания
+            },
             include: {
                 listing: {
                     include: {
                         city: true,
+                        photos: {
+                            select: {
+                                urlMin: true
+                            }
+                        }
                     },
                 },
-                user: true,
-                managedBy: true,
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        surname: true,
+                        email: true,
+                        bonusPoints: true,
+                    }
+                },
+                managedBy: {
+                    select: {
+                        name: true,
+                        surname: true,
+                        id: true,
+                    }
+                },
             },
         });
 
-        // Возврат данных клиенту
+        const parsedBookings = bookings.map(booking => {
+            const {listing, ...bookingData} = booking
+            return {
+                ...bookingData,
+                listing: {
+                    id: listing.id,
+                    photo: listing.photos[0].urlMin,
+                    city: listing.city.name,
+                    address: listing.address,
+                    title: listing.title,
+                }
+            }
+        })
+
         return {
             totalCount,
             page: pageNumber,
             pageSize: take,
-            bookings,
+            bookings: parsedBookings,
         };
     } catch (error) {
         console.error(error);

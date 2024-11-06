@@ -5,6 +5,7 @@
 		:pagination="{
             dynamicBullets: true,
         }"
+		:free-mode="true"
 		:modules="modules"
 		@swiper="getSwiperInstance"
 		class="listings-swiper"
@@ -25,14 +26,11 @@
 		<div class="action">
 			<slot name="action"/>
 		</div>
-		<div class="btns" v-if="!isMobile">
-			<v-btn @click="swiperController.slidePrev()" color="#7059FF" icon="mdi-arrow-left" variant="tonal"></v-btn>
-			<v-btn @click="swiperController.slideNext()" color="#7059FF" icon="mdi-arrow-right" variant="tonal"></v-btn>
+		<div class="btns" >
+			<v-btn @click="swiperController.slidePrev()" color="#7059FF" :icon="mdiArrowLeft" variant="tonal"></v-btn>
+			<v-btn @click="swiperController.slideNext()" color="#7059FF" :icon="mdiArrowRight" variant="tonal"></v-btn>
 		</div>
 	</div>
-
-
-
 </template>
 <script setup lang="ts">
 // Import Swiper Vue.js components
@@ -44,9 +42,9 @@
 	import 'swiper/css/navigation'
 	
 	// import required modules
-
+	import {mdiArrowLeft, mdiArrowRight} from "@mdi/js"
 	import type {IListingPreviewResponse} from "~/types/response.types";
-import ListingItemSmall from "~/modules/Listing/components/shared/ListingItemSmall.vue";
+	import ListingItemSmall from "~/modules/Listing/components/shared/ListingItemSmall.vue";
 	const {isMobile} = useDevice()
 	
 	const swiperController = ref();
@@ -60,7 +58,7 @@ import ListingItemSmall from "~/modules/Listing/components/shared/ListingItemSma
 		listings: IListingPreviewResponse[]
 	}>()
 	
-	const modules = [SwiperPagination, SwiperNavigation]
+	const modules = [SwiperPagination, SwiperNavigation, SwiperFreeMode]
 </script>
 
 

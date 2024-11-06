@@ -7,6 +7,8 @@ import {
 	YandexMapMarker,
 	YandexMapZoomControl
 } from 'vue-yandex-maps';
+import {mdiHome} from "@mdi/js"
+
 import useListing from "~/modules/Listing/composables/useListing";
 
 
@@ -19,17 +21,17 @@ const map = shallowRef<null | YMap>(null);
 <template>
 	<div class="map listing-block">
 		<h2 class="mb-2">Жилье на карте</h2>
-		<p class="mb-6">{{listing.city}}, {{listing.address}}</p>
+		<p class="mb-6">{{listing.city.name}}, {{listing.address}}</p>
 		<yandex-map
 			v-model="map"
 			class="map__canvas"
 			:settings="{
 			
-	        location: {
-	          center: listing.coords,
-	          zoom: 17,
-	        },
-	      }"
+		        location: {
+		          center: [listing.coords.longitude, listing.coords.width],
+		          zoom: 17,
+		        },
+	         }"
 			width="100%"
 		>
 			<yandex-map-default-scheme-layer/>
@@ -40,11 +42,11 @@ const map = shallowRef<null | YMap>(null);
 			<yandex-map-marker
 				position="top left-center"
 				:settings="{
-                    coordinates: listing.coords,
+                    coordinates: [listing.coords.longitude, listing.coords.width],
                 }"
 			>
 				<div class="marker">
-					<v-icon color="#fff" size="x-large">mdi-home</v-icon>
+					<v-icon color="#fff" size="x-large" :icon="mdiHome"></v-icon>
 				</div>
 			</yandex-map-marker>
 		</yandex-map>
@@ -53,7 +55,6 @@ const map = shallowRef<null | YMap>(null);
 
 <style scoped lang="scss">
 	.marker {
-		
 		top: 50%;
 		left: 100%;
 		right: 100%;
@@ -66,7 +67,6 @@ const map = shallowRef<null | YMap>(null);
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		
 	}
 	
 	.map {

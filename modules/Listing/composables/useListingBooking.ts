@@ -1,6 +1,5 @@
-import type {LocationQuery} from "vue-router";
-import type {IQueryBooking} from "~/types/query.types";
-import type {BookingResponse} from "~/types/response.types";
+import type {IQueryBooking} from "~/modules/Booking/types/query.types";
+
 interface IPeopleCount {
 	adults: number,
 	children: number
@@ -8,14 +7,18 @@ interface IPeopleCount {
 
 interface IDateModal {
 	isOpen: boolean
-	from: Date | null,
-	to: Date | null,
+	checkIn: Date | null,
+	checkOut: Date | null,
 }
+
 export default () => {
 	const peopleCountDefault = {
 		adults: 2,
 		children: 0
 	}
+
+	const chosenRoomId = useState<number | null>(() => null);
+
 	const describeGroup = (adults: number, childrens: number) => {
 		function pluralize(n: number, forms: [string, string, string]): string {
 			if (n % 10 === 1 && n % 100 !== 11) {
@@ -41,12 +44,12 @@ export default () => {
 
 	const dateModal = useState<IDateModal>(() => ({
 		isOpen: false,
-		from: null,
-		to: null,
+		checkIn: null,
+		checkOut: null,
 	}));
 
 	const getListingQueryLinkParameters = computed(() => {
-		const { from: checkIn, to: checkOut } = dateModal.value
+		const { checkIn, checkOut } = dateModal.value
 		return {
 			checkIn: checkIn?.toDateString(),
 			checkOut: checkOut?.toDateString(),
@@ -55,42 +58,60 @@ export default () => {
 		}
 	})
 
-	function setBookingQuery(parsedQuery: IQueryBooking) {
-		dateModal.value.from = parsedQuery.checkIn ?? null
-		dateModal.value.to = parsedQuery.checkOut ?? null
+	function setListingBookingInfo(parsedQuery: IQueryBooking) {
+		dateModal.value.checkIn = parsedQuery.checkIn ?? null
+		dateModal.value.checkOut = parsedQuery.checkOut ?? null
 		peopleCount.value = {
 			adults: parsedQuery.adults === 0 ? 2 : parsedQuery.adults,
 			children: parsedQuery.children
 		}
 	}
 
+	const listingBookingInfo = computed<{
+		checkIn: Date | null,
+		checkOut: Date | null,
+		adults: number,
+		children: number
+	}>(() => ({
+		checkIn: dateModal.value.checkIn,
+		checkOut: dateModal.value.checkOut,
+		adults: peopleCount.value.adults,
+		childrens: peopleCount.value.children
+	}))
+
+
 	const openSetDateModal = () => {
 		dateModal.value.isOpen = true
 	}
 
+	const openBookingModal = (roomId?: number) => {
+		if (roomId) chosenRoomId.value = roomId
+		listingBookingConfirmModal.value = true
+	}
+
 	const closeSetDateModal = (checkIn?: Date, checkOut?: Date) => {
-
-
 		if (!checkIn || !checkOut) {
 			dateModal.value.isOpen = false;
 			return;
 		}
 
-		dateModal.value.from = checkIn;
-		dateModal.value.to = checkOut;
+		dateModal.value.checkIn = checkIn;
+		dateModal.value.checkOut = checkOut;
 		dateModal.value.isOpen = false;
-
 
 	}
 	return {
 		peopleCount,
 		dateModal,
-		setBookingQuery,
+		setListingBookingInfo,
 		openSetDateModal,
 		closeSetDateModal,
 		getListingQueryLinkParameters,
 		listingBookingConfirmModal,
-		describeGroup
+		describeGroup,
+		openBookingModal,
+		listingBookingInfo,
+		chosenRoomId,
 	}
 
 }

@@ -8,10 +8,48 @@ export default defineEventHandler(async (event) => {
 			id: parseInt(<string>id)
 		},
 		include: {
+			flatProperties: true,
+			city: {
+				select: {
+					name: true,
+					slug: true,
+				}
+			},
+			reviews: {
+				include: {
+					user: {
+						select: {
+							name: true
+						}
+					}
+				}
+			},
+			type: {
+				select: {
+					name: true,
+					value: true
+				}
+			},
+			manager: {
+				select: {
+					name: true,
+					surname: true,
+					phone: true,
+					email: true,
+				}
+			},
+			owner: {
+				select: {
+					name: true,
+					phone: true,
+					avatar: true
+				}
+			},
 			photos: {
 				select: {
 					id: true,
 					urlMin: true,
+					urlFull: true,
 					position: true
 				}
 			},
@@ -46,7 +84,8 @@ export default defineEventHandler(async (event) => {
 						select: {
 							id: true,
 							position: true,
-							urlMin: true
+							urlMin: true,
+							urlFull: true
 						}
 					}
 				},
@@ -55,7 +94,7 @@ export default defineEventHandler(async (event) => {
 				include: {
 					amenity: {
 						select: {
-							id: true
+							name: true
 						}
 					}
 				}
@@ -64,29 +103,46 @@ export default defineEventHandler(async (event) => {
 				include: {
 					food: {
 						select: {
-							id: true
+							name: true
 						}
 					}
 				}
 			},
 		}
-	})
+	});
 	//@ts-ignore
-	const {amenities, food, rooms, photos, ...listingData} = listing
+	const {amenities, food, rooms, photos, reviews, ...listingData} = listing;
+	console.log(reviews)
 	return {
 		...listingData,
-		photos: photos.map((i: Photo) => ({photoId: i.id, urlMin: i.urlMin, position: i.position})),
+		food: food.map(i => i.food.name),
+		calculatedPrices: null,
 		//@ts-ignore
-		amenities: amenities.map(i => i.amenity.id),
-		//@ts-ignore
-		foodOptions: food.map(i => i.food.id),
+		photos: photos.sort((a, b) => (a.position - b.position))
+						.map((photo, index) => ({
+							id: index,
+							urlMin: photo.urlMin,
+							urlFull: photo.urlFull,
+							position: photo.position
+						})),
+		amenities: amenities.map(i => i.amenity.name),
+		averageRating: reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length,
+		reviewCount: reviews.length,
+		isHotelType: rooms.length > 0,
 		rooms: rooms.map((room: Room) => {
 			//@ts-ignore
 			const {amenities, photos, ...roomData} = room
 			return {
+				photos: photos.sort((a, b) => (a.position - b.position))
+					.map((photo, index) => ({
+						id: index,
+						urlMin: photo.urlMin,
+						urlFull: photo.urlFull,
+						position: photo.position
+					})),
+				calculatedPrices: null,
 				//@ts-ignore
 				amenities: amenities.map(i => i.name),
-				photos: photos.map((i: Photo) => ({photoId: i.id, urlMin: i.urlMin, position: i.position})),
 				...roomData
 			}
 		})

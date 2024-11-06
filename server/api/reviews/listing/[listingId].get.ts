@@ -6,6 +6,14 @@ export default defineEventHandler(async (event: H3Event) => {
     return prisma.review.findMany({
         where: {
             listingId: id
+        },
+        include: {
+            user: {
+                select: {
+                    name: true,
+                    id: true,
+                }
+            }
         }
     })
 })

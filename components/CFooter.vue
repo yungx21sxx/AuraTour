@@ -26,7 +26,7 @@
 					<NuxtLink to="/favorites" class="footer__link">Избранное</NuxtLink>
 					<NuxtLink to="/help" class="footer__link">Помощь</NuxtLink>
 					<NuxtLink to="/contacts" class="footer__link">Контакты и реквизиты</NuxtLink>
-					<NuxtLink @click="goToLK" class="footer__link">Личный кабинет</NuxtLink>
+					<NuxtLink @click="" class="footer__link">Личный кабинет</NuxtLink>
 				</div>
 				
 			</div>

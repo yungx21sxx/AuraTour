@@ -89,25 +89,35 @@ export interface ListingCreateDTO {
 	title: string;
 	description: string;
 	minPrice: number;
-	cityId: number | null;
-	typeId: number | null;
+
+	cityId: number;
+	typeId: number;
+
+	ownerId: number | null,
+	managerId: number | null,
+
 	address: string;
 	places: number;
 	badCount: number;
 	minDaysOrder: number;
-	elevator: boolean;
-	floor: number;
-	maxFloor: number;
+
+	//только если
+	flatProperties: {
+		elevator: boolean;
+		floor: number;
+		maxFloor: number;
+	} | null;
+
 	seaDistance: number;
 	area: number | null;
 	coords: Coords;
-	phoneRaw: string;
-	phone: string;
-	renterName: string;
 	amenities: number[];
 	foodOptions: number[];
 	photos: {photoId: number, urlMin: string}[];
-	pricePeriods: PricePeriodCreateDTO[]
+	pricePeriods: PricePeriodCreateDTO[];
+
+	rooms: RoomCreateDTO[]
+
 }
 
 export interface RoomCreateDTO {
@@ -127,11 +137,3 @@ export interface PricePeriodCreateDTO {
 	startDate: Date,
 	endDate: Date,
 }
-
-export interface ListingCreateCompleteDTO {
-	listing: ListingCreateDTO,
-	rooms: RoomCreateDTO[]
-}
-
-
-type ListingCreateType = 'flat' | 'guest-house' | 'cottages' | 'house'

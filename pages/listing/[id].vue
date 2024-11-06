@@ -1,9 +1,10 @@
 <script setup lang="ts">
 	import type {IQueryBooking} from "~/modules/Booking/types/query.types";
 	import useBooking from "~/modules/Booking/composables/useBooking";
-	import type {BookingInfoDTO} from "~/modules/Booking/types/dto.types";
 	import ListingHeader from "~/modules/Listing/components/ListingPage/ListingHeader.vue";
 	import ListingAdmin from "~/modules/Listing/components/ListingPage/ListingAdmin.vue";
+	import GalleryMainSlider from "~/modules/Listing/components/Gallery/GalleryMainSlider.vue"
+	import GalleryFullScreenModal from "~/modules/Listing/components/Gallery/GalleryFullScreenModal.vue";
 	import ListingDescription from "~/modules/Listing/components/ListingPage/ListingDescription.vue";
 	import ListingRules from "~/modules/Listing/components/ListingPage/ListingRules.vue";
 	import ListingRooms from "~/modules/Listing/components/ListingPage/ListingRooms.vue";
@@ -12,128 +13,92 @@
 	import SimilarListings from "~/modules/Listing/components/ListingPage/SimilarListings.vue";
 	import useListing from "~/modules/Listing/composables/useListing";
 	import useListingBooking from "~/modules/Listing/composables/useListingBooking";
-	import ListingBookingConfirmModal from "~/modules/Listing/components/ListingPage/ListingBookingConfirmModal.vue";
-	const {isMobileOrTablet} = useDevice()
-	const route = useRoute();
+	import ListingBookingConfirmModal from "~/modules/Listing/components/ListingBooking/ListingBookingConfirmModal.vue";
+	import MenuMain from "~/modules/Menu/components/MenuMain.vue";
+	import AncorsMenuFixed from "~/modules/Listing/components/ListingPage/Menu/AncorsMenuFixed.vue";
+	import GalleryDesktopPreviews from "~/modules/Listing/components/Gallery/GalleryDesktopPreviews.vue";
+	import GalleryThumbsModal from "~/modules/Listing/components/Gallery/GalleryThumbsModal.vue";
+	import ListingReviews from "~/modules/Listing/components/ListingPage/ListingReviews.vue";
+	import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
+	import {mdiImage} from "@mdi/js";
+	import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
+	import useGallery from "~/modules/Listing/composables/useGallery";
+	const {isMobileOrTablet} = useDevice();
+	
+	const authUser = useAuthUser();
+	
+	const {galleyThumbsModalIsOpen} = useGallery()
+	
 	const {parseBookingRouteQuery} = useBooking();
+	const {setListingBookingInfo, dateModal} = useListingBooking();
+	const {initListingData, updateListingPrices, queryForGoBack, listing} = useListing();
 	
-	const {listing, fetchListing, createBookingDTO, chosenRoomId, chosenRoom, listingModalMobile} = useListing()
-	const {setBookingQuery, getListingQueryLinkParameters, listingBookingConfirmModal, dateModal} = useListingBooking()
-	
-	const mobileBookingModal = ref(false);
-
+	const route = useRoute();
 	const {id} = route.params;
+	const query = { ...route.query };
 	
-	const bookingQuery: IQueryBooking = parseBookingRouteQuery(route.query)
-
-	const bookingDTO: BookingInfoDTO = createBookingDTO(bookingQuery);
-	setBookingQuery(bookingQuery);
+	queryForGoBack.value = query;
 	
+	const bookingQuery: IQueryBooking = parseBookingRouteQuery(query)
 	
-	await fetchListing(parseInt(<string>id), bookingDTO);
-	
-	watch(getListingQueryLinkParameters, async () => {
-		const bookingQuery: IQueryBooking = parseBookingRouteQuery(route.query);
-		const {adults, checkIn, checkOut, children, ...queryData} = bookingQuery;
-		
-		await fetchListing(parseInt(<string>id), {
-			//@ts-ignore
-			checkIn: getListingQueryLinkParameters.value.checkIn,
-			//@ts-ignore
-			checkOut: getListingQueryLinkParameters.value.checkOut,
-			peoples: getListingQueryLinkParameters.value.adults
-		});
-		await navigateTo({
-			path: `/listing/${id}`,
-			query: {
-				...getListingQueryLinkParameters.value,
-				...queryData
-			}
-		});
-	})
+	await initListingData(parseInt(id as string), bookingQuery);
+	setListingBookingInfo(bookingQuery);
 	
 	const dates = computed(() => {
-		//@ts-ignore
-		const {from, to} = dateModal.value
-		return {from, to}
+		const {checkIn, checkOut} = dateModal.value;
+		return {checkIn, checkOut};
+	})
+	
+	watch(dates, async ({checkIn, checkOut}) => {
+		updateListingPrices(checkIn, checkOut);
+	})
+	
+	const isAdmin = computed(() => authUser.value && ['ADMIN', 'MANAGER', 'LANDLORD'].includes(authUser.value.role))
+	
+	const ListingAdminPanel = computed(() => {
+		if (isAdmin) {
+			return defineAsyncComponent(() => import('@/modules/Admin/Listing/components/ListingAdminPanel.vue'))
+		}
+		return null;
 	})
 	
 
 </script>
 
 <template>
-	<div class="bg-gray">
+	<AncorsMenuFixed/>
+	<div class="bg-gray" id="scroll-container">
+		<div class="menu-main">
+			<MenuMain/>
+		</div>
+		<div class="wrapper">
+			<ListingAdminPanel v-if="isAdmin"/>
+			<ListingHeader/>
+			<GalleryDesktopPreviews v-if="!isMobileOrTablet && listing.photos.length > 3"/>
+		</div>
+		
 		<div class="listing wrapper">
 			<div class="listing__content">
-				
-				<ListingHeader/>
-				
-				<GalleryMainSlider/>
-				
-				<GalleryFullScreen/>
-				<ListingDescription/>
-				<ListingRules/>
-				<ListingRooms/>
+				<GalleryMainSlider id="gallery" v-if="isMobileOrTablet || listing.photos.length < 3"/>
+				<div v-if="isMobileOrTablet" style="text-align: center; margin-bottom: 24px;">
+					<BtnPrimary  width="300px" :prepend-icon="mdiImage" @click="galleyThumbsModalIsOpen = true">Показать все фото</BtnPrimary>
+				</div>
+				<ListingBookingForm target="sidebar" v-if="isMobileOrTablet "/>
+				<ListingRooms id="rooms" />
+				<ListingDescription id="about"/>
+				<ListingRules id="rules"/>
 				<ListingYMap id="map"/>
-				
+				<ListingReviews/>
 			</div>
-			<div class="listing__sidebar booking">
+			<div class="listing__sidebar booking" v-if="!isMobileOrTablet">
 				<ListingBookingForm target="sidebar"/>
 			</div>
 		</div>
 		<div class="wrapper">
 			<SimilarListings class="pb-8"/>
 		</div>
-		
-		<div class="order">
-			<div class="order__body" v-if="dates.from && dates.to">
-				<div class="order__info" v-if="listing.type !== 'guest-house'">
-					<p>
-						Цена за {{formatDays(listing.daysCount)}}
-					</p>
-					<strong> {{listing.totalPrice?.toLocaleString('ru-RU')}} ₽</strong>
-				</div>
-				<div class="order__info" v-else-if="chosenRoom">
-					<p>
-						Цена за {{formatDays(listing.daysCount)}}
-					</p>
-					<strong> {{chosenRoom.totalPrice?.toLocaleString('ru-RU')}} ₽</strong>
-				</div>
-				<div class="order__info" v-else>
-					<p>
-						Выберите номер
-					</p>
-				</div>
-				<v-btn prepend-icon="mdi-lightning-bolt" color="#7059FF" class="order__btn" @click="listingModalMobile = true">Забронировать</v-btn>
-			</div>
-			<div class="order__body" v-else>
-				<div class="order__info">
-					<strong>от {{listing.dailyPrice.toLocaleString('ru-RU')}} ₽</strong>
-					<p>
-						в сутки
-					</p>
-				</div>
-				<v-btn prepend-icon="mdi-lightning-bolt" color="#7059FF" class="order__btn" @click="listingModalMobile = true">Забронировать</v-btn>
-			</div>
-		
-		</div>
-		<v-dialog v-model="listingModalMobile" :fullscreen="isMobileOrTablet">
-			
-			<v-card>
-				<v-toolbar color="#F0F3F7">
-					<v-btn
-						icon="mdi-close"
-						@click="listingModalMobile = false"
-					></v-btn>
-					
-					<v-toolbar-title>Заявка на бронирование</v-toolbar-title>
-				</v-toolbar>
-				<div class="modal pa-4">
-					<ListingBookingForm target="sidebar"/>
-				</div>
-			</v-card>
-		</v-dialog>
-		
+		<GalleryFullScreenModal/>
+		<GalleryThumbsModal/>
 		<ListingBookingConfirmModal/>
 	</div>
 	
@@ -141,12 +106,15 @@
 </template>
 
 <style scoped lang="scss">
-	
+	.menu-main {
+		background: #fff; padding: 4px 0; margin-bottom: 32px;
+		
+		@media screen and (max-width: 630px) {
+			margin-bottom: 20px;
+		}
+	}
 	.bg-gray {
 		background: #F7F8F9;
-		margin-top: -16px;
-		padding-top: 16px;
-		margin-bottom: -48px;
 	}
 	@media screen and (max-width: 630px) {
 		.bg-gray {
@@ -194,7 +162,7 @@
 	.listing {
 		margin-top: 16px;
 		display: grid;
-		grid-template-columns: 1fr 360px;
+		grid-template-columns: 1fr 340px;
 		gap: 24px;
 		
 		

@@ -3,8 +3,8 @@
 	<NuxtLayout>
 		<NuxtPage/>
 		<AuthModal/>
+		<BurgerMenuModal/>
 	</NuxtLayout>
-	
 </template>
 
 
@@ -15,4 +15,8 @@
 </style>
 <script setup lang="ts">
 import AuthModal from "~/modules/Auth/components/AuthModal.vue";
+import BurgerMenuModal from "~/modules/Menu/components/BurgerMenuModal.vue";
+import useSearch from "~/modules/Booking/composables/useSearch";
+const {loadSearchData} = useSearch()
+await loadSearchData();
 </script>

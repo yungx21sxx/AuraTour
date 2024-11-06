@@ -12,9 +12,11 @@ interface RolePermissions {
 const roleProtectedPaths: RolePermissions = {
     '/api/users/*': ['ADMIN', 'MANAGER', 'TOURIST', 'LANDLORD'],
     '/api/auth/profile': ['ADMIN', 'MANAGER', 'TOURIST', 'LANDLORD'],
-    '/api/booking/listing/*': ['ADMIN', 'MANAGER', 'LANDLORD'],
-    '/api/booking/all': ['ADMIN', 'MANAGER'],
+    // '/api/bookings/listing/*': ['ADMIN', 'MANAGER', 'LANDLORD'],
+    // '/api/bookings/all': ['ADMIN', 'MANAGER'],
+    '/api/bookings/create': ['ADMIN', 'MANAGER'],
     '/api/bonus/*': ['ADMIN', 'MANAGER'],
+    // '/api/listing/admin/*': ['ADMIN', 'MANAGER', 'LANDLORD']
 };
 
 // Пути, где нужно просто добавить пользователя в запрос, без проверки роли
@@ -49,7 +51,7 @@ export default defineEventHandler(async (event: H3Event) => {
     // Извлекаем токен из cookies
     const cookies = parseCookies(event);
     const token = cookies['auth_token'];
-
+    console.log(token)
     let user = null;
 
     if (token) {

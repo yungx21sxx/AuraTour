@@ -1,10 +1,10 @@
 import type {
 	FiltersDTO,
 	GetAvailableListingsDTO,
-	ListingCreateDTO,
 	RoomCreateDTO
 } from "~/types/dto.types";
 
+import {type ListingCreateDTO} from "~/modules/Admin/ListingCRUD/types/dto.types";
 
 import {prisma} from "~/server/service/prisma.service";
 import type {Listing, PricePeriod, Prisma, Room} from "@prisma/client";
@@ -398,7 +398,7 @@ class ListingsService {
 					return 0;
 			}
 		}).filter(listing => {
-			const isHotel = listing.typeId === 2 || listing.typeId === 6 || listing.typeId === 8;
+			const isHotel = listing._count.rooms > 0;
 			if (isHotel) {
 				return true;
 			}
@@ -410,12 +410,18 @@ class ListingsService {
 		const paginatedListings = sortedListings.slice(startIndex, endIndex);
 		return {
 			count: sortedListings.length,
-			listings: paginatedListings,
+			listings: paginatedListings.map(listing => {
+				const {typeId, validated, description, ownerId, managerId, createdAt, note, _count, photos, ...listingData} = listing;
+				return {
+					...listingData,
+					photos: photos.slice(0, 6)
+				};
+			}),
 		};
 
 	}
-	async updateListing(listingDto: ListingCreateDTO, listingPlaces: number) {
-		const { id, amenities, foodOptions, photos, places, pricePeriods, coords, cityId, typeId, ...rest } = listingDto;
+	async updateListing(listingDto: ListingCreateDTO, id: number, isHotelType: boolean) {
+		const { amenities, managerId, foodOptions, ownerId, flatProperties, photos, places, rooms, pricePeriods, coords, cityId, typeId, ...rest } = listingDto;
 
 		let photosWithPosition = []
 
@@ -437,8 +443,13 @@ class ListingsService {
 			where: { id },
 			//@ts-ignore
 			data: {
+				flatProperties: {
+					...(flatProperties && {
+						update: {...flatProperties}
+					})
+				},
 				...rest,
-				places: listingPlaces,
+				places: isHotelType ? 100 : places,
 				city: {
 					connect: {
 						//@ts-ignore
@@ -453,11 +464,19 @@ class ListingsService {
 				},
 				photos: {
 					connect: photosWithPosition.map(photo => ({id: photo.photoId})),
-				}
+				},
+				owner: {
+					...(ownerId && {
+						connect: {id: ownerId}
+					})
+				},
+				manager: {
+					...(managerId && {
+						connect: {id: managerId}
+					})
+				},
 			},
 		});
-
-
 
 		for (const listingPhoto of photosWithPosition) {
 			await prisma.photo.update({

@@ -19,7 +19,7 @@ export const useAuth = () => {
 
     const logout = async () => {
         await AuthAPI.logout()
-        setUser(null);
+        setAuthUser(null);
     };
 
     const fetchProfile = async () => {

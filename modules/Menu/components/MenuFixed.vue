@@ -1,6 +1,6 @@
 <template>
     <transition name="slide-fade">
-        <div v-if="isMenuVisible" class="header-wrapper">
+        <div v-if="isMenuVisible && !disabled" class="header-wrapper">
             <MenuMain variant="dark"/>
         </div>
     </transition>
@@ -12,6 +12,10 @@
 
     const isMenuVisible = ref(false);
     let lastScrollY = 0;
+	
+	const route = useRoute()
+    
+    const disabled = computed(() => route.fullPath.includes('listing'))
 
     const handleScroll = () => {
         const currentScrollY = window.scrollY;

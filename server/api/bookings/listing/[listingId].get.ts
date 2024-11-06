@@ -8,14 +8,33 @@ export default defineEventHandler(async (event: H3Event) => {
         where: {id: listingId},
     })
     if (!listing) {
-        throw createError({ statusCode: 404, statusMessage: 'Объект не найден' });
-    }
-    if (user.role === 'LANDLORD' && user.id !== listing.managerId) {
-        throw createError({ statusCode: 403, message: 'Forbidden: Access is denied' });
+        throw createError({ statusCode: 404, message: 'Объект не найден' });
     }
     const bookings = await prisma.booking.findMany({
         where: {listingId},
+        orderBy: {
+            checkIn: 'desc'
+        },
+        include: {
+            user: {
+                select: {
+                    id: true,
+                    name: true,
+                    surname: true,
+                    email: true,
+                    bonusPoints: true,
+                    phone: true
+                }
+            },
+            room: {
+                select: {
+                    name: true,
+                    id: true
+                }
+            }
+        }
     })
+    console.log(bookings)
     return {
         bookings,
     }

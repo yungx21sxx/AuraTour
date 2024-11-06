@@ -38,8 +38,14 @@ async function sendRequest() {
 		console.log(e)
 	}
 	
-	completeRequest()
+	completeRequest();
 }
+
+const phone = ref('')
+
+watch(phone, () => {
+	console.log(phone.value)
+})
 
 </script>
 
@@ -53,8 +59,8 @@ async function sendRequest() {
 				<p class="form__info">
 					Мы берем на себя все вопросы по организации вашего отдыха. Оставьте заявку и мы расскажем о всех доступных предложених и подберем самое лучшее для Вас.
 				</p>
-				<v-text-field required :rules="[(v: string) => !!v || 'Введите имя']" label="Как вас зовут?" v-model="formDataRequest.name"/>
-				<PhoneInput  required :rules="[(v: string) => !!v || 'Введите номер']" v-model="formDataRequest.phone"/>
+				<v-text-field variant="outlined" required :rules="[(v: string) => !!v || 'Введите имя']" label="Как вас зовут?" v-model="formDataRequest.name"/>
+				<PhoneInput  required :rules="[(v: string) => !!v || 'Введите номер']" v-model="phone"/>
 				<v-btn color="#7059FF" type="submit" block :loading="pending">{{btnText}}</v-btn>
 			</v-form>
 			<v-img src="/main-page/submit.webp" class="form__img" cover/>

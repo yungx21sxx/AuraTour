@@ -38,7 +38,6 @@
 			
 			<!-- Элемент-наблюдатель для Intersection Observer -->
 			<div v-if="hasMore && !isFiltering" ref="observer" class="observer">
-				sdfdsfdsfsdf
 			</div>
 			<!-- Сообщение об окончании списка -->
 			<div v-else-if="!hasMore && !isFiltering">

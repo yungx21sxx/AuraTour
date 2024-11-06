@@ -1,12 +1,25 @@
 <script setup lang="ts">
 
 import useBooking from "~/modules/Booking/composables/useBooking";
-import useFilters from "~/modules/Search/composables/useFilters";
-
-import type {IGuestHouseRoom} from "~/modules/Listing/types/response.types";
 import useListingBooking from "~/modules/Listing/composables/useListingBooking";
 import ListingBookingSetDate from "~/modules/Listing/components/ListingBooking/ListingBookingSetDate.vue";
 import useListing from "~/modules/Listing/composables/useListing";
+import {
+	mdiCalendarMonthOutline,
+	mdiAccountOutline,
+	mdiMinus,
+	mdiPlus,
+	mdiWhatsapp,
+	mdiCalendarEditOutline
+} from "@mdi/js"
+import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
+import { parsePhoneNumber } from 'libphonenumber-js';
+import BtnSecondary from "~/modules/Common/UI/BtnSecondary.vue";
+import useBonus from "~/modules/Listing/composables/useBonus";
+import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
+
+const authUser = useAuthUser()
+const {applyBonus} = useBonus()
 
 const {target} = defineProps<{
 	target: 'sidebar' | 'modal'
@@ -14,91 +27,71 @@ const {target} = defineProps<{
 
 
 const {calculateDaysBetweenDates} = useBooking()
-const {listing, chosenRoomId, chosenRoom} = useListing()
-
+const {listing, chosenRoomId} = useListing()
 const {
 	beautifyDate,
 } = useBooking();
 
+
 const {peopleCount, openSetDateModal, dateModal, listingBookingConfirmModal, describeGroup} = useListingBooking();
+const whatsLink = computed(() => `whatsapp://send?phone=${listing.value.manager.phone}&text=Здравствуйте! Расскажите подробнее про: ${listing.value.title}. https://aura-tour-abkhazia.ru/listing/${route.params.id}`)
 
-const {parseQueryParams, filtersModalIsOpen, refreshBookingFilters} = useFilters();
-
-const route = useRoute()
-
-
-function countDays(startDate: Date, endDate: Date): number {
-	const oneDay = 24 * 60 * 60 * 1000; // Количество миллисекунд в одном дне
-	const differenceInTime = endDate.getTime() - startDate.getTime();
-	return Math.round(differenceInTime / oneDay);
-}
-
-const dates = computed(() => {
-	const {from, to} = dateModal.value
-	return {from, to}
-})
+const route = useRoute();
 
 const guestSetMenuIsOpen = ref(false);
-const roomsProps = (room: IGuestHouseRoom) => ({
-	title: room.name,
-	subtitle: `${room.totalPrice?.toLocaleString('ru-RU')} ₽ за ${formatDays(listing.value.daysCount)}`
-})
+
+const dates = computed(() => {
+	const {checkIn, checkOut} = dateModal.value
+	return {checkIn, checkOut}
+});
 
 
-
-const prepayListing = computed(() => Math.trunc(listing.value.totalPrice * 0.15))
-const bookingPayListing = computed(() => Math.trunc(listing.value.totalPrice - listing.value.totalPrice * 0.15))
-
-const prepayChosenRoom = computed(() => {
-	if (!chosenRoom.value) return null;
-
-	return Math.trunc(chosenRoom.value.totalPrice * 0.15);
-})
-
-const bookingPayChosenRoom = computed(() => {
-	if (!chosenRoom.value) return null;
-
-	return Math.trunc(chosenRoom.value.totalPrice - chosenRoom.value.totalPrice * 0.15);
-})
-
-const whatsLink = computed(() => `whatsapp://send?phone=+7${listing.value.phoneRaw}&text=Здравствуйте! Расскажите подробнее про: ${listing.value.title}. https://aura-tour-abkhazia.ru/listing/${route.params.id}`)
-
-const notMinDays = computed(() => listing.value.minDaysOrder > countDays(dates.value.from || new Date(), dates.value.to || new Date()))
 
 
 </script>
 
 <template>
-	<div class="booking">
-		<div class="booking__main listing-block">
+	<div class="booking listing-block contacts">
+		<v-avatar v-if="listing.manager.avatar" :src="listing.manager.avatar" size="60"/>
+		<v-avatar v-else color="#7059FF" size="60">{{listing.manager.name[0]}}</v-avatar>
+		<div class="name">{{listing.manager.name}}</div>
+		<div class="phone">{{parsePhoneNumber(listing.manager.phone).formatNational()}}</div>
+		<div class="id">Номер объявления: №{{listing.id}}</div>
+		<BtnPrimary class="booking__whats"  :href="whatsLink" :prepend-icon="mdiWhatsapp" color="#2F9E45">
+			Написать в WhatsApp
+		</BtnPrimary>
+	</div>
+	<div class="booking listing-block">
+		<div class="booking__main">
 			<div class="booking__date">
-				<div class="booking__input-body">
+				<v-card class="booking__input" :ripple="{ class: 'ripple-color' }" @click="openSetDateModal">
 					<span class="label">Заезд</span>
-					<v-card class="booking__input" :ripple="{ class: 'ripple-color' }" @click="openSetDateModal">
-						<v-icon>mdi-calendar-month-outline</v-icon>
-						<span v-if="!dates.from">Заезд</span>
-						<span v-else>{{ beautifyDate(dates.from) }}</span>
-					</v-card>
-				</div>
-				<div class="booking__input-body">
+					<div class="booking__input-body">
+						<v-icon :icon="mdiCalendarMonthOutline" color="#333D46"></v-icon>
+						<span v-if="!dates.checkIn">Дата</span>
+						<span v-else>{{ beautifyDate(dates.checkIn) }}</span>
+					</div>
+				</v-card>
+				<v-card class="booking__input" :ripple="{ class: 'ripple-color' }" @click="openSetDateModal">
 					<span class="label">Выезд</span>
-					<v-card class="booking__input" :ripple="{ class: 'ripple-color' }" @click="openSetDateModal">
-						<v-icon>mdi-calendar-month-outline</v-icon>
-						<span v-if="!dates.to">Выезд</span>
-						<span v-else>{{ beautifyDate(dates.to) }}</span>
-					</v-card>
-				</div>
+					<div class="booking__input-body">
+						<v-icon :icon="mdiCalendarMonthOutline" color="#333D46"></v-icon>
+						<span v-if="!dates.checkOut">Дата</span>
+						<span v-else>{{ beautifyDate(dates.checkOut) }}</span>
+					</div>
+				</v-card>
+				
 				
 			</div>
 			<v-menu :close-on-content-click="false" v-model="guestSetMenuIsOpen">
 				<template v-slot:activator="{ props }">
-					<div class="booking__input-body">
+					<v-card v-bind="props" class="booking__input" :ripple="{ class: 'ripple-color' }">
 						<span class="label">Кол-во гостей</span>
-						<v-card class="booking__input" v-bind="props">
-							<v-icon>mdi-account-outline</v-icon>
+						<div class="booking__input-body">
+							<v-icon :icon="mdiAccountOutline" color="#333D46"></v-icon>
 							<span>{{ describeGroup(peopleCount.adults, peopleCount.children) }}</span>
-						</v-card>
-					</div>
+						</div>
+					</v-card>
 				</template>
 				<v-card>
 					<v-card-item>
@@ -112,10 +105,10 @@ const notMinDays = computed(() => listing.value.minDaysOrder > countDays(dates.v
 							</span>
 							</div>
 							<div class="amount__range">
-								<v-btn icon="mdi-minus" density="comfortable" variant="tonal" color="#7059FF"
+								<v-btn :icon="mdiMinus" density="comfortable" variant="tonal" color="#7059FF"
 								       @click="peopleCount.adults -= 1" :disabled="peopleCount.adults === 1"/>
 								<strong class="amount__output">{{ peopleCount.adults }}</strong>
-								<v-btn icon="mdi-plus" density="comfortable" variant="tonal" color="#7059FF"
+								<v-btn :icon="mdiPlus" density="comfortable" variant="tonal" color="#7059FF"
 								       @click="peopleCount.adults += 1"/>
 							</div>
 						</div>
@@ -129,10 +122,10 @@ const notMinDays = computed(() => listing.value.minDaysOrder > countDays(dates.v
 							</span>
 							</div>
 							<div class="amount__range">
-								<v-btn icon="mdi-minus" density="comfortable" variant="tonal" color="#7059FF"
+								<v-btn :icon="mdiMinus" density="comfortable" variant="tonal" color="#7059FF"
 								       @click="peopleCount.children -= 1" :disabled="peopleCount.children === 0"/>
 								<strong class="amount__output">{{ peopleCount.children }}</strong>
-								<v-btn icon="mdi-plus" density="comfortable" variant="tonal" color="#7059FF"
+								<v-btn :icon="mdiPlus" density="comfortable" variant="tonal" color="#7059FF"
 								       @click="peopleCount.children += 1"/>
 							</div>
 						
@@ -141,92 +134,62 @@ const notMinDays = computed(() => listing.value.minDaysOrder > countDays(dates.v
 					</v-card-item>
 				</v-card>
 			</v-menu>
-			
-			<div class="booking__total" v-if="dates.from && dates.to">
-				<div class="booking__order-info" v-if="listing.rooms.length === 0">
-					<div class="booking__total-price booking__input_info booking__input" >
-						<span>Итого за {{formatDays(listing.daysCount)}}:</span> <span>{{listing.totalPrice?.toLocaleString('ru-RU')}} ₽</span>
-					</div>
-<!--					<div class="booking__input booking__input_info">-->
-<!--						<span>Предоплата</span>-->
-<!--						<span>{{prepayListing.toLocaleString('ru-RU')}} ₽</span>-->
-<!--					</div>-->
-<!--					<div class="booking__input booking__input_info">-->
-<!--						<span>Оплата при заселении</span>-->
-<!--						<span>{{bookingPayListing.toLocaleString('ru-RU')}} ₽</span>-->
-<!--					</div>-->
-				</div>
-				<div class="booking__order-info" v-else>
-					<v-select density="comfortable" v-model="chosenRoomId" item-value="id" class="mb-4 mt-4" variant="solo" bg-color="#F0F3F7"  :item-props="roomsProps"  :items="listing.rooms" label="Выберите номер"/>
-					<div class="booking__input mt-8 booking__input_info" v-if="chosenRoom">
-						<span>Итого за {{formatDays(listing.daysCount)}}:</span> <span>{{chosenRoom.totalPrice?.toLocaleString('ru-RU')}} ₽</span>
-					</div>
-<!--					<div class="booking__input booking__input_info" v-if="prepayChosenRoom">-->
-<!--						<span>Предоплата</span>-->
-<!--						<span>{{prepayChosenRoom?.toLocaleString('ru-RU')}} ₽</span>-->
-<!--					</div>-->
-<!--					<div class="booking__input booking__input_info" v-if="bookingPayChosenRoom">-->
-<!--						<span>Оплата при заселении</span>-->
-<!--						<span>{{bookingPayChosenRoom?.toLocaleString('ru-RU')}} ₽</span>-->
-<!--					</div>-->
-				</div>
-				
-				<v-alert
-					class="booking__alert mb-4"
-					v-if="notMinDays"
-					closable
-					type="info"
-					variant="tonal"
-					color="#7059FF"
-				>
-					Минимальный срок аренды: {{formatDays(listing.minDaysOrder)}}.
-				</v-alert>
-				
-				
-				<v-btn width="100%" color="#7059FF" class="mt-2" :disabled="notMinDays"  @click="listingBookingConfirmModal = true">
-					Забронировать
-				</v-btn>
-			</div>
-			<div class="booking__dates-alert" v-else>
-				<div class="booking__input booking__input_info mt-6">
-					<span>Цена за сутки</span>
-					<span>от {{listing.dailyPrice.toLocaleString('ru-RU')}} ₽</span>
-				</div>
-				<v-alert
-					type="info"
-					variant="tonal"
-				>
-					<template #text>
-						<div class="alert">
-							<h4 class="alert__title">Укажите даты поездки</h4>
-							<p class="mb-4" style="text-align: left">Выберите даты поездки чтобы забронировать жилье онлайн.</p>
-							<v-btn @click="openSetDateModal" color="#7059FF">Выбрать даты</v-btn>
-						</div>
-					</template>
-				</v-alert>
-				<p>Минимальный срок аренды: <strong>{{formatDays(listing.minDaysOrder)}}</strong></p>
-			</div>
 		</div>
-		<div class="booking__info">
-			<div class="booking__phone">
-				<div class="booking__renter-name">
-					{{listing.renterName}}
-				</div>
-				<NuxtLink  class="booking__phone_link" :to="`tel:/+7${listing.phoneRaw}`">
-					+7 {{listing.phone}}
-				</NuxtLink>
-				
-			</div>
-			<v-btn class="booking__whats" :href="whatsLink" prepend-icon="mdi-whatsapp"  color="#2F9E45">
-				Написать в WhatsApp
-			</v-btn>
+		<p class="dates-alert mb-4" v-if="!listing.calculatedPrices">Выберите даты поездки</p>
+		<BtnPrimary block @click="openSetDateModal" v-if="!listing.calculatedPrices">Проверить цены</BtnPrimary>
+		<div class="order-info" v-if="!listing.isHotelType">
+			<div class="total">Итоговая сумма:</div>
 			
-			<div class="booking__description">
-				Номер объявления:
+			<div class="mt-4" v-if="authUser && authUser.bonusPoints > 0">Количество бонусов: <strong>{{authUser.bonusPoints}}</strong></div>
+			<v-switch
+				v-if="authUser && authUser.bonusPoints > 0"
+				v-model="applyBonus"
+				label="Списать бонусы"
+				color="rgb(112, 89, 255)"
+				hide-details
+			/>
+			<div class="price-block">
+				<span class="days">За сутки</span>
+				<span class="price">{{listing.calculatedPrices ? listing.calculatedPrices.dailyPrice.toLocaleString() : listing.minPrice.toLocaleString()}} ₽</span>
 			</div>
-			<div class="booking__id">
-				№ {{listing.id}}
+			<div class="price-block" v-if="listing.calculatedPrices">
+				<span class="days">За {{formatDays(listing.calculatedPrices.daysCount)}}</span>
+				<div class="price" style="color: #2a2536;" v-if="authUser && authUser.bonusPoints > 0 && applyBonus">
+					<span>{{(listing.calculatedPrices.totalPrice - authUser.bonusPoints).toLocaleString()}} ₽</span>
+					<strike style="color: #6a6d81; margin-left: 8px;">{{listing.calculatedPrices.totalPrice.toLocaleString()}} ₽</strike>
+				</div>
+				<span class="price" style="color: #2a2536;" v-else>{{listing.calculatedPrices.totalPrice.toLocaleString()}} ₽</span>
 			</div>
+			<v-alert
+				type="info"
+				variant="tonal"
+				text="Жилье недоступно для выбранного количества гостей"
+				v-if="!listing.isHotelType && listing.places < peopleCount.adults + peopleCount.children"
+				class="min-days-alert"
+			></v-alert>
+			<BtnPrimary v-if="listing.minDaysOrder > listing.calculatedPrices?.daysCount" block class="mt-6" @click="openSetDateModal">Изменить даты</BtnPrimary>
+			<BtnPrimary v-if="listing.calculatedPrices" block class="mt-6" @click="listingBookingConfirmModal = true">Оставить заявку</BtnPrimary>
+		</div>
+		<v-alert
+			type="info"
+			variant="tonal"
+			:text="`Минимальный срок аренды: ${formatDays(listing.minDaysOrder)}.`"
+			v-if="listing.minDaysOrder > listing.calculatedPrices?.daysCount"
+			class="mt-4"
+		></v-alert>
+		<div v-if="listing.isHotelType && dates.checkIn && dates.checkOut">
+			<BtnSecondary block class="mt-6" @click="openSetDateModal" :prepend-icon="mdiCalendarEditOutline">Изменить даты</BtnSecondary>
+			<div v-if="authUser && authUser.bonusPoints > 0">
+				<div class="mt-4">Количество бонусов: <strong>{{authUser.bonusPoints}}</strong></div>
+				<v-switch
+					v-model="applyBonus"
+					label="Списать бонусы"
+					color="rgb(112, 89, 255)"
+					hide-details
+					block
+				/>
+			</div>
+		
 		</div>
 	</div>
 	
@@ -234,137 +197,85 @@ const notMinDays = computed(() => listing.value.minDaysOrder > countDays(dates.v
 </template>
 
 <style scoped lang="scss">
-
-
-
-
-.amount {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	margin-bottom: 16px;
-	background: #FFFFFF;
-	
-	&__info {
-		& > * {
-			display: block;
-		}
-	}
-	
-	&__range {
-		display: flex;
-		gap: 8px;
-		align-items: center;
-	}
-	
-}
-
-.booking {
-	
-	
-	width: 100%;
-	
-	&__main {
-		padding: 16px;
-	}
-	
-	&__dates-alert {
-		p {
-			text-align: center;
-			font-size: 14px;
-			margin-top: 16px;
+	.contacts {
+		text-align: center;
+		.name {
+			font-size: 24px;
+			font-weight: 600;
 			color: $text-main;
+			margin-top: 16px;
+			margin-bottom: 8px;
 		}
-	}
-	
-	&__input-body .label {
-		padding-bottom: 4px;
-		display: block;
-		font-size: 14px;
-		color: #333D46;
-	}
-	
-	&__total-price {
-		margin-bottom: 16px;
-		display: flex;
-		justify-content: space-between;
-		//margin-top: 32px;
-		padding: 0 16px;
-		span:last-child {
-			font-weight: bold;
+		.phone {
+			font-size: 18px;
+			margin-bottom: 16px;
 		}
-	}
-	
-	&__desktop {
-		display: grid;
-		grid-template-columns: 1fr 1fr 250px;
-		gap: 16px;
-	}
-	
-	
-	&__date {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 16px;
-	}
-	
-	&__input {
-		background: $bg;
-		height: 40px;
-		padding-left: 8px;
-		margin-bottom: 16px;
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		width: 100%;
-		
-		&_info {
-			padding-left: 16px;
-			padding-right: 16px;
-			span:last-child {
-				font-weight: bold;
-				margin-left: auto;
+		@media screen and (max-width: 630px){
+			.name {
+				font-size: 20px;
 			}
+			
 		}
-		
-		box-shadow: none;
+		.id {
+			margin-bottom: 16px;
+			color: $text-gray;
+		}
 	}
-	&__info {
+	.order-info {
+		margin-top: 16px;
+		.total {
+			color: #2a2536;
+			font-size: 16px;
+			font-weight: 500;
+			line-height: 24px;
+			margin-bottom: 8px;
+		}
+		.price {
+			font-weight: 500;
+		}
+		.days {
+			color: #6a6d81;
+			line-height: 24px;
+		}
+		.price-block {
+			color: #6a6d81;
+			margin-bottom: 8px;
+			display: flex;
+			justify-content: space-between;
+		}
+	}
+	
+	.dates-alert {
 		text-align: center;
 		margin-top: 16px;
-	}
-	&__phone {
-		margin-bottom: 16px;
-		&_info {
-			color: #818487;
-		}
-		&_link {
-			font-size: 18px;
-			color: $text-main;
-			text-decoration: none;
-		}
-	}
-	
-	&__whats {
-		color: #FFFFFF !important;
-		margin-bottom: 16px;
-	}
-	&__description {
-		color: #818487;
 		font-size: 14px;
-		margin-bottom: 8px;
+		color: #fe5454;
+	}
+	.booking {
+		&__date {
+			display: flex;
+			gap: 16px;
+			margin-bottom: 16px;
+		}
+		
+		&__input {
+			width: 100%;
+			background: #F1F3F9;
+			border-radius: 8px;
+			box-shadow: none !important;
+			padding: 1px 12px 8px 12px;
+			color: #333D46;
+			
+			.label {
+				font-size: 12px;
+			}
+			&-body {
+				display: flex;
+				font-size: 14px;
+				gap: 8px;
+				//margin-top: 4px;
+			}
+		}
 	}
 	
-	&__id {
-		font-size: 18px;
-		font-weight: bold;
-	}
-	
-	
-}
-
-
-
-
-
 </style>

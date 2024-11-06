@@ -1,4 +1,9 @@
-import type {IPhoto} from "~/types/response.types";
+export interface IPhoto {
+    id: number,
+    urlFull: string,
+    urlMin: string,
+    position: number
+}
 
 export interface IListingItemResponse {
     address: string,
@@ -21,7 +26,7 @@ export interface IListingItemResponse {
 }
 
 
-export interface IGuestHouseRoom {
+export interface IHotelRoom {
     id: number,
     name: string,
     amenities: string[]
@@ -72,4 +77,110 @@ export interface IListingPreviewResponse {
     badCount: number,
     amenities: string[],
     isHotelType: boolean
+}
+
+export interface IListingManager {
+    name: string,
+    phone: string,
+    avatar: string
+}
+
+export interface IListingOwner {
+    name: string,
+    surname: string,
+    phone: string,
+    email: string,
+}
+
+
+export interface IListingPricePeriod {
+    price: number,
+    startDate: Date,
+    endDate: Date,
+}
+export interface IReviewResponse {
+    id: number;
+    rating: number;
+    text: string;
+    listingCheckIn: Date,
+    listingCheckOut: Date,
+    isAdminCreated: boolean,
+    userName: string | null
+    user: {
+        id: number,
+        name: string,
+    } | null
+    createdAt: Date;
+}
+
+export interface IRoomResponse {
+    id: number,
+    name: string,
+    places: number,
+    area: number,
+    badCount: number,
+    minPrice: number
+    pricePeriods: IListingPricePeriod[],
+    amenities: string[]
+    photos: IPhoto[]
+    calculatedPrices: {
+        totalPrice: number,
+        dailyPrice: number,
+        daysCount: number
+    } | null;
+}
+
+export interface IListingResponse {
+    id: number,
+    isHotelType: boolean,
+    note: string | null,
+    title: string,
+    description: string,
+
+    photos: IPhoto[],
+
+    minPrice: number,
+    pricePeriods: IListingPricePeriod[]
+    minDaysOrder: number
+
+    address: number,
+    city: {
+        name: string,
+        slug: string,
+    };
+    coords: {
+        longitude: number,
+        width: number
+    }
+    seaDistance: number,
+
+    badCount: string,
+    flatProperties: {
+        floor: number,
+        maxFloor: number,
+        elevator: boolean
+    } | null;
+    places: string,
+    area: number,
+    food: string[]
+
+    manager: IListingManager,
+    owner: IListingOwner | null,
+    type: {
+        name: string,
+        value: string
+    },
+    amenities: string[],
+
+    calculatedPrices: {
+        totalPrice: number,
+        dailyPrice: number,
+        daysCount: number
+    } | null;
+
+    rooms: IRoomResponse[] | [];
+
+    reviewCount: number,
+    averageRating: number,
+
 }

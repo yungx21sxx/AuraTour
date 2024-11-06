@@ -27,7 +27,7 @@
 			name: 'listing-id',
 			params: {id: listing.id},
 			query: {...getBookingQueryLinkParameters.value},
-		})
+		}, {external: true})
 	}
 </script>
 
@@ -37,6 +37,7 @@
 			'listing_mobile': mobile
 		}]"
 		:key="listing.id"
+		@click="goToListing"
 	>
 		<v-carousel
 			class="listing__carousel"

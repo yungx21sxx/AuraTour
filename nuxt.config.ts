@@ -14,7 +14,10 @@ export default defineNuxtConfig({
     }
   },
 
-
+  // sourcemap: {
+  //   server: true,
+  //   client: true,
+  // },
 
   runtimeConfig: {
     jwtSecret: process.env.JWT_SECRET,
@@ -62,7 +65,9 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/api/**': {cors: true},
-    '/lk/**': {ssr: false}
+    '/lk/**': {ssr: false},
+    '/': {prerender: true},
+    // '/search/city/gagra': {prerender: true},
   },
 
 
@@ -71,6 +76,8 @@ export default defineNuxtConfig({
       icons: {
         defaultSet: 'mdi-svg'
       },
+      labComponents: true,
+      directives: true,
     }
   },
 
@@ -82,6 +89,7 @@ export default defineNuxtConfig({
 
   features: {
     inlineStyles: true,
+    typescriptBundlerResolution: true
   },
 
   app: {
@@ -114,21 +122,21 @@ export default defineNuxtConfig({
     },
   },
 
-  webpack: {
-    extractCSS: true,
-    optimization: {
-      splitChunks: {
-        cacheGroups: {
-          styles: {
-            name: 'styles',
-            test: /\.(css|vue)$/,
-            chunks: 'all',
-            enforce: true
-          }
-        }
-      }
-    }
-  },
+  // webpack: {
+  //   extractCSS: true,
+  //   optimization: {
+  //     splitChunks: {
+  //       cacheGroups: {
+  //         styles: {
+  //           name: 'styles',
+  //           test: /\.(css|vue)$/,
+  //           chunks: 'all',
+  //           enforce: true
+  //         }
+  //       }
+  //     }
+  //   }
+  // },
 
   compatibilityDate: '2024-09-19',
 })

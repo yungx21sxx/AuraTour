@@ -13,7 +13,7 @@
 	
 	const {isMobile} = useDevice();
 	
-	const {authStep, updateAuthStep} = useAuthStep();
+	const {authStep, updateAuthStep, resetAuthStep} = useAuthStep();
 	
 	function onLoginSuccess(email: string) {
 		updateAuthStep({
@@ -34,6 +34,7 @@
 	function onAuthSuccess(userResponse: IAuthUser) {
 		const {setAuthUser} = useAuth();
 		setAuthUser(userResponse);
+		resetAuthStep();
 		closeAuthModal();
 	}
 	

@@ -96,9 +96,6 @@ model Listing {
   minDaysOrder Int      @default(3)
   seaDistance  Int
   area         Int?
-  phoneRaw     String
-  phone        String
-  renterName   String
   ownerId      Int?
   managerId    Int?
   createdAt    DateTime @default(now())
@@ -202,8 +199,21 @@ model PricePeriod {
 }
 
 model Booking {
-  id               Int               @id @default(autoincrement())
-  status           String
+  id     Int    @id @default(autoincrement())
+  status String
+
+  userName    String
+  userSurname String
+  userPhone   String
+
+  uuid String @unique
+
+  bonusApplied      Boolean?
+  bonusAppliedCount Int?
+
+  totalPriceWithBonus Int?
+  prepayWithBonus     Int?
+
   checkIn          DateTime
   checkOut         DateTime
   adults           Int
@@ -211,6 +221,7 @@ model Booking {
   comment          String?
   transfer         Boolean
   transferComment  String?
+  daysCount        Int
   totalPrice       Int
   prepay           Int
   createdAt        DateTime          @default(now())
