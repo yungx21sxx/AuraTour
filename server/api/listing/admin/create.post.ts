@@ -4,8 +4,22 @@ import {ListingCreateDTO} from "~/modules/Admin/ListingCRUD/types/dto.types";
 import {FlatProperties} from "@prisma/client";
 
 export default defineEventHandler(async event => {
-	const listing = await readBody<ListingCreateDTO>(event, {strict: true});
-	console.log(listing)
+	const listing = await readBody<ListingCreateDTO>(event, {strict: true})
+
+	const user = event.context.user;
+
+	if (user.role === 'TOURIST') {
+		await prisma.user.update({
+			where: {
+				id: user.id
+			},
+			data: {
+				role: 'LANDLORD'
+			}
+		})
+	}
+	const createByUser = ['TOURIST', 'LANDLORD'].includes(user.role);
+
 	const query: Record<string, any> = {
 		title: listing.title,
 		description: listing.description,
@@ -17,9 +31,9 @@ export default defineEventHandler(async event => {
 				id : listing.typeId
 			}
 		},
-		manager: {
+		owner: {
 			connect: {
-				id: listing.managerId,
+				id: createByUser ? user.id : listing.ownerId
 			}
 		},
 		coords: {
@@ -30,7 +44,7 @@ export default defineEventHandler(async event => {
 				longitude: listing.coords.longitude
 			}
 		},
-
+		validated: !createByUser,
 		address: listing.address,
 		seaDistance: listing.seaDistance,
 		photos: {
@@ -39,6 +53,13 @@ export default defineEventHandler(async event => {
 		minPrice: listing.minPrice
 	}
 
+	if (!createByUser) {
+		query.manager = {
+			connect: {
+				id: listing.managerId,
+			}
+		}
+	}
 	let photosWithPosition = []
 
 	for (let i = 0; i < listing.photos.length; i++) {

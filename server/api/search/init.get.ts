@@ -61,7 +61,7 @@ export default defineEventHandler(async event => {
 		name: type.name,
 		slug: type.value,
 		listingsCount: type._count.listings,
-		minPrice: type.listings[0].minPrice,
+		// minPrice: type.listings[0].minPrice,
 		seoPage: type.seoPages.length > 0
 	})).sort((a, b) => b.listingsCount - a.listingsCount);
 	return {

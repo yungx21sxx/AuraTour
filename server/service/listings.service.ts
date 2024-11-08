@@ -20,6 +20,7 @@ class ListingsService {
 		const catalogResponse = {
 			//@ts-ignore
 			city: city.name,
+			coords,
 			//@ts-ignore
 			amenities: amenities.map(i => i.amenity.name),
 			//@ts-ignore
@@ -113,7 +114,7 @@ class ListingsService {
 
 	async getSimilarListings(typeId: number, listingId: number) {
 		const listings = await prisma.listing.findMany({
-			where: { typeId },
+			where: { typeId, validated: true },
 			include: {
 				city: true,
 				photos: true,
@@ -124,7 +125,7 @@ class ListingsService {
 				},
 				_count: true,
 			},
-			take: 20
+			take: 10
 		})
 		const totalCount = await prisma.listing.count({
 			where: { typeId }
@@ -274,7 +275,7 @@ class ListingsService {
 	}
 
 
-	async searchFilteredListings(bookingInfo: BookingInfoDTO, sortFilters: FiltersDTO, sortBy: GetAvailableListingsDTO['sortBy'],  page: number) {
+	async searchFilteredListings(bookingInfo: BookingInfoDTO, sortFilters: FiltersDTO, sortBy: GetAvailableListingsDTO['sortBy'] = "popularity", target: 'map' | 'list',  page: number) {
 		const pageSize: number = 10;
 
 
@@ -308,10 +309,19 @@ class ListingsService {
 			}
 		}
 		let listings = await prisma.listing.findMany({
-			where: queryConditions,
+			where: {
+				...queryConditions,
+				validated: true
+			},
 			include: {
 				pricePeriods: true,
 				photos: true,
+				coords: {
+					select: {
+						longitude: true,
+						width: true
+					}
+				},
 				amenities: {
 					include: {
 						amenity: true
@@ -334,7 +344,6 @@ class ListingsService {
 				},
 			},
 		});
-
 
 		const reviews = await prisma.review.findMany({
 			where: {
@@ -380,47 +389,67 @@ class ListingsService {
 			//@ts-ignore
 			calculatedListings = calculatedListings.filter(listing => listing.dailyPrice >= sortFilters.priceFrom && listing.dailyPrice <= sortFilters.priceTo)
 		}
-		let sortedListings = calculatedListings.sort((a, b) => {
-			switch (sortBy) {
-				case 'increase':
-					//@ts-ignore
-					return a.dailyPrice - b.dailyPrice;
-				case 'decrease':
-					//@ts-ignore
-					return b.dailyPrice - a.dailyPrice;
-				case 'popularity':
-					// Здесь может быть логика сортировки по популярности, например, на основе reviews
-					return b.reviewCount - a.reviewCount;
-				case 'sea-distance':
-					//@ts-ignore
-					return a.seaDistance - b.seaDistance;
-				default:
-					return 0;
-			}
-		}).filter(listing => {
-			const isHotel = listing._count.rooms > 0;
-			if (isHotel) {
-				return true;
-			}
-			return listing.places >= bookingInfo.peoples
-		});
 
-		const startIndex = (page - 1) * pageSize;
-		const endIndex = startIndex + pageSize;
-		const paginatedListings = sortedListings.slice(startIndex, endIndex);
-		return {
-			count: sortedListings.length,
-			listings: paginatedListings.map(listing => {
-				const {typeId, validated, description, ownerId, managerId, createdAt, note, _count, photos, ...listingData} = listing;
-				return {
-					...listingData,
-					photos: photos.slice(0, 6)
-				};
-			}),
-		};
+		if (target === 'list') {
+			let sortedListings = calculatedListings.sort((a, b) => {
+				switch (sortBy) {
+					case 'increase':
+						//@ts-ignore
+						return a.dailyPrice - b.dailyPrice;
+					case 'decrease':
+						//@ts-ignore
+						return b.dailyPrice - a.dailyPrice;
+					case 'popularity':
+						// Здесь может быть логика сортировки по популярности, например, на основе reviews
+						return b.reviewCount - a.reviewCount;
+					case 'sea-distance':
+						//@ts-ignore
+						return a.seaDistance - b.seaDistance;
+					default:
+						return 0;
+				}
+			}).filter(listing => {
+				const isHotel = listing._count.rooms > 0;
+				if (isHotel) {
+					return true;
+				}
+				return listing.places >= bookingInfo.peoples
+			});
+			const startIndex = (page - 1) * pageSize;
+			const endIndex = startIndex + pageSize;
+			const paginatedListings = sortedListings.slice(startIndex, endIndex);
+			return {
+				count: sortedListings.length,
+				listings: paginatedListings.map(listing => {
+					const {typeId, validated, description, ownerId, managerId, createdAt, coords, note, _count, photos, ...listingData} = listing;
+					return {
+						...listingData,
+						photos: photos.slice(0, 6)
+					};
+				}),
+			};
+		} else {
+			const listingMapResponse = calculatedListings.filter(listing => {
+				const isHotel = listing._count.rooms > 0;
+				if (isHotel) {
+					return true;
+				}
+				return listing.places >= bookingInfo.peoples
+			});
+			return {
+				count: listingMapResponse.length,
+				listings: listingMapResponse.map(listing => {
+					const {address, coords, id, minPrice, totalPrice} = listing;
+					return {
+						address, coords, id, minPrice, totalPrice
+					};
+				}),
+			};
+		}
+
 
 	}
-	async updateListing(listingDto: ListingCreateDTO, id: number, isHotelType: boolean) {
+	async updateListing(listingDto: ListingCreateDTO, id: number, isHotelType: boolean, userRole: 'ADMIN' | 'MANAGER' | 'LANDLORD' | 'TOURIST') {
 		const { amenities, managerId, foodOptions, ownerId, flatProperties, photos, places, rooms, pricePeriods, coords, cityId, typeId, ...rest } = listingDto;
 
 		let photosWithPosition = []
@@ -477,6 +506,8 @@ class ListingsService {
 				},
 			},
 		});
+
+
 
 		for (const listingPhoto of photosWithPosition) {
 			await prisma.photo.update({
@@ -548,6 +579,18 @@ class ListingsService {
 				}
 			})
 		}))
+
+		if (!updatedListing.validated && ['ADMIN', 'MANAGER'].includes(userRole)) {
+			await prisma.listing.update({
+				where: {
+					id: updatedListing.id
+				},
+				data: {
+					validated: true,
+				}
+			})
+		}
+
 		return updatedListing;
 	}
 
@@ -677,6 +720,152 @@ class ListingsService {
 				dailyPrice: listing.minPrice,
 				totalPrice: null
 			}
+		})
+	}
+
+	async getUserListings(id: number) {
+		const listings = await prisma.listing.findMany({
+			where: {
+				ownerId: id
+			},
+			include: {
+				amenities: {
+					include: {
+						amenity: true
+					}
+				},
+				photos: true,
+				city: {
+					include: {
+						region: true
+					}
+				},
+				_count: {
+					select: {
+						rooms: true
+					}
+				},
+			}
+		})
+		const reviews = await prisma.review.findMany({
+			where: {
+				listingId: {
+					in: listings.map(listing => listing.id),
+				},
+			},
+			select: {
+				listingId: true,
+				rating: true,
+			},
+		});
+		let calculatedListings = [];
+		for (const listing of listings) {
+			const listingReviews = reviews.filter(review => review.listingId === listing.id);
+			const reviewCount = listingReviews.length;
+			const averageRating = listingReviews.reduce((acc, curr) => acc + curr.rating, 0) / reviewCount || 0;
+			let prices: { dailyPrice: number; totalPrice: number | null };
+			const rooms = await prisma.room.findMany({
+				where: {
+					listingId: listing.id
+				},
+				include: {
+					pricePeriods: true
+				}
+			})
+			prices = {
+				dailyPrice: rooms.length > 0 ? rooms[0].minPrice : listing.minPrice,
+				totalPrice: null
+			}
+			calculatedListings.push({
+				...this.transformResponse(listing, 'catalog'),
+				...prices,
+				averageRating: parseFloat(averageRating.toFixed(2)),
+				reviewCount,
+			})
+		}
+		return calculatedListings.map(listing => {
+			const {typeId, validated, description, ownerId, managerId, createdAt, coords, note, _count, photos, ...listingData} = listing;
+			return {
+				...listingData,
+				validated,
+				photos: photos.slice(0, 6)
+			};
+		})
+	}
+
+	async getListingsByIDs(IDs: number[], bookingInfo?: BookingInfoDTO) {
+		const listings = await prisma.listing.findMany({
+			where: {
+				id: {
+					in: IDs
+				},
+				validated: true
+			},
+			include: {
+				amenities: {
+					include: {
+						amenity: true
+					}
+				},
+				pricePeriods: true,
+				photos: true,
+				city: {
+					include: {
+						region: true
+					}
+				},
+				_count: {
+					select: {
+						rooms: true
+					}
+				},
+			}
+		})
+		const reviews = await prisma.review.findMany({
+			where: {
+				listingId: {
+					in: listings.map(listing => listing.id),
+				},
+			},
+			select: {
+				listingId: true,
+				rating: true,
+			},
+		});
+		let calculatedListings = [];
+		for (const listing of listings) {
+			const listingReviews = reviews.filter(review => review.listingId === listing.id);
+			const reviewCount = listingReviews.length;
+			const averageRating = listingReviews.reduce((acc, curr) => acc + curr.rating, 0) / reviewCount || 0;
+			let prices: { dailyPrice: number; totalPrice: number | null };
+			const rooms = await prisma.room.findMany({
+				where: {
+					listingId: listing.id
+				},
+				include: {
+					pricePeriods: true
+				}
+			})
+
+			if (rooms.length > 0) {
+				prices = this.calculatePrices(rooms[0].pricePeriods, listing.minPrice, bookingInfo ? bookingInfo.checkIn : null, bookingInfo ? bookingInfo.checkOut : null)
+			} else {
+				prices = this.calculatePrices(listing.pricePeriods, listing.minPrice,bookingInfo ? bookingInfo.checkIn : null, bookingInfo ? bookingInfo.checkOut : null)
+			}
+
+			calculatedListings.push({
+				...this.transformResponse(listing, 'catalog'),
+				...prices,
+				averageRating: parseFloat(averageRating.toFixed(2)),
+				reviewCount,
+			})
+		}
+		return calculatedListings.map(listing => {
+			const {typeId, validated, description, ownerId, managerId, createdAt, coords, note, _count, photos, ...listingData} = listing;
+			return {
+				...listingData,
+				photos: photos.slice(0, 6)
+			};
 		})
 	}
 }

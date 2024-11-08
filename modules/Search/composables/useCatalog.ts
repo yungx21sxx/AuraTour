@@ -113,7 +113,6 @@ export default () => {
 		} catch (error) {
 			console.error('Ошибка при загрузке данных:', error);
 		} finally {
-
 			isFiltering.value = false;
 		}
 	}, 400)

@@ -95,7 +95,9 @@
 						           :subtitle="authUser.email"
 					           >
 						           <template #prepend>
-							           <v-avatar v-if="authUser.avatar" :src="authUser.avatar"/>
+							           <v-avatar v-if="authUser.avatar">
+								           <v-img :src="authUser.avatar"/>
+							           </v-avatar>
 							           <v-avatar v-else color="#7059FF">{{authUser.name[0]}}</v-avatar>
 						           </template>
 					           </v-list-item>
@@ -105,23 +107,27 @@
 					            <v-list-item>
 						            <BtnPrimary
 							            :prepend-icon="mdiAccountCircleOutline"
-							            v-if="['TOURIST', 'LANDLORD'].includes(authUser.role)"
+							            v-if="['MANAGER', 'ADMIN'].includes(authUser.role)"
 							            href="/admin/bookings"
 							            block
-						            >Личный кабинет</BtnPrimary>
+							            class="mb-2"
+						            >Админка</BtnPrimary>
 						            <BtnPrimary
 							            :prepend-icon="mdiAccountCircleOutline"
-							            v-else
+							            v-if="authUser"
+							            href="/lk/profile"
 							            block
-						            >Админка</BtnPrimary>
+						            >Личный кабинет</BtnPrimary>
+						            
 					            </v-list-item>
 					            <v-list-item>
-						            <BtnSecondary block :prepend-icon="mdiHomeVariantOutline">Мои объекты</BtnSecondary>
+						            <BtnSecondary block href="/lk/listings" :prepend-icon="mdiHomeVariantOutline">Мои объекты</BtnSecondary>
 					            </v-list-item>
 					            <v-list-item>
-						            <BtnSecondary block :prepend-icon="mdiLogout">Выйти</BtnSecondary>
+						            <BtnSecondary block :prepend-icon="mdiLogout" @click="logout">Выйти</BtnSecondary>
 					            </v-list-item>
 				            </v-list>
+				            
 				        
 			            </v-card-item>
 		            </v-card>
@@ -154,7 +160,7 @@
     }
     &__logo {
         height: 26px;
-        width: fit-content;
+        width: auto;
     }
     &__links {
         margin-left: 16px;
@@ -173,17 +179,23 @@
 	    
     }
     @media screen and (max-width: 730px) {
+	    padding: 7px 0;
         &__right {
             display: none;
         }
         &__logo {
-            height: 22px;
-            width: fit-content;
+            height: 25px;
+            width: auto;
         }
         &__burger {
             display: block;
             margin-left: auto;
             margin-right: -8px;
+	        
+	        svg {
+		        height: 30px;
+		        width: auto;
+	        }
         }
     }
 	@media screen and (max-width: 500px) {
@@ -211,10 +223,12 @@ import type { MenuVariants } from "~/modules/Menu/types/menu.types";
 import MainLogo from "~/modules/Menu/icons/MainLogo.vue";
 import BtnSecondary from "~/modules/Common/UI/BtnSecondary.vue";
 import useSearch from "~/modules/Booking/composables/useSearch";
+import {useAuth} from "~/modules/Auth/composables/useAuth";
 
 
 const { open } = useBurgerMenu();
 const {openAuthModal} = useAuthModal();
+const {logout} = useAuth()
 
 const authUser = useAuthUser();
 const props = withDefaults(

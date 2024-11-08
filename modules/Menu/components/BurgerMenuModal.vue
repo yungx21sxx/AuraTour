@@ -64,7 +64,9 @@
 											:subtitle="authUser.email"
 										>
 											<template #prepend>
-												<v-avatar v-if="authUser.avatar" :src="authUser.avatar"/>
+												<v-avatar v-if="authUser.avatar">
+													<v-img :src="authUser.avatar"/>
+												</v-avatar>
 												<v-avatar v-else color="#7059FF">{{authUser.name[0]}}</v-avatar>
 											</template>
 										</v-list-item>
@@ -74,18 +76,20 @@
 										<v-list-item>
 											<BtnPrimary
 												:prepend-icon="mdiAccountCircleOutline"
-												v-if="['TOURIST', 'LANDLORD'].includes(authUser.role)"
+												v-if="['MANAGER', 'ADMIN'].includes(authUser.role)"
 												href="/admin/bookings"
 												block
-											>Личный кабинет</BtnPrimary>
+												class="mb-2"
+											>Админка</BtnPrimary>
 											<BtnPrimary
 												:prepend-icon="mdiAccountCircleOutline"
-												v-else
+												v-if="authUser"
+												href="/lk/profile"
 												block
-											>Админка</BtnPrimary>
+											>Личный кабинет</BtnPrimary>
 										</v-list-item>
 										<v-list-item>
-											<BtnSecondary block :prepend-icon="mdiHomeVariantOutline">Мои объекты</BtnSecondary>
+											<BtnSecondary href="/lk/listings" block :prepend-icon="mdiHomeVariantOutline">Мои объекты</BtnSecondary>
 										</v-list-item>
 										<v-list-item>
 											<BtnSecondary @click="logout" block :prepend-icon="mdiLogout">Выйти</BtnSecondary>

@@ -159,8 +159,7 @@ model Photo {
   listingId Int?
   roomId    Int?
   position  Int?     @default(2)
-  userId    Int?     @unique
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User?
   listing   Listing? @relation(fields: [listingId], references: [id], onDelete: Cascade)
   room      Room?    @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }
@@ -239,7 +238,7 @@ model Booking {
 
 model User {
   id                Int                @id @default(autoincrement())
-  //Все роли: 'ADMIN', 'MANAGER', 'TOURIST', 'LANDLORD'
+  // Все роли: 'ADMIN', 'MANAGER', 'TOURIST', 'LANDLORD'
   role              String             @default("TOURIST")
   isTemporary       Boolean            @default(true)
   name              String
@@ -257,10 +256,13 @@ model User {
   userBookings      Booking[]          @relation("UserBookings")
   manageredBookings Booking[]          @relation("ManagedBookings")
 
+  telegram String?
+
   EmailVerificationCode EmailVerificationCode[]
   managerListings       Listing[]               @relation("ManagerRelation")
   ownerListings         Listing[]               @relation("OwnerRelation")
-  avatar                Photo?
+  avatar                Photo?                  @relation(fields: [avatarId], references: [id], onDelete: Cascade)
+  avatarId              Int?                    @unique
   reviews               Review[]
 }
 

@@ -40,6 +40,7 @@ export default defineEventHandler(async (event) => {
 			},
 			owner: {
 				select: {
+					id: true,
 					name: true,
 					phone: true,
 					avatar: true

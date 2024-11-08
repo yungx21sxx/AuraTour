@@ -16,13 +16,20 @@ class FiltersService {
 				}
 			});
 
+
+
 			// Для каждого типа жилья подсчитываем количество объектов в указанном городе
 			const countsByType = await Promise.all(allTypes.map(async (type) => {
+				const query = cityId ? {
+					typeId: type.id,
+					cityId: cityId,
+				} : {typeId: type.id}
+
 				const count = await prisma.listing.count({
-					where: cityId ? {
-						typeId: type.id,
-						cityId: cityId,
-					} : {typeId: type.id},
+					where: {
+						...query,
+						validated: true
+					},
 				});
 				return {
 					id: type.id,
@@ -44,10 +51,15 @@ class FiltersService {
 	}
 	async getMinAndMaxPriceForCity(cityId: number | null, startDate: Date, endDate: Date) {
 
+		const query = cityId ? {
+			cityId: cityId,
+		} : {}
+
 		const listings = await prisma.listing.findMany({
-			where: cityId ? {
-				cityId: cityId,
-			} : {},
+			where: {
+				...query,
+				validated: true
+			},
 			include: {
 				pricePeriods: true,
 				type: true,

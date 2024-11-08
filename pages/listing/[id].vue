@@ -23,6 +23,7 @@
 	import {mdiImage} from "@mdi/js";
 	import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 	import useGallery from "~/modules/Listing/composables/useGallery";
+	import useStatistics from "~/modules/Common/useStatistics";
 	const {isMobileOrTablet} = useDevice();
 	
 	const authUser = useAuthUser();
@@ -53,13 +54,29 @@
 		updateListingPrices(checkIn, checkOut);
 	})
 	
-	const isAdmin = computed(() => authUser.value && ['ADMIN', 'MANAGER', 'LANDLORD'].includes(authUser.value.role))
+	const isAdmin = computed(() => {
+		const fullAccess = authUser.value && ['ADMIN', 'MANAGER'].includes(authUser.value.role);
+		let isListingOwner: boolean = false;
+		
+		if (listing.value.owner) {
+			isListingOwner = authUser.value && authUser.value.id === listing.value.owner.id;
+		}
+		
+		return fullAccess || isListingOwner
+	})
 	
 	const ListingAdminPanel = computed(() => {
 		if (isAdmin) {
 			return defineAsyncComponent(() => import('@/modules/Admin/Listing/components/ListingAdminPanel.vue'))
 		}
 		return null;
+	})
+	
+	onMounted(() => {
+		if (!isAdmin) {
+			const {incrementStatistic} = useStatistics()
+			incrementStatistic('views', listing.value.id)
+		}
 	})
 	
 
@@ -83,7 +100,7 @@
 				<div v-if="isMobileOrTablet" style="text-align: center; margin-bottom: 24px;">
 					<BtnPrimary  width="300px" :prepend-icon="mdiImage" @click="galleyThumbsModalIsOpen = true">Показать все фото</BtnPrimary>
 				</div>
-				<ListingBookingForm target="sidebar" v-if="isMobileOrTablet "/>
+				<ListingBookingForm target="sidebar" v-if="isMobileOrTablet"/>
 				<ListingRooms id="rooms" />
 				<ListingDescription id="about"/>
 				<ListingRules id="rules"/>

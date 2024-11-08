@@ -4,7 +4,6 @@ import { prisma } from "~/server/service/prisma.service";
 import jwt from 'jsonwebtoken';
 
 export default defineEventHandler(async (event) => {
-    const { req } = event;
     const query = getQuery(event);
     const code = query.code as string;
 
@@ -16,9 +15,9 @@ export default defineEventHandler(async (event) => {
         // Обмениваем код на access_token
         const tokenResponse = await $fetch('https://oauth.vk.com/access_token', {
             params: {
-                client_id: process.env.VK_CLIENT_ID,
-                client_secret: process.env.VK_CLIENT_SECRET,
-                redirect_uri: process.env.VK_REDIRECT_URI,
+                client_id: '52476950',
+                client_secret: 'hjzUwhe10KrdFeQySaoe',
+                redirect_uri: 'https://aura-tour-abkhazia.ru/api/auth/vk/callback',
                 code,
             },
         });
@@ -62,7 +61,7 @@ export default defineEventHandler(async (event) => {
                         },
                     },
                     isTemporary: false,
-                    role: 'USER', // Устанавливаем роль по умолчанию
+                    role: 'TOURIST', // Устанавливаем роль по умолчанию
                 },
             });
         } else {
@@ -77,7 +76,7 @@ export default defineEventHandler(async (event) => {
 
         // Генерируем JWT токен
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'your_jwt_secret', {
-            expiresIn: '7d',
+            expiresIn: '30d',
         });
 
         // Устанавливаем cookie с токеном
@@ -85,7 +84,7 @@ export default defineEventHandler(async (event) => {
             httpOnly: true,
             sameSite: 'lax',
             path: '/',
-            maxAge: 60 * 60 * 24 * 7, // 7 дней
+            maxAge: 60 * 60 * 24 * 30, // 7 дней
         });
 
         // Перенаправляем пользователя на главную страницу или на нужный маршрут

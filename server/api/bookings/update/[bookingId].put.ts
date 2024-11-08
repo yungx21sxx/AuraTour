@@ -103,7 +103,7 @@ export default defineEventHandler(async (event) => {
             // Если статус изменился на 'COMPLETED', начисляем бонусы
             if (status === 'COMPLETED' && currentBooking.status !== 'COMPLETED' && booking.userId) {
                 const bonusAmount = Math.floor((booking.totalPrice || currentBooking.totalPrice) * 0.03);
-                const revenue =  Math.floor((booking.totalPrice || currentBooking.totalPrice) * 0.2);
+                const revenue =  Math.floor((booking.totalPrice || currentBooking.totalPrice) * 0.1);
                 // Создаем запись о бонусной транзакции
                 await prisma.bonusTransaction.create({
                     data: {

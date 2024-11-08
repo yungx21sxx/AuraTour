@@ -1,5 +1,6 @@
 <script setup lang="ts">
 	import useBooking from "~/modules/Booking/composables/useBooking";
+	import {mdiArrowLeftCircleOutline} from "@mdi/js";
 	
 	const {bookingModals, closeSetDateModal, beautifyDate, calculateDaysBetweenDates} = useBooking();
 	const {isMobileOrTablet} = useDevice();
@@ -33,7 +34,7 @@
 				}]">
 					<div class="modal__header header">
 						<div class="header__title">
-							<v-btn color="#7059FF" icon="mdi-arrow-left-circle-outline" @click="closeSetDateModal" variant="tonal"/>
+							<v-btn color="#7059FF" :icon="mdiArrowLeftCircleOutline" @click="closeSetDateModal" variant="tonal"/>
 							<h3>Выберите даты</h3>
 						</div>
 						<div class="header__dates dates" v-if="!range.start && !range.end">

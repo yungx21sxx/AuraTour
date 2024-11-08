@@ -12,7 +12,7 @@ const {openAuthModal} = useAuthModal()
 	<div class="wrapper promo-wrapper">
 		<section class="promo">
 			<BonusIcon class="bonus-icon"/>
-			<h3>Вернем до 10% от суммы бронирования</h3>
+			<h3>Вернем до 5% от суммы бронирования</h3>
 			<p>После завершения бронирования на ваш аккаунт будут начислены бонусы, которыми можно оплать следующее заселение.</p>
 			<button>
 				<span>Подробнее</span>

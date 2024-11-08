@@ -1,11 +1,13 @@
 <script setup lang="ts">
+import {mdiInstagram, mdiMapMarkerOutline, mdiPhoneOutline} from "@mdi/js";
+	
 	const {isMobile} = useDevice();
 
 
 </script>
 
 <template>
-	<div v-if="!isMobile" class="footer footer_desktop">
+	<div class="footer footer_desktop">
 		<div class="wrapper footer__body">
 			<div class="footer__left">
 				<NuxtLink to="/" class="footer__logo">
@@ -26,27 +28,27 @@
 					<NuxtLink to="/favorites" class="footer__link">Избранное</NuxtLink>
 					<NuxtLink to="/help" class="footer__link">Помощь</NuxtLink>
 					<NuxtLink to="/contacts" class="footer__link">Контакты и реквизиты</NuxtLink>
-					<NuxtLink @click="" class="footer__link">Личный кабинет</NuxtLink>
+					<NuxtLink to="/lk" class="footer__link">Личный кабинет</NuxtLink>
 				</div>
 				
 			</div>
 			<div class="footer__contacts">
 				<NuxtLink class="contact" to="tel:/+79409976702">
-					<v-icon class="contact__icon" color="#7059FF">mdi-phone-outline</v-icon>
+					<v-icon class="contact__icon" color="#7059FF" :icon="mdiPhoneOutline"></v-icon>
 					<div class="contact__body">
 						<div class="contact__desc">Служба поддержки</div>
 						<div class="contact__text">+7 (940) 997-67-02</div>
 					</div>
 				</NuxtLink>
 				<NuxtLink class="contact">
-					<v-icon class="contact__icon" color="#7059FF">mdi-map-marker-outline</v-icon>
+					<v-icon class="contact__icon" color="#7059FF" :icon="mdiMapMarkerOutline"></v-icon>
 					<div class="contact__body">
 						<div class="contact__desc">Адрес</div>
 						<div class="contact__text">г. Гудаута, Очамчирская 90</div>
 					</div>
 				</NuxtLink>
 				<NuxtLink class="contact" to="https://www.instagram.com/reel/C3-uB8sIlkW/?igsh=MXE4OTM4djBqcDZsNA==">
-					<v-icon class="contact__icon" color="#7059FF">mdi-instagram</v-icon>
+					<v-icon class="contact__icon" color="#7059FF" :icon="mdiInstagram"></v-icon>
 					<div class="contact__body">
 						<div class="contact__desc">Мы в Instagram</div>
 						<div class="contact__text">aura_tur_abkhazia</div>
@@ -57,7 +59,7 @@
 			
 		</div>
 	</div>
-	<div v-else class="footer footer_mobile">
+	<div class="footer footer_mobile">
 		<div class="wrapper footer__body">
 			
 			<NuxtLink to="/" class="footer__logo">
@@ -66,21 +68,21 @@
 			
 			<div class="footer__contacts">
 				<NuxtLink class="contact" to="tel:/+79409976702">
-					<v-icon class="contact__icon" color="#7059FF">mdi-phone-outline</v-icon>
+					<v-icon class="contact__icon" color="#7059FF" :icon="mdiPhoneOutline"></v-icon>
 					<div class="contact__body">
 						<div class="contact__desc">Служба поддержки</div>
 						<div class="contact__text">+7 (940) 997-67-02</div>
 					</div>
 				</NuxtLink>
 				<NuxtLink class="contact">
-					<v-icon class="contact__icon" color="#7059FF">mdi-map-marker-outline</v-icon>
+					<v-icon class="contact__icon" color="#7059FF" :icon="mdiMapMarkerOutline"></v-icon>
 					<div class="contact__body">
 						<div class="contact__desc">Адрес</div>
 						<div class="contact__text">г. Гудаута, Очамчирская 90</div>
 					</div>
 				</NuxtLink>
 				<NuxtLink class="contact" to="https://www.instagram.com/reel/C3-uB8sIlkW/?igsh=MXE4OTM4djBqcDZsNA==">
-					<v-icon class="contact__icon" color="#7059FF">mdi-instagram</v-icon>
+					<v-icon class="contact__icon" color="#7059FF" :icon="mdiInstagram"></v-icon>
 					<div class="contact__body">
 						<div class="contact__desc">Мы в Instagram</div>
 						<div class="contact__text">aura_tur_abkhazia</div>
@@ -109,6 +111,22 @@
 </template>
 
 <style scoped lang="scss">
+
+	.footer_desktop {
+		display: block;
+	}
+	.footer_mobile {
+		display: none;
+	}
+	
+	@media screen and (max-width: 700px){
+		.footer_desktop {
+			display: none;
+		}
+		.footer_mobile {
+			display: block;
+		}
+	}
 	//Общие стили
 	.footer {
 		background: #FFFFFF;

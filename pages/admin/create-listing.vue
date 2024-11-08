@@ -10,7 +10,7 @@ definePageMeta({
 
 <template>
 	<client-only>
-		<ListingCreateForm :admin="true"/>
+		<ListingCreateForm/>
 	</client-only>
 </template>
 

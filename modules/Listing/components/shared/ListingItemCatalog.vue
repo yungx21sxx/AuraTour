@@ -8,13 +8,17 @@
 	import FitIcon from "~/modules/Listing/icons/FitIcon.vue";
 	import RoomsIcon from "~/modules/Listing/icons/RoomsIcon.vue";
 	import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
-	const {listing} = defineProps<{
+	import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
+	const {listing, target = 'catalog'} = defineProps<{
 		listing: IListingPreviewResponse,
-		mobile?: boolean
+		mobile?: boolean,
+		target?: 'lk' | 'catalog'
 	}>();
 	
+	const authUser = useAuthUser()
+	
 	const {getBookingQueryLinkParameters} = useBooking();
-	const {addToFavorites, removeFromFavorites, favoriteListingIDs} = useFavorites()
+	const {addToFavorites, removeFromFavorites, favoriteListingIDs} = useFavorites();
 	
 	
 	const inFavorite = computed(() => {
@@ -37,7 +41,6 @@
 			'listing_mobile': mobile
 		}]"
 		:key="listing.id"
-		@click="goToListing"
 	>
 		<v-carousel
 			class="listing__carousel"
@@ -54,7 +57,7 @@
 			       @click="addToFavorites(listing.id)"
 			></v-btn>
 			<v-btn class="carousel__btn"
-			       :icon="mdiHeartOutline"
+			       :icon="mdiHeart"
 			       density="comfortable"
 			       color="rgba(255,255,255,.8)"
 			       v-else
@@ -66,7 +69,11 @@
 				<v-img @click.stop="goToListing" :src="photo" cover/>
 			</v-carousel-item>
 		</v-carousel>
-		<div class="listing__info info">
+		<div class="listing__info info" @click="goToListing">
+			<div v-if="target === 'lk'" class="mb-2">
+				<v-chip variant="flat" color="yellow" v-if="!listing.validated">Ожидает проверки</v-chip>
+				<v-chip variant="flat" color="blue" v-else>Объект размещен</v-chip>
+			</div>
 			<div class="info__title text-main" @click="goToListing">{{listing.title}}</div>
 			<div class="listing__address">
 				<v-icon size="18px" color="#7059FF" :icon="mdiMapMarker"></v-icon>

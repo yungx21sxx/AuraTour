@@ -14,10 +14,10 @@ export default defineNuxtConfig({
     }
   },
 
-  // sourcemap: {
-  //   server: true,
-  //   client: true,
-  // },
+  sourcemap: {
+    server: true,
+    client: true,
+  },
 
   runtimeConfig: {
     jwtSecret: process.env.JWT_SECRET,

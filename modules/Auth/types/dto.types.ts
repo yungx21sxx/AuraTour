@@ -12,5 +12,4 @@ export interface RegistrationDTO {
     name: string;
     surname: string;
     phone?: string;
-    role: 'TOURIST' | 'LANDLORD'
 }

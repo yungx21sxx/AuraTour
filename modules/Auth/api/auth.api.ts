@@ -26,7 +26,7 @@ export class AuthAPI {
     }
 
     static async logout() {
-        return $fetch('/api/auth/logout');
+        return $fetch('/api/auth/logout')
     }
 
     static async fetchProfile(): Promise<IAuthUser> {

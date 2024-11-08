@@ -15,6 +15,20 @@
 		bookings: ListingBookingItemAdminResponse[]
 	}>()
 	
+	import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
+	
+	const authUser = useAuthUser();
+	
+	const access = computed(() => {
+		const fullAccess = authUser.value && ['ADMIN', 'MANAGER'].includes(authUser.value.role);
+		const isListingOwner = authUser.value && (listing.value.owner && authUser.value.id === listing.value.owner.id);
+		
+		return {
+			fullAccess,
+			isListingOwner
+		}
+	})
+	
 	const {isMobile} = useDevice()
 	
 	const bookingCalendar = ref(false);
@@ -109,8 +123,10 @@
 	/>
 	<BookingCalendarModal :bookings="bookings" v-model:is-open="bookingCalendar"/>
 	<div class="mt-8">
-		<BtnPrimary :block="isMobile" class="mb-4 text-center" @click="createBooking">Создать бронирование</BtnPrimary>
-		<BtnSecondary :block="isMobile" class="mb-4 text-center" :prepend-icon="mdiCalendarMonthOutline" @click="bookingCalendar = true">Открыть календарь</BtnSecondary>
+		<div v-if="access.fullAccess">
+			<BtnPrimary :block="isMobile" class="mb-4 text-center" @click="createBooking">Создать бронирование</BtnPrimary>
+			<BtnSecondary :block="isMobile" class="mb-4 text-center" :prepend-icon="mdiCalendarMonthOutline" @click="bookingCalendar = true">Открыть календарь</BtnSecondary>
+		</div>
 		<h2 v-if="bookings.length === 0" class="text-center">
 			Бронированний пока нет.
 		</h2>
@@ -196,11 +212,11 @@
 							<div class="details__item">
 								<strong>Бонусные баллы:</strong> {{ booking.user.bonusPoints }}
 							</div>
-							<BtnPrimary class="mt-4 mb-4">Профиль пользователя</BtnPrimary>
+							<BtnPrimary v-if="access.fullAccess" :href="`/admin/user/${booking.user.id}`" class="mt-4 mb-4">Профиль пользователя</BtnPrimary>
 						</div>
 						<v-divider></v-divider>
-						<BtnSecondary class="mt-4" :prepend-icon="mdiPencil" @click="updateBooking(booking)">Редактировать</BtnSecondary>
-						<v-btn variant="elevated" color="red" class="mt-4" :prepend-icon="mdiPencil" @click="deleteConfirmSnackBar = true">Удалить</v-btn>
+						<BtnSecondary v-if="access.fullAccess" class="mt-4" :prepend-icon="mdiPencil" @click="updateBooking(booking)">Редактировать</BtnSecondary>
+						<v-btn variant="elevated" v-if="access.fullAccess" color="red" class="mt-4" :prepend-icon="mdiPencil" @click="deleteConfirmSnackBar = true">Удалить</v-btn>
 						
 						<v-snackbar
 							v-model="deleteConfirmSnackBar"

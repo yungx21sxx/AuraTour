@@ -48,3 +48,14 @@ interface ListingType {
     name: string;
     value: string;
 }
+
+export interface ListingMapItemResponse {
+    id: number,
+    coords: {
+        longitude: number
+        width: number
+    },
+    address: string,
+    minPrice: number,
+    totalPrice: number | null
+}

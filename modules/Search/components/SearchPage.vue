@@ -1,57 +1,3 @@
-<template>
-	<!-- Меню для изменения информации о бронировании -->
-	<HeaderSEO v-if="seoPage"/>
-	<HeaderDesktop v-else />
-	<div class="catalog wrapper">
-		<div class="catalog__sidebar">
-			<!-- Сайдбар с фильтрами -->
-			<FilterForm />
-		</div>
-		<div class="catalog__content">
-			<div class="catalog__filters">
-				<h3 id="listings">Найдено {{ listingsList.count }} вариантов жилья</h3>
-				<VSelect
-					hide-details
-					class="catalog__select"
-					:items="sortSelect"
-					item-title="text"
-					v-model="sortBy"
-					density="compact"
-					variant="outlined"
-				/>
-			</div>
-			
-			<template v-if="isFiltering">
-				<ListingItemSceleton v-for="n in 5" :key="n"/>
-			</template>
-			
-			<template v-else v-for="listing in listingsList.listings" :key="listing.id">
-				<ListingItemCatalog :listing="listing" />
-			</template>
-			
-			<div v-if="isLoading && hasMore && !isFiltering" class="loading-indicator">
-				<v-progress-circular
-					color="#7059FF"
-					indeterminate
-				></v-progress-circular>
-			</div>
-			
-			<!-- Элемент-наблюдатель для Intersection Observer -->
-			<div v-if="hasMore && !isFiltering" ref="observer" class="observer">
-			</div>
-			<!-- Сообщение об окончании списка -->
-			<div v-else-if="!hasMore && !isFiltering">
-				<v-alert
-					title="Объекты закончились"
-					type="success"
-				></v-alert>
-			</div>
-			
-		</div>
-	</div>
-	<!-- Модальное окно с фильтрами -->
-	<FilterFormModal />
-</template>
 
 <script setup lang="ts">
 import HeaderDesktop from "~/modules/Search/components/HeaderDesktop.vue";
@@ -70,6 +16,13 @@ import type { IQueryBooking } from '~/modules/Booking/types/query.types';
 import type { FiltersDTO } from '~/modules/Search/types/dto.types';
 import ListingItemSceleton from "~/modules/Listing/components/shared/ListingItemSceleton.vue";
 import HeaderSEO from "~/modules/Search/components/HeaderSEO.vue";
+import {mdiCloseCircle} from "@mdi/js";
+import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
+import CatalogListingsList from "~/modules/Search/components/CatalogListingsList.vue";
+import useMapCatalog from "~/modules/Search/composables/useMapCatalog";
+import CatalogListingsMap from "~/modules/Search/components/CatalogListingsMap.vue";
+import {map} from "zod";
+import CatalogListingsMapModal from "~/modules/Search/components/CatalogListingsMapModal.vue";
 
 
 
@@ -93,17 +46,11 @@ const {
 
 const {
 	createBookingDTO,
-	loadListings,
-	listingsList,
 	sortBy,
 	setFiltersDTO,
-	refreshListingList,
-	fetchCatalog,
+	
 	currentPage,
-	hasMore,
-	isFiltering,
 	isLoading,
-	debouncedRefreshListingList,
 	listingTypeSEOPage,
 	cityListingTypeSEOPage,
 	getSeoPage,
@@ -164,91 +111,36 @@ setFiltersDTO(parsedFilterParams);
 // Загружаем параметры фильтрации и инициализируем списки
 await fetchBookingFilters(bookingParameters, chosenCity.value ? chosenCity.value.id : null)
 
-
-const sortSelect = [
-	{
-		text: 'По популярности',
-		value: 'popularity',
-	},
-	{
-		text: 'Близость к морю',
-		value: 'sea-distance',
-	},
-	{
-		text: 'По возрастанию цены',
-		value: 'increase',
-	},
-	{
-		text: 'По убыванию цены',
-		value: 'decrease',
-	},
-];
-
-watch(sortBy, async () => {
-	debouncedRefreshListingList()
-});
-
-const { data: initialData, error: initialError } = await useAsyncData('initialCatalog', () => fetchCatalog());
-
-console.log('SSR отрисовка')
-// Обработка ошибки при загрузке данных на сервере
-if (initialError.value) {
-	console.error('Ошибка при загрузке данных на сервере:', initialError.value);
-}
-
-// Инициализируем данные
-if (initialData.value) {
-	listingsList.value.listings = initialData.value.listings;
-	listingsList.value.count = initialData.value.count;
-	currentPage.value = 2; // Устанавливаем следующую страницу для загрузки
-}
-
-const observer = ref(null);
-let intersectionObserver: IntersectionObserver;
-
-onMounted(() => {
-	// Инициализируем IntersectionObserver
-	intersectionObserver = new IntersectionObserver((entries) => {
-		entries.forEach((entry) => {
-			if (entry.isIntersecting) {
-				loadListings();
-			}
-		});
-	});
-	
-	// Наблюдаем за элементом, если он доступен
-	if (observer.value) {
-		intersectionObserver.observe(observer.value);
-	}
-});
-
-// Отслеживаем изменения в observer.value
-watch(
-	observer,
-	(newVal, oldVal) => {
-		// Прекращаем наблюдение за старым элементом
-		if (oldVal) {
-			intersectionObserver.unobserve(oldVal);
-		}
-		// Наблюдаем за новым элементом
-		if (newVal) {
-			intersectionObserver.observe(newVal);
-		}
-	},
-	{ flush: 'post' } // Обеспечиваем, что DOM обновлен перед запуском наблюдателя
-);
-
-onBeforeUnmount(() => {
-	// Очищаем наблюдатель
-	if (intersectionObserver && observer.value) {
-		intersectionObserver.unobserve(observer.value);
-	}
-});
+const {mapCatalogIsOpen} = useMapCatalog()
 
 </script>
 
-<style scoped lang="scss">
 
+
+<template>
+	<!-- Меню для изменения информации о бронировании -->
+	<HeaderSEO v-if="seoPage"/>
+	<HeaderDesktop v-else />
+	<div class="catalog wrapper">
+		<div class="catalog__sidebar">
+			<!-- Сайдбар с фильтрами -->
+			<FilterForm />
+		</div>
+		<div class="catalog__content">
+			<CatalogListingsMap :key="1" v-if="mapCatalogIsOpen"/>
+			<CatalogListingsList v-else/>
+		</div>
+		
+		
+		
+	</div>
+	<!-- Модальное окно с фильтрами -->
+	<FilterFormModal />
+	<CatalogListingsMapModal/>
+</template>
+
+
+<style scoped lang="scss">
 
 .catalog {
 	display: grid;
@@ -262,18 +154,6 @@ onBeforeUnmount(() => {
 		border-radius: 16px;
 		height: fit-content;
 	}
-	&__filters {
-		display: flex;
-		justify-content: space-between;
-		margin-bottom: 16px;
-		width: 100%;
-		align-items: center;
-	}
-	
-	&__select {
-		display: inline-block;
-		max-width: 250px ;
-	}
 	
 	@media screen and (max-width: 950px) {
 		margin-top: 16px !important;
@@ -282,32 +162,7 @@ onBeforeUnmount(() => {
 			display: none;
 		}
 	}
-	@media screen and (max-width: 600px) {
-		&__filters {
-			display: block !important;
-			margin-bottom: 0 !important;
-		}
-		&__select {
-			max-width: 500px !important;
-			width: 100%;
-			margin-top: 16px;
-			margin-bottom: 16px;
-		}
-		h3 {
-			font-weight: 600;
-			font-size: 16px;
-		}
-	}
-	@media screen and (max-width: 450px){
-		&__filters {
-			margin-top: 24px;
-		}
-	}
 }
 
-.loading-indicator {
-	display: flex;
-	justify-content: center;
-	margin-top: 24px;
-}
+
 </style>

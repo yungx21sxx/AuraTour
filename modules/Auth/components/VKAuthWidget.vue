@@ -1,7 +1,5 @@
 <script setup lang="ts">
 
-import useAuthModal from "~/modules/Auth/composables/useAuthModal";
-const {authModalIsOpen} = useAuthModal();
 function loadVKIDScript() {
 	return new Promise((resolve, reject) => {
 		if (window.VKIDSDK) {
@@ -18,6 +16,7 @@ function loadVKIDScript() {
 		document.head.appendChild(script);
 	});
 }
+
 const vkAuthIsLoaded = ref(false);
 onMounted(() => {
 	loadVKIDScript()

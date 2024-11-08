@@ -3,11 +3,18 @@ import useCreateListing from "~/modules/Admin/ListingCRUD/composables/useCreateL
 import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 import UserSearchDialog from "~/modules/Admin/Shared/UserSearchDialog.vue";
 import type {ListingBookingUserResponse} from "~/modules/Admin/Listing/types/response.types";
+import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
 
-const {listingFormData, initialData} = useCreateListing();
+const authUser = useAuthUser();
+const {listingFormData, initialData, ownerData} = useCreateListing();
+
+if (authUser.value && authUser.value.role === 'MANAGER') {
+	listingFormData.value.managerId = authUser.value.id
+}
+
+
 
 const userSearchModal = ref(false);
-const ownerData = ref<ListingBookingUserResponse | null>(null);
 
 const setOwner = (owner: ListingBookingUserResponse) => {
 	ownerData.value = owner;
@@ -40,8 +47,7 @@ const setOwner = (owner: ListingBookingUserResponse) => {
 					:subtitle="ownerData.email"
 				>
 					<template #prepend>
-						<v-avatar v-if="ownerData.avatar" :src="ownerData.avatar"/>
-						<v-avatar v-else color="#7059FF">{{ownerData.name[0]}}</v-avatar>
+						<v-avatar color="#7059FF">{{ownerData.name[0]}}</v-avatar>
 					</template>
 				</v-list-item>
 			</v-list>

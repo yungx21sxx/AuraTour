@@ -15,4 +15,5 @@ export const userUpdateSchema = z.object({
     phone: z.string().min(1, 'Телефон обязателен для заполнения').optional(),
     role: z.enum(['ADMIN', 'MANAGER', 'TOURIST', 'LANDLORD']).optional(),
     avatarId: z.number().int().optional(),
+    telegram: z.string().optional()
 })

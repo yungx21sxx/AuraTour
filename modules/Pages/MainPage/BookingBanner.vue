@@ -19,7 +19,7 @@ const {searchData} = useSearch();
                     посуточно
                 </h1>
                 <div class="banner__info">
-                    <p>Вернем до <strong>10%</strong> от стомости бронирования</p>
+                    <p>Вернем до <strong>5%</strong> от стомости бронирования</p>
                     <button>
                         Узнать подробности
                         <v-icon :icon="mdiArrowRight" size="24" />

@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
 
         const body = await readBody(event);
 
-        const { email, name, surname, role, phone } = registerSchema.parse(body);
+        const { email, name, surname, role = 'TOURIST', phone } = registerSchema.parse(body);
 
         // Проверяем, существует ли уже временный пользователь с таким email
         let user = await prisma.user.findUnique({ where: { email } });

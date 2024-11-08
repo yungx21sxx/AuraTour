@@ -1,14 +1,5 @@
 <template>
 	<v-form ref="formRef" @submit.prevent="submit" style="margin: 24px 0">
-		<v-select
-			v-model="role"
-			:items="roleOptions"
-			label="Роль пользователя"
-			item-title="label"
-			item-value="value"
-			:rules="[v => !!v || 'Выберите роль']"
-			required
-		></v-select>
 		<v-text-field
 			v-model="emailInput"
 			label="Почта"
@@ -30,11 +21,11 @@
 			required
 		></v-text-field>
 		
-		<v-text-field
+		<PhoneInput
 			v-model="phone"
-			label="Номер телефона (необязательно)"
+			label="Номер телефона"
 			type="tel"
-		></v-text-field>
+		></PhoneInput>
 		
 		<BtnPrimary
 			type="submit"
@@ -61,7 +52,7 @@ import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 import {AuthAPI} from "~/modules/Auth/api/auth.api";
 import type {H3Error} from "h3";
 
-const emit = defineEmits(['onSucces']);
+const emit = defineEmits(['onSuccess']);
 
 const formRef = ref();
 
@@ -69,7 +60,6 @@ const emailInput = ref('');
 const firstName = ref('');
 const lastName = ref('');
 const phone = ref('');
-const role = ref('TOURIST');
 
 const isLoading = ref(false);
 const serverErrors = ref<string[]>([]);
@@ -82,12 +72,6 @@ const emailRules = [
 const nameRules = [
 	(v: string) => !!v || 'Поле обязательно для заполнения',
 ];
-
-const roleOptions = [
-	{ label: 'Отельер', value: 'LANDLORD' },
-	{ label: 'Турист', value: 'TOURIST' },
-];
-
 
 const submit = async () => {
 	if (formRef.value) {
@@ -108,7 +92,6 @@ const submit = async () => {
 			name: firstName.value,
 			surname: lastName.value,
 			phone: phone.value || undefined,
-			role: role.value,
 		})
 		emit('onSuccess', email);
 	} catch (error: H3Error) {

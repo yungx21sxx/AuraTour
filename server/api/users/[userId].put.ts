@@ -71,6 +71,7 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event);
     const parsedData = userUpdateSchema.safeParse(body);
 
+
     if (!parsedData.success) {
         throw createError({
             statusCode: 400,
@@ -150,7 +151,7 @@ export default defineEventHandler(async (event) => {
             data,
         });
         return {
-            message: 'User updated successfully',
+            message: 'Данные успешно обновленны!',
             data: updatedUser,
         };
     } catch (error: any) {

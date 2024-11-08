@@ -5,7 +5,7 @@
 	import useCatalog from "~/modules/Search/composables/useCatalog";
 	import useBooking from "~/modules/Booking/composables/useBooking";
 	import type {FiltersDTO} from "~/modules/Search/types/dto.types";
-
+	import useMapCatalog from "~/modules/Search/composables/useMapCatalog";
 	
 	const {filters} = useFilters();
 	const {setFiltersDTO, isFiltering, debouncedRefreshListingList, filtersDTO, getRedirectPath, listingTypeSEOPage, cityListingTypeSEOPage} = useCatalog();
@@ -52,6 +52,10 @@
 		if (!seoPage) {
 			setFiltersDTO(filtersDTO);
 			debouncedRefreshListingList();
+			const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog()
+			if (mapCatalogIsOpen.value || mapModalIsOpen.value) {
+				await refreshNuxtData('map-listings-list')
+			}
 		}
 	}
 	

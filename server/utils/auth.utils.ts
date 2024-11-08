@@ -3,7 +3,7 @@ import {prisma} from "~/server/service/prisma.service";
 
 export const getUserFromToken = async (token: string) => {
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: number };
+        const decoded = jwt.verify(token, 'gjc8aKwxK3dWgg00XiGqgaWXCuixVb7v') as { userId: number };
         console.log(decoded)
         const user = await prisma.user.findUnique({
             where: { id: decoded.userId },
@@ -31,4 +31,4 @@ export const getUserFromToken = async (token: string) => {
     }
 };
 
-export const generateToken = (userId: number) => jwt.sign({ userId }, process.env.JWT_SECRET as string, { expiresIn: '21d' });
+export const generateToken = (userId: number) => jwt.sign({ userId }, 'gjc8aKwxK3dWgg00XiGqgaWXCuixVb7v', { expiresIn: '21d' });

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 	import useFavorites from "~/components/pages/Favorites/useFavorites";
 	import type {IListingPreviewResponse} from "~/types/response.types";
+	import ListingItemCatalog from "~/modules/Listing/components/shared/ListingItemCatalog.vue";
+	import {mdiHeartPlusOutline} from "@mdi/js";
 	
 	const {getLocaleStoreData} = useFavorites();
 	
@@ -55,7 +57,7 @@
 		<h1 class="mb-4">Избранное жилье</h1>
 		<div class="favorites__body" v-if="clientLoaded">
 			<v-alert
-				icon="mdi-heart-plus-outline"
+				:icon="mdiHeartPlusOutline"
 				class="mt-4"
 				color="#FFFFFF"
 				v-if="showEmptyMassage"
@@ -68,7 +70,7 @@
 					</div>
 				</template>
 			</v-alert>
-			<ListingItem
+			<ListingItemCatalog
 				v-for="listing of listings"
 				:listing="listing"
 			/>

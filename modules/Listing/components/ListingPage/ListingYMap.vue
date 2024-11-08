@@ -26,7 +26,6 @@ const map = shallowRef<null | YMap>(null);
 			v-model="map"
 			class="map__canvas"
 			:settings="{
-			
 		        location: {
 		          center: [listing.coords.longitude, listing.coords.width],
 		          zoom: 17,

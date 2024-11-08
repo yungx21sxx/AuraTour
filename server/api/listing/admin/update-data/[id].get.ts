@@ -15,6 +15,13 @@ export default defineEventHandler(async (event) => {
                     elevator: true,
                 }
             },
+            owner: {
+                select: {
+                    name: true,
+                    surname: true,
+                    email: true,
+                }
+            },
             photos: {
                 select: {
                     id: true,

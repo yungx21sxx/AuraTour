@@ -324,7 +324,7 @@ const goBack = () => {
 								<v-text-field variant="outlined" required label="Имя" :rules="formRules.name" v-model="bookingFormData.userName"/>
 								<v-text-field variant="outlined" required label="Фамилия"  :rules="formRules.surname" v-model="bookingFormData.userSurname"/>
 							</div>
-							<v-text-field variant="outlined" class="mb-2" required :rules="formRules.phone" v-model="bookingFormData.userPhone"/>
+							<PhoneInput variant="outlined" class="mb-2" required :rules="formRules.phone" v-model="bookingFormData.userPhone"/>
 							
 							<v-textarea v-model="bookingFormData.comment" style="height: 150px !important;" variant="outlined" placeholder="Дополнительная информация и Ваши пожелания:" label="Комментарий (Необязательно)"/>
 							

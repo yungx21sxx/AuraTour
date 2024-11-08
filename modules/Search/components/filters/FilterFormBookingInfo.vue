@@ -10,6 +10,7 @@ import BookingSearchLocation from "~/modules/Booking/components/BookingSearchLoc
 import BookingSetDate from "~/modules/Booking/components/BookingSetDate.vue";
 import useSearch from "~/modules/Booking/composables/useSearch";
 import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
+import useMapCatalog from "~/modules/Search/composables/useMapCatalog";
 
 const {light} = defineProps({
 	light: {
@@ -29,7 +30,7 @@ const {
 	getBookingQueryLinkParameters,
 } = useBooking();
 
-const { getRedirectPath } = useCatalog();
+const { getRedirectPath, debouncedRefreshListingList , createBookingDTO} = useCatalog();
 const { parseQueryParams, filtersModalIsOpen } = useFilters();
 const {chosenCity} = useSearch();
 
@@ -65,14 +66,19 @@ watch(getBookingQueryLinkParameters, async () => {
 			...getBookingQueryLinkParameters.value,
 			...filtersQueryParameters
 		}
-	}, {
-		external: true
 	})
+	createBookingDTO(getBookingQueryLinkParameters.value, citySlug.value);
+	debouncedRefreshListingList();
+	const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog();
+	if (mapCatalogIsOpen.value || mapModalIsOpen.value) {
+		await refreshNuxtData('map-listings-list');
+	}
 }, {
 	deep: true,
 })
 
-const scrollBottom = () => window.scrollBy(0, 140)
+const scrollBottom = () => window.scrollBy(0, 140);
+
 </script>
 
 <template>

@@ -29,11 +29,11 @@
 				<h3 class="rules__subtitle">Правила бронирования</h3>
 				<div class="rules__rule">
 					<NuxtIcon class="rules__icon" name="prepay" filled/>
-					<div class="rules__text">Предоплата: на усмотрение арендатора</div>
+					<div class="rules__text">Предоплата: 20% от стоимости бронирования</div>
 				</div>
 				<div class="rules__rule">
 					<NuxtIcon class="rules__icon" name="cancel-rules" filled/>
-					<div class="rules__text">Условия бесплатной отмены брони: за 21 дней</div>
+					<div class="rules__text">Условия бесплатной отмены брони: за 30 дней</div>
 				</div>
 			</div>
 		</div>

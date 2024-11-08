@@ -1,12 +1,18 @@
 import type {IListingPreviewResponse} from "~/types/response.types";
+import useStatistics from "~/modules/Common/useStatistics";
 
 export default () => {
-	const favoriteListingIDs = useState<number[]>(() => [])
+	const favoriteListingIDs = useState<number[]>('favorite',() => [])
 
-	const saveChanges = (listings: number[]) => localStorage.setItem('favorites', JSON.stringify(listings))
+	const saveChanges = (listings: number[]) => localStorage.setItem('favorites', JSON.stringify(listings));
+
 	const addToFavorites = (listingId: number) => {
-		favoriteListingIDs.value.push(listingId)
-		saveChanges(favoriteListingIDs.value)
+		favoriteListingIDs.value.push(listingId);
+		saveChanges(favoriteListingIDs.value);
+
+		const {incrementStatistic} = useStatistics();
+
+		incrementStatistic('favorites', listingId)
 	}
 
 	const removeFromFavorites = (listingId: number) => {

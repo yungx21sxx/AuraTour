@@ -14,5 +14,5 @@ export const registerSchema = z.object({
     name: z.string().min(1, { message: 'Имя обязательно для заполнения' }),
     surname: z.string(),
     phone: z.string().optional(),
-    role: z.enum([ 'TOURIST', 'LANDLORD']),
+    role: z.enum([ 'TOURIST', 'LANDLORD']).optional(),
 });

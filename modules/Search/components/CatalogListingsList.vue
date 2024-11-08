@@ -1,0 +1,234 @@
+<script setup lang="ts">
+
+import {mdiCloseCircle, mdiMapOutline} from "@mdi/js";
+import ListingItemSceleton from "~/modules/Listing/components/shared/ListingItemSceleton.vue";
+import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
+import ListingItemCatalog from "~/modules/Listing/components/shared/ListingItemCatalog.vue";
+import useCatalog from "~/modules/Search/composables/useCatalog";
+import useMapCatalog from "~/modules/Search/composables/useMapCatalog";
+import CatalogListingsMapModal from "~/modules/Search/components/CatalogListingsMapModal.vue";
+
+const {listingsList, sortBy, isLoading, isFiltering, debouncedRefreshListingList, hasMore, loadListings, fetchCatalog, currentPage} = useCatalog();
+
+const sortSelect = [
+	{
+		text: 'По популярности',
+		value: 'popularity',
+	},
+	{
+		text: 'Близость к морю',
+		value: 'sea-distance',
+	},
+	{
+		text: 'По возрастанию цены',
+		value: 'increase',
+	},
+	{
+		text: 'По убыванию цены',
+		value: 'decrease',
+	},
+];
+
+watch(sortBy, async () => {
+	debouncedRefreshListingList()
+});
+
+const { data: initialData, error: initialError } = await useAsyncData('initialCatalog', () => fetchCatalog());
+
+
+// Обработка ошибки при загрузке данных на сервере
+if (initialError.value) {
+	console.error('Ошибка при загрузке данных на сервере:', initialError.value);
+}
+
+// Инициализируем данные
+if (initialData.value) {
+	listingsList.value.listings = initialData.value.listings;
+	listingsList.value.count = initialData.value.count;
+	currentPage.value = 2; // Устанавливаем следующую страницу для загрузки
+}
+
+const observer = ref(null);
+let intersectionObserver: IntersectionObserver;
+
+onMounted(() => {
+	// Инициализируем IntersectionObserver
+	intersectionObserver = new IntersectionObserver((entries) => {
+		entries.forEach((entry) => {
+			if (entry.isIntersecting) {
+				loadListings();
+			}
+		});
+	});
+	
+	// Наблюдаем за элементом, если он доступен
+	if (observer.value) {
+		intersectionObserver.observe(observer.value);
+	}
+});
+
+// Отслеживаем изменения в observer.value
+watch(
+	observer,
+	(newVal, oldVal) => {
+		// Прекращаем наблюдение за старым элементом
+		if (oldVal) {
+			intersectionObserver.unobserve(oldVal);
+		}
+		// Наблюдаем за новым элементом
+		if (newVal) {
+			intersectionObserver.observe(newVal);
+		}
+	},
+	{ flush: 'post' } // Обеспечиваем, что DOM обновлен перед запуском наблюдателя
+);
+
+onBeforeUnmount(() => {
+	// Очищаем наблюдатель
+	if (intersectionObserver && observer.value) {
+		intersectionObserver.unobserve(observer.value);
+	}
+});
+
+const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog()
+
+</script>
+
+<template>
+	<div class="catalog__content">
+		<div class="catalog__filters">
+			<h3 id="listings">Найдено {{ listingsList.count }} вариантов жилья</h3>
+			<VSelect
+				hide-details
+				class="catalog__select"
+				:items="sortSelect"
+				item-title="text"
+				v-model="sortBy"
+				density="compact"
+				variant="outlined"
+			/>
+		</div>
+		
+		<div class="map">
+			<img src="/map.png" alt="map">
+			<div class="map__info">
+				<h3 class="map__title mb-2">
+					Найди лучшее жилье на карте!
+				</h3>
+				<p class="mb-4">Смотрите на карте цены на соседние объекты, близость к пляжам и выбирайте лучшее предложение</p>
+				<BtnPrimary class="btn-desktop" @click="mapCatalogIsOpen = true">Показать на карте</BtnPrimary>
+				<BtnPrimary @click="mapModalIsOpen = true" :prepend-icon="mdiMapOutline" class="btn-mobile">Показать на карте</BtnPrimary>
+			</div>
+			<v-icon :icon="mdiCloseCircle"></v-icon>
+		</div>
+		
+		<template v-if="isFiltering">
+			<ListingItemSceleton v-for="n in 5" :key="n"/>
+		</template>
+		
+		<template v-else v-for="listing in listingsList.listings" :key="listing.id">
+			<ListingItemCatalog :listing="listing" />
+		</template>
+		
+		<div v-if="isLoading && hasMore && !isFiltering" class="loading-indicator">
+			<v-progress-circular
+				color="#7059FF"
+				indeterminate
+			></v-progress-circular>
+		</div>
+		
+		<!-- Элемент-наблюдатель для Intersection Observer -->
+		<div v-if="hasMore && !isFiltering" ref="observer" class="observer">
+		</div>
+		<!-- Сообщение об окончании списка -->
+		<div v-else-if="!hasMore && !isFiltering">
+			<v-alert
+				title="Объекты закончились"
+				type="success"
+			></v-alert>
+		</div>
+	
+	</div>
+</template>
+
+<style scoped lang="scss">
+
+.map {
+	display: flex;
+	background: #F1F3F9;
+	border-radius: 16px;
+	padding: 10px;
+	gap: 10px;
+	margin-bottom: 16px;
+	img {
+		height: 125px;
+		width: auto;
+	}
+	.btn-mobile {
+		display: none;
+	}
+	@media screen and (max-width: 600px){
+		padding: 16px;
+		img, .btn-desktop {
+			display: none;
+		}
+		.btn-mobile {
+			display: flex;
+		}
+		p {
+			font-size: 14px;
+		}
+		
+	}
+}
+
+.loading-indicator {
+	display: flex;
+	justify-content: center;
+	margin-top: 24px;
+}
+
+.catalog {
+	&__filters {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 16px;
+		width: 100%;
+		align-items: center;
+	}
+	
+	&__select {
+		display: inline-block;
+		max-width: 250px;
+	}
+	
+	@media screen and (max-width: 950px) {
+		&__sidebar {
+			display: none;
+		}
+	}
+	
+	@media screen and (max-width: 600px) {
+		&__filters {
+			display: block !important;
+			margin-bottom: 0 !important;
+		}
+		&__select {
+			max-width: 500px !important;
+			width: 100%;
+			margin-top: 16px;
+			margin-bottom: 16px;
+		}
+		h3 {
+			font-weight: 600;
+			font-size: 16px;
+		}
+	}
+	@media screen and (max-width: 450px){
+		&__filters {
+			margin-top: 24px;
+		}
+	}
+}
+
+</style>

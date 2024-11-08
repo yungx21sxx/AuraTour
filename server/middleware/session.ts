@@ -10,7 +10,7 @@ interface RolePermissions {
 
 // Пути, требующие проверки роли
 const roleProtectedPaths: RolePermissions = {
-    '/api/users/*': ['ADMIN', 'MANAGER', 'TOURIST', 'LANDLORD'],
+    // '/api/users/*': ['ADMIN', 'MANAGER', 'TOURIST', 'LANDLORD'],
     '/api/auth/profile': ['ADMIN', 'MANAGER', 'TOURIST', 'LANDLORD'],
     // '/api/bookings/listing/*': ['ADMIN', 'MANAGER', 'LANDLORD'],
     // '/api/bookings/all': ['ADMIN', 'MANAGER'],
@@ -22,6 +22,7 @@ const roleProtectedPaths: RolePermissions = {
 // Пути, где нужно просто добавить пользователя в запрос, без проверки роли
 const userExtractPaths: string[] = [
     '/api/reviews/*',
+    '/api/listing/admin/*'
 ];
 
 // Функция для проверки соответствия пути с шаблоном

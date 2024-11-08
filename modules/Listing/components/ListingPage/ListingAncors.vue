@@ -16,8 +16,12 @@
 <script lang="ts" setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import useListing from "~/modules/Listing/composables/useListing";
+import useFavorites from "~/components/pages/Favorites/useFavorites";
+
 
 const {listing} = useListing();
+
+
 
 interface Link {
 	name: string

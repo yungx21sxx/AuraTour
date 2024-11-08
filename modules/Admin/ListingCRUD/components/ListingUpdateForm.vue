@@ -8,10 +8,14 @@ import FileUploader from "~/modules/Admin/ListingCRUD/components/FileUploader.vu
 import PeriodsCreater from "~/modules/Admin/ListingCRUD/components/PeriodsCreater.vue";
 import CreateRooms from "~/modules/Admin/ListingCRUD/components/CreateRooms.vue";
 import SetManager from "~/modules/Admin/ListingCRUD/components/SetManager.vue";
+import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
+import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
+const authUser = useAuthUser();
 
+const isAdminOrManager = computed(() => ['ADMIN', 'MANAGER'].includes(authUser.value?.role))
 
 const route = useRoute()
-const {listingFormData, fetchListingUpdateData, initialData, fetchInitialData, setPhoneRaw, updateListing, rooms, createListing, createOrUpdateError} = useCreateListing()
+const {listingFormData, fetchListingUpdateData, initialData, fetchInitialData, setPhoneRaw, updateListing, rooms, createListing, createOrUpdateError, errorMassages} = useCreateListing()
 const {beautifyDate} = useBooking();
 
 await fetchInitialData()
@@ -39,7 +43,7 @@ const isHotelType = computed<boolean>(() => {
 				</v-card-item>
 			</v-card>
 			
-			<SetManager/>
+			<SetManager v-if="isAdminOrManager"/>
 			
 			<SetLocation/>
 			<FileUploader v-model="listingFormData.photos"/>
@@ -120,8 +124,18 @@ const isHotelType = computed<boolean>(() => {
 			</v-card>
 			<CreateRooms v-else-if="isHotelType"/>
 			
-			<v-btn class="mt-8" width="100%" color="blue" @click="updateListing">Сохранить объект</v-btn>
-</v-form>
+			<BtnPrimary v-if="isAdminOrManager" class="mt-8" width="100%"  @click="updateListing(authUser.role)">Сохранить объект</BtnPrimary>
+			<BtnPrimary v-else class="mt-8" width="100%" @click="updateListing(authUser.role)">Отправить на модерацию</BtnPrimary>
+			
+			<div v-if="errorMassages.length > 0">
+				<h4 class="mb-2 mt-4">Не заполенны следующие поля:</h4>
+				<ul class="mb-8">
+					<li
+						v-for="error of errorMassages"
+					>{{error}}</li>
+				</ul>
+			</div>
+		</v-form>
 </div>
 </template>
 

@@ -7,9 +7,26 @@
 	import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 	import {mdiPencil, mdiDeleteForeverOutline, mdiPlus} from "@mdi/js"
 	import ListingStatistic from "~/modules/Admin/Listing/components/ListingStatistic.vue";
+	import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
+	
+	const authUser = useAuthUser();
+	
+	const access = computed(() => {
+		const fullAccess = authUser.value && ['ADMIN', 'MANAGER'].includes(authUser.value.role);
+		let isListingOwner: boolean = false;
+		
+		if (listing.value.owner) {
+			isListingOwner = authUser.value && authUser.value.id === listing.value.owner.id;
+		}
+		
+		return {
+			fullAccess,
+			isListingOwner
+		}
+	})
 	
 	const {listing} = useListing()
-	const tabs = [
+	const tabsList = [
 		{
 			value: 1,
 			name: 'Броинрования',
@@ -18,7 +35,7 @@
 		{
 			value: 2,
 			name: 'Заметки',
-			disabled: false
+			disabled: access.value.isListingOwner
 		},
 		{
 			value: 3,
@@ -26,12 +43,17 @@
 			disabled: false
 		},
 	]
+	
+	const tabs = computed(() => tabsList.filter(tab => !tab.disabled))
+	
+	
+	
 	const currentTab = ref(1);
 	const {data, refresh, error} = await useAsyncData('listing-bookings', () => ListingBookingApi.fetchBookings(listing.value.id));
 	
 	const {data: listingNote} = await useFetch(`/api/listing-note/${listing.value.id}`)
 	
-	const noteText = ref(listingNote.value.note ?? '');
+	const noteText = ref(listingNote.value.note || '');
 	
 	const createNote = async () => {
 		await useFetch(`/api/listing-note/${listing.value.id}`, {
@@ -57,9 +79,13 @@
 
 <template>
 	<div class="listing-block">
-		<div class="mb-5 menu">
+		<div class="mb-5 menu" v-if="access.fullAccess">
 			<v-btn color="green" :href="`/admin/edit-listing/${listing.id}`" :prepend-icon="mdiPencil">Редактировать объект</v-btn>
-			<v-btn color="blue" href="/admin/create-listing" :prepend-icon="mdiPlus">Создать объект</v-btn>
+			<v-btn color="blue" href="/admin/create-listing" :prepend-icon="mdiPlus" v-if="access.fullAccess">Создать объект</v-btn>
+			<v-btn color="red" @click="listingDeleteSnackBar = true"  :prepend-icon="mdiDeleteForeverOutline">Удалить объект</v-btn>
+		</div>
+		<div class="mb-5 menu" v-else>
+			<v-btn color="green" :href="`/lk/edit-listing/${listing.id}`" :prepend-icon="mdiPencil">Редактировать объект</v-btn>
 			<v-btn color="red" @click="listingDeleteSnackBar = true"  :prepend-icon="mdiDeleteForeverOutline">Удалить объект</v-btn>
 		</div>
 		<v-tabs

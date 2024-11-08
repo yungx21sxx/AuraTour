@@ -7,17 +7,20 @@ import PeriodsCreater from "~/modules/Admin/ListingCRUD/components/PeriodsCreate
 import CreateRooms from "~/modules/Admin/ListingCRUD/components/CreateRooms.vue";
 import {beautifyDate} from "~/modules/Common/Utils/dates.utils";
 import SetManager from "~/modules/Admin/ListingCRUD/components/SetManager.vue";
+import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
+import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
+
+const authUser = useAuthUser();
+
+const isAdminOrManager = computed(() => ['ADMIN', 'MANAGER'].includes(authUser.value?.role))
 
 definePageMeta({
 	layout: 'admin',
 	middleware: ['admin-only'],
 });
 
-const props = defineProps<{
-	admin: boolean
-}>()
 
-const {listingFormData, initialData, fetchInitialData, createListing, validationFail, roomsDontAdded} = useCreateListing()
+const {listingFormData, initialData, fetchInitialData, createListing, validationFail, roomsDontAdded, errorMassages} = useCreateListing()
 
 
 await fetchInitialData()
@@ -77,7 +80,7 @@ onMounted(() => {
 					</v-card-item>
 				</v-card>
 				
-				<SetManager/>
+				<SetManager v-if="isAdminOrManager"/>
 				
 				<SetLocation/>
 				<FileUploader v-model="listingFormData.photos"/>
@@ -159,23 +162,17 @@ onMounted(() => {
 				</v-card>
 				<CreateRooms v-else-if="isHotelType"/>
 				
-				<v-btn class="mt-8" width="100%" color="blue" @click="createListing">Сохранить объект</v-btn>
-				<v-alert
-					v-if="validationFail"
-					class="mt-4"
-					color="error"
-					icon="$error"
-					title="Заполните всю информацию"
-					variant="tonal"
-				></v-alert>
-				<v-alert
-					v-if="roomsDontAdded"
-					class="mt-4"
-					color="error"
-					icon="$error"
-					title="Вы не добавили номера"
-					variant="tonal"
-				></v-alert>
+				<BtnPrimary v-if="isAdminOrManager" class="mt-8" width="100%"  @click="createListing(authUser.role)">Сохранить объект</BtnPrimary>
+				<BtnPrimary v-else class="mt-8 mb-4" width="100%" @click="createListing(authUser.role)">Отправить на модерацию</BtnPrimary>
+				
+				<div v-if="errorMassages.length > 0">
+					<h4 class="mb-2 mb-4">Не заполенны следующие поля:</h4>
+					<ul class="mb-8">
+						<li
+							v-for="error of errorMassages"
+						>{{error}}</li>
+					</ul>
+				</div>
 			</v-form>
 		</div>
 </template>

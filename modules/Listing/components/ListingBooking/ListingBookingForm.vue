@@ -51,8 +51,10 @@ const dates = computed(() => {
 </script>
 
 <template>
-	<div class="booking listing-block contacts">
-		<v-avatar v-if="listing.manager.avatar" :src="listing.manager.avatar" size="60"/>
+	<div class="booking listing-block contacts" v-if="listing.manager">
+		<v-avatar v-if="listing.manager.avatar">
+			<v-img :src="listing.manager.avatar"/>
+		</v-avatar>
 		<v-avatar v-else color="#7059FF" size="60">{{listing.manager.name[0]}}</v-avatar>
 		<div class="name">{{listing.manager.name}}</div>
 		<div class="phone">{{parsePhoneNumber(listing.manager.phone).formatNational()}}</div>
@@ -60,6 +62,9 @@ const dates = computed(() => {
 		<BtnPrimary class="booking__whats"  :href="whatsLink" :prepend-icon="mdiWhatsapp" color="#2F9E45">
 			Написать в WhatsApp
 		</BtnPrimary>
+	</div>
+	<div v-else class="booking listing-block contacts">
+		После проверки объявления к нему будет прикреплен менеджер.
 	</div>
 	<div class="booking listing-block">
 		<div class="booking__main">
@@ -167,7 +172,7 @@ const dates = computed(() => {
 				v-if="!listing.isHotelType && listing.places < peopleCount.adults + peopleCount.children"
 				class="min-days-alert"
 			></v-alert>
-			<BtnPrimary v-if="listing.minDaysOrder > listing.calculatedPrices?.daysCount" block class="mt-6" @click="openSetDateModal">Изменить даты</BtnPrimary>
+			<BtnSecondary v-if="listing.minDaysOrder > listing.calculatedPrices?.daysCount" block class="mt-6" @click="openSetDateModal">Изменить даты</BtnSecondary>
 			<BtnPrimary v-if="listing.calculatedPrices" block class="mt-6" @click="listingBookingConfirmModal = true">Оставить заявку</BtnPrimary>
 		</div>
 		<v-alert
