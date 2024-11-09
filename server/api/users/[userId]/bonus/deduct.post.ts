@@ -73,7 +73,7 @@ export default defineEventHandler(async (event) => {
             data: {
                 userId,
                 amount: -amount, // Отрицательное значение для списания
-                description: description ? description : 'Начисление бонусов.',
+                description: description ? description : 'Списание бонусов.',
             },
         });
 

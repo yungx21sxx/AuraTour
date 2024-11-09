@@ -3,6 +3,7 @@
 	import type {IListingPreviewResponse} from "~/types/response.types";
 	import ListingItemCatalog from "~/modules/Listing/components/shared/ListingItemCatalog.vue";
 	import {mdiHeartPlusOutline} from "@mdi/js";
+	import MenuMain from "~/modules/Menu/components/MenuMain.vue";
 	
 	const {getLocaleStoreData} = useFavorites();
 	
@@ -51,7 +52,7 @@
 </script>
 
 <template>
-
+	<MenuMain/>
 	<div class="favorites">
 		<v-breadcrumbs class="mb-2" :items="breadcrumbs"></v-breadcrumbs>
 		<h1 class="mb-4">Избранное жилье</h1>

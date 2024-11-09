@@ -117,6 +117,9 @@ const onSaveHandler = async () => {
 					<div class="details__item" v-if="booking.bonusApplied">
 						<strong>Использовано бонусов:</strong> {{ booking.bonusAppliedCount }}
 					</div>
+					<div class="details__item">
+						<strong>Менеджер:</strong> {{ booking.managedBy.name }}
+					</div>
 					<!-- Информация о пользователе -->
 					<div class="details__user" v-if="booking.user">
 						<v-divider class="my-4"></v-divider>
@@ -133,7 +136,8 @@ const onSaveHandler = async () => {
 						<div class="details__item">
 							<strong>Бонусные баллы:</strong> {{ booking.user.bonusPoints }}
 						</div>
-						<BtnPrimary class="mt-4 mb-4">Профиль пользователя</BtnPrimary>
+						<BtnPrimary class="mt-4 mb-4" :href="`/admin/user/${booking.user.id}`">Профиль пользователя</BtnPrimary>
+						<BtnSecondary class="mt-4 mb-4" :href="`/listing/${booking.listing.id}`">Страница объекта</BtnSecondary>
 					</div>
 					<v-divider></v-divider>
 					<BtnSecondary class="mt-4" :prepend-icon="mdiPencil" @click="updateBooking(booking)">Редактировать</BtnSecondary>

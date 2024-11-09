@@ -2,7 +2,7 @@
 	<nav id="nav" class="navigation">
 		<ul :class="{ 'navigation-list': true, mobile: isMobile }">
 			<li
-				v-for="(link, index) in links"
+				v-for="(link, index) in computedLinks"
 				:key="index"
 				:class="{ active: activeSectionId === link.id }"
 				@click.prevent="scrollToSection(link.id)"
@@ -55,8 +55,14 @@ const links: Link[] = [
 		id: 'map',
 		enable: true,
 	},
+	{
+		name: 'Отзывы',
+		id: 'reviews',
+		enable: true,
+	},
 ]
 
+const computedLinks = computed(() => links.filter(link => link.enable))
 
 const activeSectionId = ref('gallery')
 const isMobile = ref(false)

@@ -84,15 +84,7 @@ export default defineEventHandler(async (event) => {
 
     // Обработка изменения роли
     if (data.role && data.role !== user.role) {
-        if (isAdminOrManager) {
-            // Администраторы и менеджеры могут назначать только роль 'ADMIN'
-            if (data.role !== 'ADMIN') {
-                throw createError({
-                    statusCode: 403,
-                    statusMessage: 'Managers and Admins can assign only ADMIN role',
-                });
-            }
-        } else if (isEditingOwnAccount) {
+        if (isEditingOwnAccount) {
             // Пользователи могут менять роль только между TOURIST и LANDLORD
             const validRoleChanges: Record<string, string> = {
                 TOURIST: 'LANDLORD',

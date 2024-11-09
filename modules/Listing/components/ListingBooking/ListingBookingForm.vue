@@ -143,28 +143,29 @@ const dates = computed(() => {
 		<p class="dates-alert mb-4" v-if="!listing.calculatedPrices">Выберите даты поездки</p>
 		<BtnPrimary block @click="openSetDateModal" v-if="!listing.calculatedPrices">Проверить цены</BtnPrimary>
 		<div class="order-info" v-if="!listing.isHotelType">
-			<div class="total">Итоговая сумма:</div>
-			
-			<div class="mt-4" v-if="authUser && authUser.bonusPoints > 0">Количество бонусов: <strong>{{authUser.bonusPoints}}</strong></div>
-			<v-switch
-				v-if="authUser && authUser.bonusPoints > 0"
-				v-model="applyBonus"
-				label="Списать бонусы"
-				color="rgb(112, 89, 255)"
-				hide-details
-			/>
 			<div class="price-block">
 				<span class="days">За сутки</span>
 				<span class="price">{{listing.calculatedPrices ? listing.calculatedPrices.dailyPrice.toLocaleString() : listing.minPrice.toLocaleString()}} ₽</span>
 			</div>
-			<div class="price-block" v-if="listing.calculatedPrices">
-				<span class="days">За {{formatDays(listing.calculatedPrices.daysCount)}}</span>
-				<div class="price" style="color: #2a2536;" v-if="authUser && authUser.bonusPoints > 0 && applyBonus">
-					<span>{{(listing.calculatedPrices.totalPrice - authUser.bonusPoints).toLocaleString()}} ₽</span>
-					<strike style="color: #6a6d81; margin-left: 8px;">{{listing.calculatedPrices.totalPrice.toLocaleString()}} ₽</strike>
+			<div v-if="listing.calculatedPrices">
+				<div class="mt-4" v-if="authUser && authUser.bonusPoints > 0">Количество бонусов: <strong>{{authUser.bonusPoints}}</strong></div>
+				<v-switch
+					v-if="authUser && authUser.bonusPoints > 0"
+					v-model="applyBonus"
+					label="Списать бонусы"
+					color="rgb(112, 89, 255)"
+					hide-details
+				/>
+				<div class="price-block">
+					<span class="days">За {{formatDays(listing.calculatedPrices.daysCount)}}</span>
+					<div class="price" style="color: #2a2536;" v-if="authUser && authUser.bonusPoints > 0 && applyBonus">
+						<span>{{(listing.calculatedPrices.totalPrice - authUser.bonusPoints).toLocaleString()}} ₽</span>
+						<strike style="color: #6a6d81; margin-left: 8px;">{{listing.calculatedPrices.totalPrice.toLocaleString()}} ₽</strike>
+					</div>
+					<span class="price" style="color: #2a2536;" v-else>{{listing.calculatedPrices.totalPrice.toLocaleString()}} ₽</span>
 				</div>
-				<span class="price" style="color: #2a2536;" v-else>{{listing.calculatedPrices.totalPrice.toLocaleString()}} ₽</span>
 			</div>
+			
 			<v-alert
 				type="info"
 				variant="tonal"

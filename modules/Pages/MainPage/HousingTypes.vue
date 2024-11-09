@@ -66,7 +66,7 @@
 			margin-bottom: 16px !important;
 		}
 		
-		@media screen and (max-width: 450px) {
+		@media screen and (max-width: 650px) {
 			&__title {
 				font-size: 24px;
 				

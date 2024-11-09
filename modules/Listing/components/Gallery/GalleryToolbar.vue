@@ -19,8 +19,8 @@ const inFavorite = computed(() => {
 		<template #append>
 			<v-btn v-if="isMobile && !inFavorite" :icon="mdiHeartOutline"/>
 			<v-btn v-if="isMobile && inFavorite" :icon="mdiHeart"/>
-			<v-btn variant="text" v-if="!inFavorite" :prepend-icon="mdiHeartOutline">Сохранить</v-btn>
-			<v-btn variant="text" v-else :prepend-icon="mdiHeart">Сохранено</v-btn>
+			<v-btn variant="text" v-if="!isMobile && !inFavorite" :prepend-icon="mdiHeartOutline">Сохранить</v-btn>
+			<v-btn variant="text" v-if="!isMobile && inFavorite" :prepend-icon="mdiHeart">Сохранено</v-btn>
 			<v-menu>
 				<template v-slot:activator="{ props }">
 					<v-btn v-if="isMobile" :icon="mdiShareVariant"/>

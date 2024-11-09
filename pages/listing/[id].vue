@@ -105,7 +105,7 @@
 				<ListingDescription id="about"/>
 				<ListingRules id="rules"/>
 				<ListingYMap id="map"/>
-				<ListingReviews/>
+				<ListingReviews id="reviews"/>
 			</div>
 			<div class="listing__sidebar booking" v-if="!isMobileOrTablet">
 				<ListingBookingForm target="sidebar"/>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+	import MenuMain from "~/modules/Menu/components/MenuMain.vue";
+	
 	const breadcrumbs = [
 		{
 			title: 'Главная',
@@ -15,13 +17,13 @@
 </script>
 
 <template>
+	<MenuMain/>
 	<div class="help wrapper">
 		<v-breadcrumbs :items="breadcrumbs" class="mb-4"></v-breadcrumbs>
 		<v-card class="mb-4">
 			<v-card-text class="text">
 				<h3 class="mb-2">Как оплатить бронирование?</h3>
 				<p>Порядок оплаты за бронирование определяется только после личного общения гостя и владельца (представителя) объекта размещения. Как правило, после обсуждения согласования всех существенных условий, указанных в заявке гостя (стоимость, условия размещения, срок проживания и прочее) владелец выставит счет на предоплату, которая составляет 15% от стоимости проживания или за 1 сутки.</p>
-				
 			</v-card-text>
 		</v-card>
 		<v-card class="mb-4">

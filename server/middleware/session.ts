@@ -22,7 +22,8 @@ const roleProtectedPaths: RolePermissions = {
 // Пути, где нужно просто добавить пользователя в запрос, без проверки роли
 const userExtractPaths: string[] = [
     '/api/reviews/*',
-    '/api/listing/admin/*'
+    '/api/listing/admin/*',
+    '/api/users/*',
 ];
 
 // Функция для проверки соответствия пути с шаблоном

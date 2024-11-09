@@ -90,7 +90,7 @@
 	}
 	
 	const saveRoomChanges = async () => {
-		console.log('update')
+		
 		if (formRef.value) {
 			const { valid } = await formRef.value.validate();
 			if (!valid) {
@@ -102,6 +102,10 @@
 		}
 		if (roomFormData.value.photos.length === 0) {
 			errors.value = ['Фотографии не загружены'];
+			return;
+		}
+		if (roomFormData.value.amenities.length === 0) {
+			errors.value = ['Удобства не указаны'];
 			return;
 		}
 		
@@ -194,7 +198,7 @@
 	<v-card
 		elevation="0"
 		v-for="room of listingFormData.rooms"
-		:class="['room mt-8', {
+		:class="['room mt-8 ml-4 mr-4', {
 			'no-photos': room.photos.length === 0
 		}]"
 		max-width="900px"

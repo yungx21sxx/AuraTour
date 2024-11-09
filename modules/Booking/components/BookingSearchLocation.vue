@@ -2,7 +2,7 @@
 	import useBooking from "~/modules/Booking/composables/useBooking";
 	import useSearch from "~/modules/Booking/composables/useSearch";
 	import useShowListingCount from "~/composables/useShowListingCount";
-	import {mdiMagnify, mdiArrowLeftCircleOutline} from "@mdi/js"
+	import {mdiMagnify, mdiArrowLeftCircleOutline, mdiShare, mdiArrowRightCircleOutline, mdiChevronLeft} from "@mdi/js"
 	import type {ICitySearchItem} from "~/modules/Booking/types/response.types";
 	
 	function levenshteinDistance(a, b) {
@@ -90,6 +90,8 @@
 	
 	const {isMobileOrTablet} = useDevice();
 	
+	const slide = ref(1)
+	
 	
 </script>
 
@@ -130,20 +132,55 @@
 						</v-list>
 						
 						<v-list dense v-else>
-							<h4>Популярные направления</h4>
-							<v-card
-								v-for="city in searchData.cities.slice(0,6)"
-								:key="city.id"
-								elevation="0"
-								@click="onCitySelect(city)"
-							>
-								<div class="search-res">
-									<v-icon :icon="mdiMagnify"></v-icon>
-									<p>
-										{{ city.cityName }}, <span>{{ city.regionName }}</span>
-									</p>
-								</div>
-							</v-card>
+							<v-window v-model="slide">
+								<v-window-item :value="1">
+									<h4>Популярные направления</h4>
+									<v-card
+										v-for="city in searchData.cities.slice(0,6)"
+										:key="city.id"
+										elevation="0"
+										@click="onCitySelect(city)"
+									>
+										<div class="search-res">
+											<v-icon :icon="mdiMagnify" color="#6a6d81"></v-icon>
+											<p>
+												{{ city.cityName }}, <span>{{ city.regionName }}</span>
+											</p>
+										</div>
+									</v-card>
+									<v-chip class="mt-2 mb-2" color="#7059FF" :append-icon="mdiArrowRightCircleOutline" @click="slide = 2">Все направления</v-chip>
+									<h4 class="mt-4">Типы жилья</h4>
+									<div style="display: flex; flex-wrap: wrap; gap: 12px;">
+										<v-chip
+											v-for="type in searchData.listingTypes"
+											:key="type.id"
+											elevation="0"
+											:href="`/search/?housingTypesId=${type.id}`"
+											variant="outlined"
+											color="#333D46"
+										>
+											{{ type.name }}
+										</v-chip>
+									</div>
+								</v-window-item>
+								<v-window-item :value="2">
+									<v-chip class="mt-2 mb-2" color="#7059FF" :prepend-icon="mdiChevronLeft" @click="slide = 1">Популярные направления</v-chip>
+									<v-card
+										v-for="city in searchData.cities"
+										:key="city.id"
+										elevation="0"
+										@click="onCitySelect(city)"
+									>
+										<div class="search-res">
+											<v-icon :icon="mdiMagnify" color="#6a6d81"></v-icon>
+											<p>
+												{{ city.cityName }}, <span>{{ city.regionName }}</span>
+											</p>
+										</div>
+									</v-card>
+								</v-window-item>
+							</v-window>
+						
 						</v-list>
 						
 					</div>

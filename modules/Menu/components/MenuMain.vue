@@ -19,24 +19,26 @@
                     </template>
                     <v-card max-width="350">
                         <v-card-item>
-	                        <h4 class="mt-2 mb-2">Популярные направления</h4>
-	                        <v-chip-group column color="#7059FF">
+	                        <h4 class="mt-2 mb-4">Популярные направления</h4>
+	                        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
 		                        <v-chip
 			                        v-for="city of searchData.cities.slice(0,8)"
 			                        :key="city.id"
-			                        color="#7059FF"
+			                        variant="outlined"
+			                        color="#333D46"
 			                        :href="`/search/city/${city.slug}`"
 		                        >{{city.cityName}}</v-chip>
-	                        </v-chip-group>
-	                        <h4 class="mt-4 mb-2">Типы жилья</h4>
-	                        <v-chip-group column color="#7059FF">
+	                        </div>
+	                        <h4 class="mt-8 mb-4">Типы жилья</h4>
+	                        <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
 		                        <v-chip
 			                        v-for="type of searchData.listingTypes.slice(0,5)"
 			                        :key="type.id"
-			                        color="#7059FF"
+			                        variant="outlined"
+			                        color="#333D46"
 			                        :href="`/search/type/${type.slug}`"
 		                        >{{type.name}}</v-chip>
-	                        </v-chip-group>
+	                        </div>
                         </v-card-item>
                     </v-card>
                 </v-menu>
@@ -148,6 +150,10 @@
 </template>
 
 <style lang="scss" scoped>
+
+h4 {
+	color: $text-gray;
+}
 .nav {
     padding: 4px 0;
 

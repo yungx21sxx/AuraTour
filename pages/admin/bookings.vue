@@ -60,7 +60,7 @@
 					v-for="booking of bookings"
 					:booking="booking"
 					:key="booking.id"
-					@on-update="resetData"
+					@on-update="onBookingsUpdate"
 				/>
 			</v-expansion-panels>
 			
@@ -83,6 +83,7 @@ import {mdiCalendarMonthOutline, mdiPencil} from "@mdi/js";
 import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 import BtnSecondary from "~/modules/Common/UI/BtnSecondary.vue";
 import FullBookingItemAdmin from "~/modules/Admin/Booking/components/FullBookingItemAdmin.vue";
+import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
 
 definePageMeta({
 	layout: 'admin',
@@ -159,14 +160,24 @@ const isAllDataLoaded = ref(false);
 const observerElement = ref<HTMLElement | null>(null);
 let observer: IntersectionObserver | null = null;
 
+
+const authUser = useAuthUser()
 // Загрузка данных при монтировании компонента
 onMounted(async () => {
 	await loadCities();
 	await loadManagers();
+	if (authUser.value && authUser.value.role === 'MANAGER' && managers.value) {
+		selectedManager.value = managers.value.find(manager => manager.id === authUser.value.id) || null;
+	}
 	resetData();
 	await fetchBookings();
 	initIntersectionObserver();
 });
+
+const onBookingsUpdate = async () => {
+	resetData();
+	await fetchBookings();
+}
 
 onBeforeUnmount(() => {
 	if (observer) {

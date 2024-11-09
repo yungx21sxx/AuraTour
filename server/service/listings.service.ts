@@ -692,6 +692,36 @@ class ListingsService {
 		}
 	}
 
+	async getListingsForModeration() {
+		const listings = await prisma.listing.findMany({
+			where: {
+				validated: false
+			},
+			include: {
+				city: true,
+				photos: true,
+				amenities: {
+					include: {
+						amenity: true
+					}
+				},
+				_count: {
+					select: {
+						rooms: true
+					}
+				},
+			},
+		})
+		return listings.map(listing => {
+			return {
+				...this.transformResponse(listing, 'catalog'),
+				dailyPrice: listing.minPrice,
+				totalPrice: null
+			}
+		})
+	}
+
+
 	async getFavorites(listingIDs: number[]) {
 		const listings = await prisma.listing.findMany({
 			where: {

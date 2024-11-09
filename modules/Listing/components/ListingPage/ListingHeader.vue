@@ -27,7 +27,7 @@
 			{
 				title: listing.value.city.name,
 				disabled: false,
-				href: `/search/${listing.value.city.slug}`,
+				href: `/search/city/${listing.value.city.slug}`,
 			},
 		]
 	});

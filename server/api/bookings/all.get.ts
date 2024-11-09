@@ -69,6 +69,7 @@ export default defineEventHandler(async (event) => {
                         surname: true,
                         email: true,
                         bonusPoints: true,
+                        phone: true,
                     }
                 },
                 managedBy: {

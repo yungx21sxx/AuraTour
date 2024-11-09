@@ -1,7 +1,14 @@
 <script setup lang="ts">
 	import useBurgerMenu from "~/modules/Menu/composables/useBurgerMenu";
 	import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
-	import {mdiAccountCircleOutline, mdiClose, mdiHomeVariantOutline, mdiLogout, mdiMagnify} from "@mdi/js";
+	import {
+		mdiAccountCircleOutline,
+		mdiChevronLeft,
+		mdiClose,
+		mdiHomeVariantOutline,
+		mdiLogout,
+		mdiMagnify
+	} from "@mdi/js";
 	import BookingMainForm from "~/modules/Booking/components/BookingMainForm.vue";
 	import MainLogo from "~/modules/Menu/icons/MainLogo.vue";
 	import useFavorites from "~/components/pages/Favorites/useFavorites";
@@ -44,15 +51,15 @@
 								<UserIcon class="nav__icon"/>
 								<span>Личный кабинет</span>
 							</NuxtLink>
-							<NuxtLink class="nav__link" href="/favorites" >
+							<NuxtLink class="nav__link" to="/favorites" external>
 								<LikeIcon class="nav__icon" />
 								<span>Избранное</span>
 							</NuxtLink>
-							<NuxtLink class="nav__link" href="/help" >
+							<NuxtLink class="nav__link" to="/help" external>
 								<HelpIcon class="nav__icon" />
 								<span>Помощь</span>
 							</NuxtLink>
-							<NuxtLink class="nav__link" href="/help" >
+							<NuxtLink class="nav__link" to="/help" external>
 								<InfoIcon class="nav__icon" />
 								<span>О нас</span>
 							</NuxtLink>
@@ -111,8 +118,10 @@
 						</div>
 					</v-window-item>
 					<v-window-item :value="2">
-						<v-chip @click="menuPosition -= 1" color="#7059FF" prepend-icon="mdi-chevron-left" class="ml-2 mb-4">Назад</v-chip>
-						<BookingMainForm @submit="close"/>
+						<div style="padding: 20px 16px">
+							<v-chip @click="menuPosition -= 1" color="#7059FF" :prepend-icon="mdiChevronLeft" class="mb-6">Назад</v-chip>
+							<BookingMainForm @submit="close"/>
+						</div>
 					</v-window-item>
 				</v-window>
 			
@@ -166,7 +175,7 @@
 	&__link {
 		display: flex;
 		align-items: center;
-		gap: 8px;
+		gap: 12px;
 		color: #2A2536;
 	}
 	

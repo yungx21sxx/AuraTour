@@ -25,6 +25,8 @@ const userEditFromData = ref({
 	email: user.value.email,
 });
 
+const snackbar = ref(false)
+
 const adminEditData = ref({
 	telegram: null,
 	avatarId: null,
@@ -53,6 +55,7 @@ async function updateUserInfo() {
 		})
 		await fetchProfile();
 		await refresh();
+		snackbar.value = true
 	} catch (e) {
 		console.log(e)
 	}
@@ -115,7 +118,21 @@ const isAdmin = computed(() => ['ADMIN', 'MANAGER'].includes(authUser.value?.rol
 			:subtitle="`На сумму: ${Math.abs(transaction.amount).toLocaleString()}`"
 		/>
 	</v-list>
-	
+	<v-snackbar
+		v-model="snackbar"
+		:timeout="2000"
+	>
+		Изменения сохранены
+		<template v-slot:actions>
+			<v-btn
+				color="pink"
+				variant="text"
+				@click="snackbar = false"
+			>
+				Закрыть
+			</v-btn>
+		</template>
+	</v-snackbar>
 	
 </template>
 

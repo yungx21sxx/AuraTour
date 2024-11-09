@@ -2,6 +2,8 @@
 
 
 
+import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
+
 const formDataDefault = {
 	phone: '',
 	name: ''
@@ -60,8 +62,8 @@ watch(phone, () => {
 					Мы берем на себя все вопросы по организации вашего отдыха. Оставьте заявку и мы расскажем о всех доступных предложених и подберем самое лучшее для Вас.
 				</p>
 				<v-text-field variant="outlined" required :rules="[(v: string) => !!v || 'Введите имя']" label="Как вас зовут?" v-model="formDataRequest.name"/>
-				<PhoneInput  required :rules="[(v: string) => !!v || 'Введите номер']" v-model="phone"/>
-				<v-btn color="#7059FF" type="submit" block :loading="pending">{{btnText}}</v-btn>
+				<PhoneInput variant="outlined"  required :rules="[(v: string) => !!v || 'Введите номер']" v-model="phone"/>
+				<BtnPrimary color="#7059FF" type="submit" block :loading="pending">{{btnText}}</BtnPrimary>
 			</v-form>
 			<v-img src="/main-page/submit.webp" class="form__img" cover/>
 		</div>
@@ -72,16 +74,10 @@ watch(phone, () => {
 <style scoped lang="scss">
 
 .form {
-	
-	
-	
 	margin-top: 48px;
 	display: grid;
 	grid-template-columns: 1fr 1.2fr;
 	gap: 64px;
-	border-radius: 12px;
-	background: #FFFFFF;
-	
 	
 	
 	&__title {
@@ -96,19 +92,24 @@ watch(phone, () => {
 		border-radius: 12px;
 		height: 350px;
 	}
-	@media screen and (max-width: 860px) {
+	
+	
+	@media screen and (max-width: 800px) {
 		grid-template-columns: 1fr;
+		
 		margin-top: 32px !important;
 		gap: 16px;
-		&__img {
-			border-radius: 12px !important;
-			height: 200px;
-		}
 		
 		&__body {
-			margin: 16px !important;
+			max-width: 500px;
+		}
+		&__img {
+			display: none;
 		}
 	}
+	
+	
+	
 }
 
 
