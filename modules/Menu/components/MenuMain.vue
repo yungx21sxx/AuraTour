@@ -53,7 +53,7 @@
                     class="nav__link"
                     :color="color"
                     variant="text"
-                    href="/about"
+                    href="/help"
                     >Помощь</v-btn
                 >
             </div>

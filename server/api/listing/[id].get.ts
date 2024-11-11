@@ -36,6 +36,7 @@ export default defineEventHandler(async (event) => {
 					surname: true,
 					phone: true,
 					email: true,
+					telegram: true
 				}
 			},
 			owner: {

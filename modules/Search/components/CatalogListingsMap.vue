@@ -6,7 +6,8 @@
 		YandexMapControls, YandexMapDefaultFeaturesLayer,
 		YandexMapDefaultSchemeLayer,
 		YandexMapMarker,
-		YandexMapZoomControl
+		YandexMapZoomControl,
+		VueYandexMaps
 	} from 'vue-yandex-maps';
 	import BtnSecondary from "~/modules/Common/UI/BtnSecondary.vue";
 	import {mdiChevronLeft, mdiClose} from "@mdi/js";
@@ -84,7 +85,9 @@
 	
 	const listingModal = ref(false);
 	const currentListings = ref<IListingPreviewResponse[] | null>(null);
-	const listingsLoading = ref(false)
+	const listingsLoading = ref(false);
+	
+	
 	
 	const openListingModal = async (IDs: number[]) => {
 		listingModal.value = true;
@@ -99,9 +102,20 @@
 		listingsLoading.value = false
 	}
 	
-	const {isMobile} = useDevice()
+	const {isMobile} = useDevice();
 	
+	const mapLoading = ref(true);
+	const mapError = ref(false);
 	
+	watch(VueYandexMaps.loadStatus, (status) => {
+		console.log(status)
+		if (status === 'loaded') {
+			mapLoading.value = false;
+		}
+		if (VueYandexMaps.loadError.value) {
+			mapError.value = true
+		}
+	});
 </script>
 
 <template>
@@ -120,6 +134,7 @@
 				<yandex-map
 					v-model="map"
 					class="map__canvas"
+					v-show="!mapLoading"
 					:settings="{
 			        location: {
 			          center: [mapListingsList.listings[0].coords.longitude, mapListingsList.listings[0].coords.width],
@@ -147,6 +162,12 @@
 						</div>
 					</yandex-map-marker>
 				</yandex-map>
+				<div v-if="mapLoading" style="display: flex; justify-content: center; height: 400px; flex-direction: column; align-items: center">
+					<v-progress-circular
+						color="primary"
+						indeterminate
+					></v-progress-circular>
+				</div>
 			</div>
 			
 			
@@ -159,7 +180,14 @@
 						<ListingItemCatalog
 							v-for="listing of currentListings"
 							:listing="listing"
+							v-if="!listingsLoading"
 						/>
+						<div v-else style="display: flex; justify-content: center; margin-top: 24px; margin-bottom: 56px;">
+							<v-progress-circular
+								color="primary"
+								indeterminate
+							></v-progress-circular>
+						</div>
 					</v-card-item>
 				</v-card>
 			</v-dialog>
@@ -173,7 +201,14 @@
 						<ListingItemCatalog
 							v-for="listing of currentListings"
 							:listing="listing"
+							v-if="!listingsLoading"
 						/>
+						<div v-else style="display: flex; justify-content: center; margin-top: 24px; margin-bottom: 56px;">
+							<v-progress-circular
+								color="primary"
+								indeterminate
+							></v-progress-circular>
+						</div>
 					</v-card-text>
 				
 				</v-card>

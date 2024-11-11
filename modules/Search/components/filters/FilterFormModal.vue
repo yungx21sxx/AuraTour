@@ -3,6 +3,7 @@
 import FilterForm from "~/modules/Search/components/filters/FilterForm.vue";
 import useFilters from "~/modules/Search/composables/useFilters";
 import useCatalog from "~/modules/Search/composables/useCatalog";
+import {mdiClose} from "@mdi/js";
 const {filtersModalIsOpen} = useFilters();
 const {listingsList} = useCatalog()
 const {isMobile} = useDevice();
@@ -13,7 +14,7 @@ const {isMobile} = useDevice();
 		<v-card>
 			<v-toolbar>
 				<v-btn
-					icon="mdi-close"
+					:icon="mdiClose"
 					@click="filtersModalIsOpen = false"
 				></v-btn>
 				

@@ -104,6 +104,7 @@ const isAdmin = computed(() => ['ADMIN', 'MANAGER'].includes(authUser.value?.rol
 	<div v-if="isAdmin">
 		<v-file-input label="Загрузить аватар" v-model="avatar" :show-size="1000"/>
 		<BtnPrimary class="mb-4" @click="uploadAvatar" :loading="fileLoading">Загрузить</BtnPrimary>
+		<div>Имя пользователя без знака @</div>
 		<v-text-field v-model="adminEditData.telegram" label="Ник в телеграмм"></v-text-field>
 	</div>
 	<BtnPrimary :disabled="!editDetected" @click="updateUserInfo">Сохранить изменения</BtnPrimary>

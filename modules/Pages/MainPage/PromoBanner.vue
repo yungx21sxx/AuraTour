@@ -4,18 +4,22 @@ import BonusIcon from "~/modules/Pages/MainPage/Icons/BonusIcon.vue";
 import {mdiChevronRight} from "@mdi/js";
 import TransferIcon from "~/modules/Pages/MainPage/Icons/TransferIcon.vue";
 import useAuthModal from "~/modules/Auth/composables/useAuthModal";
+import ConsultSubmitModal from "~/modules/Common/ConsultSubmitModal.vue";
+import ConsultingIcon from "~/modules/Pages/MainPage/Icons/ConsultingIcon.vue";
 
-const {openAuthModal} = useAuthModal()
+const {openAuthModal} = useAuthModal();
+
+const consultModal = ref(false)
 </script>
 
 <template>
 	<div class="wrapper promo-wrapper">
 		<section class="promo">
-			<BonusIcon class="bonus-icon"/>
-			<h3>Вернем до 5% от суммы бронирования</h3>
-			<p>После завершения бронирования на ваш аккаунт будут начислены бонусы, которыми можно оплать следующее заселение.</p>
-			<button>
-				<span>Подробнее</span>
+			<ConsultingIcon/>
+			<h3>Персональный подбор жилья</h3>
+			<p>Расскажем о всех доступных предложених и подберем самое лучшее.</p>
+			<button @click="consultModal = true">
+				<span>Оставить заявку</span>
 				<v-icon :icon="mdiChevronRight"/>
 			</button>
 		</section>
@@ -23,12 +27,13 @@ const {openAuthModal} = useAuthModal()
 			<TransferIcon/>
 			<h3>Бесплатная экскурсия</h3>
 			<p>При бронирование жилья на срок от 10 дней, экскурсия в подарок</p>
-			<button>
+			<NuxtLink style="color: white" to="/search" external>
 				<span>Смотреть жилье</span>
 				<v-icon :icon="mdiChevronRight"/>
-			</button>
+			</NuxtLink>
 		</section>
 	</div>
+	<ConsultSubmitModal v-model="consultModal"/>
 </template>
 
 <style scoped lang="scss">

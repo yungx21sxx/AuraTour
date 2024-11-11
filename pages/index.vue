@@ -8,6 +8,8 @@ import Excursions from "~/modules/Pages/MainPage/Excursions.vue";
 import Advantages from "~/modules/Pages/MainPage/Advantages.vue";
 import useSearch from "~/modules/Booking/composables/useSearch";
 import PromoBanner from "~/modules/Pages/MainPage/PromoBanner.vue";
+import BonusProgramModal from "~/modules/Common/BonusProgramModal.vue";
+import PassListingBanner from "~/modules/Pages/MainPage/PassListingBanner.vue";
 
 const { isMobile } = useDevice();
 const { loadSearchData } = useSearch();
@@ -22,9 +24,12 @@ const { loadSearchData } = useSearch();
 	<v-lazy>
 		<HousingTypes />
 	</v-lazy>
-    <Excursions />
-	
+	<div class="wrapper">
+		<PassListingBanner/>
+	</div>
+
     <Advantages />
+
 </template>
 
 <style scoped lang="scss"></style>

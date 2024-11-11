@@ -103,114 +103,116 @@
 </script>
 
 <template>
-	<ReviewCreateModal
-		v-model:is-open="isReviewCreateModalOpen"
-		:is-admin="isAdmin"
-		:review-to-update="reviewToUpdateData"
-		:review-id="reviewToUpdateId"
-		@onSave="onReviewSave"
-	/>
-	<div class="reviews listing-block">
-		<div class="rating">
-			<h3>Отзывы гостей</h3>
-			<div class="reviews-info" v-if="listing.reviewCount > 0">
-				<span class="average">{{reviewsParams.averageRating}}</span>
-				<span class="count">{{getWordWithProperEnding(reviewsParams.reviewsCount, 'отзыв')}}</span>
+	<div>
+		<ReviewCreateModal
+			v-model:is-open="isReviewCreateModalOpen"
+			:is-admin="isAdmin"
+			:review-to-update="reviewToUpdateData"
+			:review-id="reviewToUpdateId"
+			@onSave="onReviewSave"
+		/>
+		<div class="reviews listing-block">
+			<div class="rating">
+				<h3>Отзывы гостей</h3>
+				<div class="reviews-info" v-if="listing.reviewCount > 0">
+					<span class="average">{{reviewsParams.averageRating}}</span>
+					<span class="count">{{getWordWithProperEnding(reviewsParams.reviewsCount, 'отзыв')}}</span>
+				</div>
+				<span class="count" v-else>Нет отзывов</span>
 			</div>
-			<span class="count" v-else>Нет отзывов</span>
-		</div>
-		<div class="header mt-4 mb-8">
-			<p v-if="authUser">Отдыхали здесь? Поделитесь впечатлениями!</p>
-			<p v-else>Войдите или зарегестрируйтесь, чтобы оставить отзыв.</p>
-			<BtnPrimary @click="createReview" v-if="authUser">
-				Оставить отзыв
-			</BtnPrimary>
-			<BtnPrimary v-else @click="openAuthModal">Войти</BtnPrimary>
-		</div>
-		<div class="review mb-4" v-for="review of reviews" :key="review.id">
-			<v-avatar color="#7059FF" size="large">
-				{{review.isAdminCreated ? review.userName[0] : review.user.name[0] }}
-			</v-avatar>
-			<div class="review__main">
-				<v-chip v-if="isAdmin && review.isAdminCreated">Не настоящий</v-chip>
-				<v-chip-group v-if="isAdmin || (authUser && authUser.id === review?.user?.id)">
-					<v-chip
-						:prepend-icon="mdiPencil"
-						@click="startEditReview(review)"
-					>Редактировать</v-chip>
-					<v-chip
-						:prepend-icon="mdiDeleteForeverOutline"
-						@click="openDeleteConfirmSnackBar(review.id)"
-					>Удалить</v-chip>
-					<v-chip v-if="isAdmin && !review.isAdminCreated" :prepend-icon="mdiAccountOutline">Профиль пользователя</v-chip>
-				</v-chip-group>
-				<div class="review__header review__header_desktop">
-					<div class="review__info">
-						<div class="review__name">{{review.isAdminCreated ? review.userName : review.user.name }}</div>
-						<div class="review__period mt-1">
-							<v-icon color="#6A6D81FF" size="16px" :icon="mdiCalendarMonthOutline"/>
-							<span>
+			<div class="header mt-4 mb-8">
+				<p v-if="authUser">Отдыхали здесь? Поделитесь впечатлениями!</p>
+				<p v-else>Войдите или зарегестрируйтесь, чтобы оставить отзыв.</p>
+				<BtnPrimary @click="createReview" v-if="authUser">
+					Оставить отзыв
+				</BtnPrimary>
+				<BtnPrimary v-else @click="openAuthModal">Войти</BtnPrimary>
+			</div>
+			<div class="review mb-4" v-for="review of reviews" :key="review.id">
+				<v-avatar color="#7059FF" size="large">
+					{{review.isAdminCreated ? review.userName[0] : review.user.name[0] }}
+				</v-avatar>
+				<div class="review__main">
+					<v-chip v-if="isAdmin && review.isAdminCreated">Не настоящий</v-chip>
+					<v-chip-group v-if="isAdmin || (authUser && authUser.id === review?.user?.id)">
+						<v-chip
+							:prepend-icon="mdiPencil"
+							@click="startEditReview(review)"
+						>Редактировать</v-chip>
+						<v-chip
+							:prepend-icon="mdiDeleteForeverOutline"
+							@click="openDeleteConfirmSnackBar(review.id)"
+						>Удалить</v-chip>
+						<v-chip v-if="isAdmin && !review.isAdminCreated" :prepend-icon="mdiAccountOutline">Профиль пользователя</v-chip>
+					</v-chip-group>
+					<div class="review__header review__header_desktop">
+						<div class="review__info">
+							<div class="review__name">{{review.isAdminCreated ? review.userName : review.user.name }}</div>
+							<div class="review__period mt-1">
+								<v-icon color="#6A6D81FF" size="16px" :icon="mdiCalendarMonthOutline"/>
+								<span>
 								{{formatDateRange(new Date(review.listingCheckIn), new Date(review.listingCheckOut))}}
 							</span>
+							</div>
+						</div>
+						<div class="review__rating">
+							<v-rating
+								color="yellow-darken-3"
+								v-model="review.rating"
+								density="compact"
+								half-increments
+								readonly
+							></v-rating>
+							<span>{{formatDate(review.createdAt)}}</span>
 						</div>
 					</div>
-					<div class="review__rating">
-						<v-rating
-							color="yellow-darken-3"
-							v-model="review.rating"
-							density="compact"
-							half-increments
-							readonly
-						></v-rating>
-						<span>{{formatDate(review.createdAt)}}</span>
-					</div>
-				</div>
-				<div class="review__header review__header_mobile">
-					<div class="review__info">
-						<div class="review__name">{{review.isAdminCreated ? review.userName : review.user.name }}</div>
-						<span class="review__date">{{formatDate(review.createdAt)}}</span>
-						<div class="review__period mt-2">
-							<v-icon color="#6A6D81FF" size="16px" :icon="mdiCalendarMonthOutline"/>
-							<span>
+					<div class="review__header review__header_mobile">
+						<div class="review__info">
+							<div class="review__name">{{review.isAdminCreated ? review.userName : review.user.name }}</div>
+							<span class="review__date">{{formatDate(review.createdAt)}}</span>
+							<div class="review__period mt-2">
+								<v-icon color="#6A6D81FF" size="16px" :icon="mdiCalendarMonthOutline"/>
+								<span>
 								{{formatDateRange(new Date(review.listingCheckIn), new Date(review.listingCheckOut))}}
 							</span>
+							</div>
+						</div>
+						<div class="review__rating">
+							<span class="average" style="width: fit-content">{{review.rating.toFixed(1)}}</span>
 						</div>
 					</div>
-					<div class="review__rating">
-						<span class="average" style="width: fit-content">{{review.rating.toFixed(1)}}</span>
-					</div>
+					<p class="review__text mt-4">
+						{{review.text}}
+					</p>
 				</div>
-				<p class="review__text mt-4">
-					{{review.text}}
-				</p>
-			</div>
 			
+			</div>
+		
 		</div>
-		
+		<v-snackbar
+			v-model="deleteReviewSnackBar"
+			multi-line
+		>
+			Точно хотите удалить?
+			
+			<template v-slot:actions>
+				<v-btn
+					color="red"
+					variant="text"
+					class="mr-5"
+					@click="deleteReview"
+				>
+					Да
+				</v-btn>
+				<v-btn
+					variant="text"
+					@click="deleteReviewSnackBar = false"
+				>
+					Нет
+				</v-btn>
+			</template>
+		</v-snackbar>
 	</div>
-	<v-snackbar
-		v-model="deleteReviewSnackBar"
-		multi-line
-	>
-		Точно хотите удалить?
-		
-		<template v-slot:actions>
-			<v-btn
-				color="red"
-				variant="text"
-				class="mr-5"
-				@click="deleteReview"
-			>
-				Да
-			</v-btn>
-			<v-btn
-				variant="text"
-				@click="deleteReviewSnackBar = false"
-			>
-				Нет
-			</v-btn>
-		</template>
-	</v-snackbar>
 	
 </template>
 

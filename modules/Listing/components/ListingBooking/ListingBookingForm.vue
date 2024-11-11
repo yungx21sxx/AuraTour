@@ -17,6 +17,7 @@ import { parsePhoneNumber } from 'libphonenumber-js';
 import BtnSecondary from "~/modules/Common/UI/BtnSecondary.vue";
 import useBonus from "~/modules/Listing/composables/useBonus";
 import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
+import TelegramIcon from "~/modules/Listing/icons/TelegramIcon.vue";
 
 const authUser = useAuthUser()
 const {applyBonus} = useBonus()
@@ -59,9 +60,17 @@ const dates = computed(() => {
 		<div class="name">{{listing.manager.name}}</div>
 		<div class="phone">{{parsePhoneNumber(listing.manager.phone).formatNational()}}</div>
 		<div class="id">Номер объявления: №{{listing.id}}</div>
-		<BtnPrimary class="booking__whats"  :href="whatsLink" :prepend-icon="mdiWhatsapp" color="#2F9E45">
-			Написать в WhatsApp
-		</BtnPrimary>
+		<div class="contacts__messengers">
+			<v-btn class="contacts__btn" variant="tonal"  :href="whatsLink" :prepend-icon="mdiWhatsapp" color="#2F9E45">
+				WhatsApp
+			</v-btn>
+			<v-btn class="contacts__btn" variant="tonal" v-if="listing.manager.telegram" :href="`https://t.me/${listing.manager.telegram}`" color="#24A1DE">
+				<template #prepend>
+					<TelegramIcon/>
+				</template>
+				Телеграмм
+			</v-btn>
+		</div>
 	</div>
 	<div v-else class="booking listing-block contacts">
 		После проверки объявления к нему будет прикреплен менеджер.
@@ -205,6 +214,14 @@ const dates = computed(() => {
 <style scoped lang="scss">
 	.contacts {
 		text-align: center;
+		
+		.contacts__messengers {
+			display: flex;
+			gap: 8px;
+			justify-content: center;
+			flex-wrap: wrap;
+			margin-top: 24px;
+		}
 		.name {
 			font-size: 24px;
 			font-weight: 600;
@@ -214,7 +231,7 @@ const dates = computed(() => {
 		}
 		.phone {
 			font-size: 18px;
-			margin-bottom: 16px;
+			margin-bottom: 8px;
 		}
 		@media screen and (max-width: 630px){
 			.name {
@@ -261,6 +278,11 @@ const dates = computed(() => {
 		&__date {
 			display: flex;
 			gap: 16px;
+			margin-bottom: 16px;
+		}
+		
+		&__contact-btn {
+			width: 230px;
 			margin-bottom: 16px;
 		}
 		

@@ -9,6 +9,7 @@ import { mdiMinus, mdiPlus } from '@mdi/js';
 import { mdiArrowRightCircleOutline } from '@mdi/js';
 import BookingSearchLocation from "~/modules/Booking/components/BookingSearchLocation.vue";
 import BookingSetDate from "~/modules/Booking/components/BookingSetDate.vue";
+import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 
 const {
 	peopleCount,
@@ -59,7 +60,7 @@ async function onSubmit() {
 			'error': dateInputError
 		}]">
 			<v-card class="booking__input" :ripple="{ class: 'ripple-color' }"  @click="openSetDateModal">
-				<v-icon :icon="mdiCalendarMonthOutline"/>
+				<v-icon :icon="mdiCalendarMonthOutline" color="#333D46FF"/>
 				<span v-if="!dates.from">Заезд</span>
 				<span v-else>{{beautifyDate(dates.from)}}</span>
 			</v-card>
@@ -109,7 +110,7 @@ async function onSubmit() {
 						</div>
 					
 					</div>
-					<v-btn color="#7059FF"  width="100%" @click="guestSetMenuIsOpen = false">Готово</v-btn>
+					<BtnPrimary width="100%" @click="guestSetMenuIsOpen = false">Готово</BtnPrimary>
 				</v-card-item>
 			</v-card>
 		</v-menu>
@@ -222,6 +223,11 @@ async function onSubmit() {
 			gap: 8px;
 			align-items: center;
 			height: 65px;
+			color: $text-main;
+			
+			@media screen and (max-width: 600px){
+				height: 55px;
+			}
 			border-radius: 0;
 			box-shadow: none;
 			

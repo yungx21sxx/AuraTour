@@ -12,11 +12,13 @@ const {mapModalIsOpen} = useMapCatalog()
 
 <template>
 	<v-dialog fullscreen v-model="mapModalIsOpen">
-		<div class="header">
-			<BtnPrimary class="btn-filter"  color="#7059FF"  :prepend-icon="mdiTuneVariant" @click="filtersModalIsOpen = true">Фильтры жилья</BtnPrimary>
-			<BtnSecondary :prepend-icon="mdiClose" color="#fff" @click="mapModalIsOpen = false">Закрыть</BtnSecondary>
-		</div>
-		<CatalogListingsMap :key="2" target="modal"/>
+		<v-card>
+			<div class="header">
+				<BtnPrimary class="btn-filter"  color="#7059FF"  :prepend-icon="mdiTuneVariant" @click="filtersModalIsOpen = true">Фильтры жилья</BtnPrimary>
+				<BtnSecondary :prepend-icon="mdiClose" color="#fff" @click="mapModalIsOpen = false">Закрыть</BtnSecondary>
+			</div>
+			<CatalogListingsMap :key="2" target="modal"/>
+		</v-card>
 	</v-dialog>
 </template>
 

@@ -3,11 +3,16 @@ import BookingMainForm from "~/modules/Booking/components/BookingMainForm.vue";
 import { mdiArrowRight } from "@mdi/js";
 import MenuMain from "~/modules/Menu/components/MenuMain.vue";
 import useSearch from "~/modules/Booking/composables/useSearch";
+import BonusProgramModal from "~/modules/Common/BonusProgramModal.vue";
 
 const {searchData} = useSearch();
+
+const bonusProgramInfo = ref(false);
 </script>
 
 <template>
+	
+	
     <div
         class="banner"
     >
@@ -18,10 +23,10 @@ const {searchData} = useSearch();
                     Жилье в Абхазии <br />
                     посуточно
                 </h1>
-                <div class="banner__info">
-                    <p>Вернем до <strong>5%</strong> от стомости бронирования</p>
-                    <button>
-                        Узнать подробности
+                <div class="banner__info" >
+                    <p>Вернем до 5% от суммы броинрования</p>
+                    <button @click="bonusProgramInfo = true">
+                        Подробнее
                         <v-icon :icon="mdiArrowRight" size="24" />
                     </button>
                 </div>
@@ -48,6 +53,7 @@ const {searchData} = useSearch();
             </div>
         </div>
     </div>
+	<BonusProgramModal v-model="bonusProgramInfo"/>
 </template>
 
 <style lang="scss" scoped>
@@ -65,7 +71,7 @@ const {searchData} = useSearch();
     }
 
     &__title {
-        font-size: 36px;
+        font-size: 42px;
         color: #ffffff;
         /* line-height: 56px; */
         font-weight: 600;
@@ -102,7 +108,7 @@ const {searchData} = useSearch();
     @media screen and (max-width: 750px) {
         height: 100svh;
         &__title {
-            font-size: 32px;
+            font-size: 30px;
             margin-bottom: 16px;
         }
 
@@ -114,5 +120,10 @@ const {searchData} = useSearch();
             }
         }
     }
+	
+	@media screen and (max-height: 620px){
+		padding: 64px 0;
+		height: auto;
+	}
 }
 </style>

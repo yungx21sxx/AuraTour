@@ -9,10 +9,13 @@
 	import FitIcon from "~/modules/Listing/icons/FitIcon.vue";
 	import RoomsIcon from "~/modules/Listing/icons/RoomsIcon.vue";
 	import BedIcon from "~/modules/Listing/icons/BedIcon.vue";
+	import useBonus from "~/modules/Listing/composables/useBonus";
+	import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
 	
 	const {listing} = useListing();
 	const {openSetDateModal, chosenRoomId, listingBookingConfirmModal} = useListingBooking()
 	const {currentPhoto} = useGallery()
+	const {applyBonus} = useBonus()
 	
 	function openGalleryModal(roomId: number, photoIndex: number) {
 		currentPhoto.value.room = {roomId, photoIndex}
@@ -23,6 +26,8 @@
 		chosenRoomId.value = roomId;
 		listingBookingConfirmModal.value = true;
 	}
+	
+	const authUser = useAuthUser()
 </script>
 
 <template>
@@ -86,11 +91,19 @@
 						</div>
 						<div class="room__order order">
 							<div class="order__info">
-								<div class="order__price" v-if="room.calculatedPrices">
+								<div class="order__price" v-if="room.calculatedPrices && applyBonus && authUser">
+									<div class="price-bonus price">
+										<span>{{(room.calculatedPrices.totalPrice - authUser.bonusPoints).toLocaleString('ru-RU')}} ₽</span>
+										<strike style="color: #6a6d81; margin-left: 8px;">{{room.calculatedPrices.totalPrice.toLocaleString('ru-RU')}} ₽</strike>
+									</div>
+									<span class="order__price_info">Цена за {{formatDays(room.calculatedPrices.daysCount)}}</span>
+								</div>
+								<div class="order__price" v-if="room.calculatedPrices && !applyBonus">
 									<div class="price">{{room.calculatedPrices.totalPrice?.toLocaleString('ru-RU')}} ₽</div>
 									<span class="order__price_info">Цена за {{formatDays(room.calculatedPrices.daysCount)}}</span>
 								</div>
-								<div class="order__price" v-else>
+								
+								<div class="order__price" v-if="!room.calculatedPrices">
 									<div class="price">от {{room.minPrice.toLocaleString('ru-RU')}} ₽</div>
 									<span class="order__price_info">Цена за 1 ночь</span>
 								</div>
@@ -107,7 +120,7 @@
 								class="order__btn"
 								color="#7059FF"
 								v-else
-								@click="openBookingModal(room.id)"
+								@click="openSetDateModal()"
 							>
 								Проверить цены
 							</BtnPrimary>
@@ -132,6 +145,8 @@
 		}
 	}
 }
+
+
 
 .chip {
 	display: flex;
