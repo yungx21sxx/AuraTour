@@ -79,6 +79,10 @@
 	const {isMobile} = useDevice();
 	
 	const submit = async () => {
+		if (!dateRange.value.start || !dateRange.value.end) {
+			serverErrors.value = ['Не выбранны даты проживания.'];
+			return;
+		}
 		if (formRef.value) {
 			const { valid } = await formRef.value.validate();
 			if (!valid) {
@@ -90,9 +94,7 @@
 		}
 		isLoading.value = true;
 		serverErrors.value = [];
-		if (dateRange.value.start && dateRange.value.end) {
-			serverErrors.value = ['Не выбранны даты проживания.'];
-		}
+		
 		try {
 			const {success, review} = await ReviewsApi.createOrUpdateReview(
 				reviewToUpdate ? 'UPDATE' : 'CREATE',
@@ -108,6 +110,10 @@
 				},
 				reviewId
 			)
+			createDate.value = new Date();
+			nameInput.value = '';
+			textInput.value = '';
+			serverErrors.value = []
 			emits('onSave');
 		} catch (error: H3Error) {
 			if (error && error.data) {

@@ -111,7 +111,7 @@ watch(userEditFromData, () => {
 		
 		<v-select v-model="userEditFromData.role" :items="userRoles" item-title="name" item-value="value" label="Роль пользователя"/>
 		<v-text-field  v-model="userEditFromData.name" label="Имя"></v-text-field>
-		<v-text-field  v-model="userEditFromData.surname" label="Имя"></v-text-field>
+		<v-text-field  v-model="userEditFromData.surname" label="Фамилия"></v-text-field>
 		<v-text-field type="email" v-model="userEditFromData.email" label="Почта"></v-text-field>
 		<PhoneInput  v-model="userEditFromData.phone" label="Телефон"></PhoneInput>
 		

@@ -5,7 +5,8 @@ import {formatDate} from "~/modules/Listing/utils/dates";
 import type {PhotoUploadResponse} from "~/modules/Admin/ListingCRUD/types/response.types";
 import {useAuth} from "~/modules/Auth/composables/useAuth";
 import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
-import {mdiCashCheck} from "@mdi/js";
+import {mdiCashCheck, mdiClose, mdiRotateLeft, mdiRotateRight} from "@mdi/js";
+import type {H3Error} from "h3";
 
 definePageMeta({
 	layout: 'lk',
@@ -61,6 +62,9 @@ async function updateUserInfo() {
 	}
 }
 
+
+const uploadedPhoto = ref<PhotoUploadResponse | null>();
+
 async function uploadAvatar() {
 	const formData = new FormData()
 	if (!avatar.value) {
@@ -74,6 +78,7 @@ async function uploadAvatar() {
 			method: "POST",
 			body: formData,
 		})
+		uploadedPhoto.value = photosResponse[0]
 		authUser.value.avatar = photosResponse[0].urlMin;
 		adminEditData.value.avatarId = photosResponse[0].photoId;
 		await updateUserInfo();
@@ -91,6 +96,28 @@ watch([userEditFromData, adminEditData], () => {
 
 const isAdmin = computed(() => ['ADMIN', 'MANAGER'].includes(authUser.value?.role))
 
+interface rotateDTO {
+	target: 'left' | 'right',
+	photoId: number,
+}
+
+const rotate = async (dto: rotateDTO) => {
+	try {
+		await $fetch('/api/photo/rotate', {
+			method: 'POST',
+			body: {
+				target: dto.target,
+				photoId: dto.photoId
+			}
+		});
+		
+		uploadedPhoto.value.urlMin = `${uploadedPhoto.value.urlMin}?t=${new Date().getTime()}`;
+		
+	} catch (e: H3Error) {
+		console.log(e.data.message);
+	}
+}
+
 </script>
 
 <template>
@@ -104,6 +131,22 @@ const isAdmin = computed(() => ['ADMIN', 'MANAGER'].includes(authUser.value?.rol
 	<div v-if="isAdmin">
 		<v-file-input label="Загрузить аватар" v-model="avatar" :show-size="1000"/>
 		<BtnPrimary class="mb-4" @click="uploadAvatar" :loading="fileLoading">Загрузить</BtnPrimary>
+		<v-img
+			class="pa-2"
+			aspect-ratio="1"
+			cover
+			height="200px"
+			width="200px"
+			:src="uploadedPhoto.urlMin"
+			v-if="uploadedPhoto"
+		>
+			<div class="image-control">
+				<div class="rotate-btns">
+					<v-btn class="delete-btn" :icon="mdiRotateLeft" density="compact" color="#fff" @click="rotate({target: 'left', photoId: uploadedPhoto.photoId})"></v-btn>
+					<v-btn class="delete-btn" :icon="mdiRotateRight" density="compact" color="#fff" @click="rotate({target: 'right', photoId: uploadedPhoto.photoId})"></v-btn>
+				</div>
+			</div>
+		</v-img>
 		<div>Имя пользователя без знака @</div>
 		<v-text-field v-model="adminEditData.telegram" label="Ник в телеграмм"></v-text-field>
 	</div>
@@ -138,5 +181,17 @@ const isAdmin = computed(() => ['ADMIN', 'MANAGER'].includes(authUser.value?.rol
 </template>
 
 <style scoped lang="scss">
+
+.image-control {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	width: 100%;
+	justify-content: space-between;
+	.rotate-btns {
+		display: flex;
+		justify-content: space-between;
+	}
+}
 
 </style>

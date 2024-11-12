@@ -36,7 +36,7 @@
 						</div>
 						<div class="header__dates" v-else>
 							<h2 class="header__date">
-								{{beautifyDate(range.start || new Date)}} - {{beautifyDate(range.end || new Date)}}
+								{{beautifyDate(range.start || new Date())}} - {{beautifyDate(range.end || new Date())}}
 							</h2>
 						</div>
 					

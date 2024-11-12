@@ -65,7 +65,6 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/api/**': {cors: true},
-    '/lk/**': {ssr: false},
     '/': {prerender: true},
     // '/search/city/gagra': {prerender: true},
   },
@@ -78,6 +77,9 @@ export default defineNuxtConfig({
       },
       labComponents: true,
       directives: true,
+      locale: {
+        locale: 'ru',
+      },
     }
   },
 

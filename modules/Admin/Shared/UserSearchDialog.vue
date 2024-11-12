@@ -36,6 +36,9 @@
 							<v-list-item-subtitle>
 								Email: {{ user.email || 'не указан' }}
 							</v-list-item-subtitle>
+							<v-list-item-subtitle>
+								Роль: {{ user.role }}
+							</v-list-item-subtitle>
 					</v-list-item>
 				
 				

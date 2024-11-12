@@ -4,6 +4,7 @@ import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 import UserSearchDialog from "~/modules/Admin/Shared/UserSearchDialog.vue";
 import type {ListingBookingUserResponse} from "~/modules/Admin/Listing/types/response.types";
 import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
+import {mdiDelete} from "@mdi/js";
 
 const authUser = useAuthUser();
 const {listingFormData, initialData, ownerData} = useCreateListing();
@@ -20,6 +21,11 @@ const setOwner = (owner: ListingBookingUserResponse) => {
 	ownerData.value = owner;
 	listingFormData.value.ownerId = owner.id;
 	userSearchModal.value = false;
+}
+
+const deleteOwner = () => {
+	ownerData.value = null;
+	listingFormData.value.ownerId = null;
 }
 
 </script>
@@ -45,9 +51,13 @@ const setOwner = (owner: ListingBookingUserResponse) => {
 				<v-list-item
 					:title="`${ownerData.name} ${ownerData.surname || ''}`"
 					:subtitle="ownerData.email"
+					style="max-width: 400px"
 				>
 					<template #prepend>
 						<v-avatar color="#7059FF">{{ownerData.name[0]}}</v-avatar>
+					</template>
+					<template #append>
+						<v-btn @click="deleteOwner" variant="tonal" color="red" :icon="mdiDelete"/>
 					</template>
 				</v-list-item>
 			</v-list>

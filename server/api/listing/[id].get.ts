@@ -36,7 +36,8 @@ export default defineEventHandler(async (event) => {
 					surname: true,
 					phone: true,
 					email: true,
-					telegram: true
+					telegram: true,
+					avatar: true,
 				}
 			},
 			owner: {
@@ -114,7 +115,6 @@ export default defineEventHandler(async (event) => {
 	});
 	//@ts-ignore
 	const {amenities, food, rooms, photos, reviews, ...listingData} = listing;
-	console.log(reviews)
 	return {
 		...listingData,
 		food: food.map(i => i.food.name),

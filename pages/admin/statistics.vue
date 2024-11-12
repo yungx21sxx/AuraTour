@@ -24,7 +24,7 @@
 		{
 			title: 'id',
 			align: 'start',
-			sortable: false,
+			sortable: true,
 			key: 'id',
 		},
 		{ title: 'Название', sortable: false, key: 'title', align: 'end' },
@@ -46,6 +46,15 @@
 			loading.value = false
 		})
 	}
+	const selectedListings = ref([]);
+	
+	const onSelect = async (id: number) => {
+		await navigateTo(`/listing/${id}`, {
+			open: {
+				target: '_blank'
+			}
+		})
+	}
 
 </script>
 
@@ -53,12 +62,16 @@
 	<v-data-table-server
 		class="mt-8"
 		v-model:items-per-page="itemsPerPage"
+		v-model="selectedListings"
+		select-strategy="single"
+		show-select
+		@update:modelValue="onSelect"
 		:headers="headers"
 		:items="serverItems"
 		:items-length="totalItems"
 		:loading="loading"
 		:search="search"
-		item-value="name"
+		item-value="id"
 		@update:options="loadItems"
 	></v-data-table-server>
 </template>

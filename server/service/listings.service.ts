@@ -494,11 +494,9 @@ class ListingsService {
 				photos: {
 					connect: photosWithPosition.map(photo => ({id: photo.photoId})),
 				},
-				owner: {
-					...(ownerId && {
-						connect: {id: ownerId}
-					})
-				},
+				owner: ownerId
+					? { connect: { id: ownerId } } // Если ownerId не null, подключаем
+					: { disconnect: true },
 				manager: {
 					...(managerId && {
 						connect: {id: managerId}

@@ -83,7 +83,7 @@ export default defineEventHandler(async (event) => {
     const data = parsedData.data;
 
     // Обработка изменения роли
-    if (data.role && data.role !== user.role) {
+    if (data.role && data.role !== user.role && !isAdminOrManager) {
         if (isEditingOwnAccount) {
             // Пользователи могут менять роль только между TOURIST и LANDLORD
             const validRoleChanges: Record<string, string> = {

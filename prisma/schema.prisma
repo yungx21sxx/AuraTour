@@ -156,6 +156,7 @@ model Photo {
   id        Int      @id @default(autoincrement())
   urlMin    String
   urlFull   String
+  rotation  Int      @default(0)
   listingId Int?
   roomId    Int?
   position  Int?     @default(2)

@@ -5,6 +5,7 @@ import type {PhotoUploadResponse} from "~/modules/Admin/ListingCRUD/types/respon
 import { VueDraggableNext } from 'vue-draggable-next'
 import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 import {mdiClose, mdiRotateLeft, mdiRotateRight} from "@mdi/js";
+import type {H3Error} from "h3";
 
 defineProps<{
 	preview?: boolean
@@ -45,11 +46,49 @@ async function uploadPhotos() {
 	}
 }
 
+interface Photo {
+	urlMin: string,
+	photoId: number
+}
 
+const photoRotateModalIsOpen = ref(false);
+
+const currentRotatePhoto = ref<Photo | null>(null)
+
+const openRotateModal = (photo: Photo) => {
+	currentRotatePhoto.value = photo;
+	photoRotateModalIsOpen.value = true
+}
+
+
+interface rotateDTO {
+	target: 'left' | 'right',
+	photoId: number,
+}
+
+
+const rotate = async (dto: rotateDTO) => {
+	try {
+		await $fetch('/api/photo/rotate', {
+			method: 'POST',
+			body: {
+				target: dto.target,
+				photoId: dto.photoId
+			}
+		});
+		const index = photos.value.findIndex(p => p.photoId === dto.photoId);
+		if (index !== -1) {
+			// Добавляем метку времени для обновления кэшированного изображения
+			photos.value[index].urlMin = `${photos.value[index].urlMin}?t=${new Date().getTime()}`;
+		}
+	} catch (e: H3Error) {
+		console.log(e.data.message);
+	}
+}
 
 const deletePhoto = async (id: number) => {
 	try {
-		await useFetch(`/api/photo/${id}`, {
+		await $fetch(`/api/photo/${id}`, {
 			method: "DELETE",
 		})
 		if (photos.value)
@@ -62,6 +101,7 @@ const deletePhoto = async (id: number) => {
 </script>
 
 <template>
+	<PhotoRotateModal v-model="photoRotateModalIsOpen" :photo="currentRotatePhoto"/>
 	<v-card class="mt-4" >
 		<v-card-title v-if="!preview">Загрузка фотографии</v-card-title>
 		<v-card-text>Загрузка фотографий обязательна</v-card-text>
@@ -116,8 +156,8 @@ const deletePhoto = async (id: number) => {
 							<div class="image-control">
 								<v-btn class="delete-btn" color="red" :icon="mdiClose" density="compact"  @click="deletePhoto(photo.photoId)"></v-btn>
 								<div class="rotate-btns">
-									<v-btn class="delete-btn" :icon="mdiRotateLeft" density="compact" color="#fff" @click=""></v-btn>
-									<v-btn class="delete-btn" :icon="mdiRotateRight" density="compact" color="#fff" @click=""></v-btn>
+									<v-btn class="delete-btn" :icon="mdiRotateLeft" density="compact" color="#fff" @click="rotate({target: 'left', photoId: photo.photoId})"></v-btn>
+									<v-btn class="delete-btn" :icon="mdiRotateRight" density="compact" color="#fff" @click="rotate({target: 'right', photoId: photo.photoId})"></v-btn>
 								</div>
 							</div>
 						</v-img>

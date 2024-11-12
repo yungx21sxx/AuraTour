@@ -54,7 +54,7 @@
 		updateListingPrices(checkIn, checkOut);
 	})
 	
-	const isAdmin = computed(() => {
+	const access = computed(() => {
 		const fullAccess = authUser.value && ['ADMIN', 'MANAGER'].includes(authUser.value.role);
 		let isListingOwner: boolean = false;
 		
@@ -62,18 +62,18 @@
 			isListingOwner = authUser.value && authUser.value.id === listing.value.owner.id;
 		}
 		
-		return fullAccess || isListingOwner
+		return {fullAccess, isListingOwner}
 	})
 	
 	const ListingAdminPanel = computed(() => {
-		if (isAdmin) {
+		if (access.value.isListingOwner || access.value.fullAccess) {
 			return defineAsyncComponent(() => import('@/modules/Admin/Listing/components/ListingAdminPanel.vue'))
 		}
 		return null;
 	})
 	
 	onMounted(() => {
-		if (!isAdmin) {
+		if (!access.value.isListingOwner && !access.value.fullAccess) {
 			const {incrementStatistic} = useStatistics()
 			incrementStatistic('views', listing.value.id)
 		}
@@ -89,7 +89,7 @@
 			<MenuMain/>
 		</div>
 		<div class="wrapper">
-			<ListingAdminPanel v-if="isAdmin"/>
+			<ListingAdminPanel/>
 			<ListingHeader/>
 			<GalleryDesktopPreviews v-if="!isMobileOrTablet && listing.photos.length > 3"/>
 		</div>

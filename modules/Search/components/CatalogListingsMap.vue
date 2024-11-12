@@ -7,7 +7,7 @@
 		YandexMapDefaultSchemeLayer,
 		YandexMapMarker,
 		YandexMapZoomControl,
-		VueYandexMaps
+		VueYandexMaps,
 	} from 'vue-yandex-maps';
 	import BtnSecondary from "~/modules/Common/UI/BtnSecondary.vue";
 	import {mdiChevronLeft, mdiClose} from "@mdi/js";
@@ -87,7 +87,7 @@
 	const currentListings = ref<IListingPreviewResponse[] | null>(null);
 	const listingsLoading = ref(false);
 	
-	
+	console.log('map component')
 	
 	const openListingModal = async (IDs: number[]) => {
 		listingModal.value = true;
@@ -107,32 +107,50 @@
 	const mapLoading = ref(true);
 	const mapError = ref(false);
 	
+	// onBeforeUnmount(() => {
+	// 	console.log('destroy map')
+	// 	map.value?.destroy()
+	// 	map.value = null;
+	// 	mapKey.value = Date.now();
+	// 	mapLoading.value = false;
+	// })
+	
+	const mapKey = ref(Date.now());
+	
+	
+	watch(map, () => {
+		console.log(map.value)
+	})
+	
 	watch(VueYandexMaps.loadStatus, (status) => {
-		console.log(status)
 		if (status === 'loaded') {
 			mapLoading.value = false;
 		}
 		if (VueYandexMaps.loadError.value) {
 			mapError.value = true
+			mapLoading.value = false
 		}
+		console.log(status, VueYandexMaps.loadError.value)
 	});
 </script>
 
 <template>
-	<client-only>
+	
 		<div :class="[{
-			'map-catalog': target === 'catalog',
-			'map-modal': target === 'modal'
-		}]">
+				'map-catalog': target === 'catalog',
+				'map-modal': target === 'modal'
+			}]"
+		>
 			<div class="header">
 				<h3 id="listings">Найдено {{ mapListingsList.count }} вариантов жилья</h3>
 				<BtnSecondary class="btn" :prepend-icon="mdiChevronLeft" @click="mapCatalogIsOpen = false">Назад к каталогу</BtnSecondary>
 			</div>
-			<div :class="['map', {
+			<div id="map" :class="['map', {
 			'map_modal': target === 'modal'
 		}]">
 				<yandex-map
 					v-model="map"
+					id="map__canvas"
 					class="map__canvas"
 					v-show="!mapLoading"
 					:settings="{
@@ -162,11 +180,14 @@
 						</div>
 					</yandex-map-marker>
 				</yandex-map>
-				<div v-if="mapLoading" style="display: flex; justify-content: center; height: 400px; flex-direction: column; align-items: center">
+				<div v-if="mapLoading && !mapError" style="display: flex; justify-content: center; height: 400px; flex-direction: column; align-items: center">
 					<v-progress-circular
 						color="primary"
 						indeterminate
 					></v-progress-circular>
+				</div>
+				<div v-if="mapError" style="display: flex; justify-content: center; height: 400px; flex-direction: column; align-items: center">
+					<v-alert type="error" title="Ошибка загрузки карты!" text="Попробуйте отключить VPN."/>
 				</div>
 			</div>
 			
@@ -214,7 +235,6 @@
 				</v-card>
 			</v-dialog>
 		</div>
-	</client-only>
 </template>
 
 <style scoped lang="scss">

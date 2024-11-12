@@ -6,7 +6,6 @@
 				<span v-if="dateRange.startDate && dateRange.endDate">{{formatDate(dateRange.startDate)}} - {{formatDate(dateRange.endDate)}}</span>
 				<span v-else>Выберите диапазон</span>
 			</v-card>
-			
 			<DateRangePickModal v-model:range="dateRange" v-model:is-open="datePickerModal"/>
 		</div>
 		<div v-if="isLoading">Загрузка данных...</div>

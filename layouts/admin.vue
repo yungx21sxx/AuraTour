@@ -8,7 +8,7 @@
 				
 				<v-toolbar-title>Админка</v-toolbar-title>
 				<v-spacer></v-spacer>
-				<v-btn :prepend-icon="mdiMagnify" @click="userSearchDialog = true" >Пользователи</v-btn>
+				<v-btn :prepend-icon="mdiMagnify" @click="userSearchDialogIsOpen = true" >Пользователи</v-btn>
 			</v-app-bar>
 			
 			<v-navigation-drawer
@@ -45,7 +45,7 @@
 			</v-main>
 		</v-layout>
 		
-		<UserSearchDialog v-model:is-open="userSearchDialog" @onUserSelect="onUserSelect"/>
+		<UserSearchDialog v-model:is-open="userSearchDialogIsOpen" @onUserSelect="onUserSelect"/>
 	</v-app>
  
 	
@@ -70,7 +70,7 @@
 		navigateTo('/')
 	}
 	
-	const userSearchDialog = ref(false);
+	const userSearchDialogIsOpen = ref(false);
 	
 	const onUserSelect = async (user: ListingBookingUserResponse) => {
 		await navigateTo({

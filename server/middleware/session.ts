@@ -14,7 +14,7 @@ const roleProtectedPaths: RolePermissions = {
     '/api/auth/profile': ['ADMIN', 'MANAGER', 'TOURIST', 'LANDLORD'],
     // '/api/bookings/listing/*': ['ADMIN', 'MANAGER', 'LANDLORD'],
     // '/api/bookings/all': ['ADMIN', 'MANAGER'],
-    '/api/bookings/create': ['ADMIN', 'MANAGER'],
+
     '/api/bonus/*': ['ADMIN', 'MANAGER'],
     // '/api/listing/admin/*': ['ADMIN', 'MANAGER', 'LANDLORD']
 };
@@ -24,6 +24,7 @@ const userExtractPaths: string[] = [
     '/api/reviews/*',
     '/api/listing/admin/*',
     '/api/users/*',
+    '/api/bookings/create',
 ];
 
 // Функция для проверки соответствия пути с шаблоном

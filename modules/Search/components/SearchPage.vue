@@ -108,15 +108,19 @@ if (typeSlug) {
 // Создаем тело запроса на сервер
 setFiltersDTO(parsedFilterParams);
 
+
 // Загружаем параметры фильтрации и инициализируем списки
 await fetchBookingFilters(bookingParameters, chosenCity.value ? chosenCity.value.id : null)
 
-const {mapCatalogIsOpen} = useMapCatalog()
+const mapKey = ref(Date.now())
+const {mapCatalogIsOpen} = useMapCatalog();
+
+watch(mapCatalogIsOpen, () => {
+	mapKey.value = Date.now()
+	console.log(mapKey.value)
+})
 
 </script>
-
-
-
 <template>
 	<!-- Меню для изменения информации о бронировании -->
 	<HeaderSEO v-if="seoPage"/>
@@ -127,7 +131,7 @@ const {mapCatalogIsOpen} = useMapCatalog()
 			<FilterForm />
 		</div>
 		<div class="catalog__content">
-			<CatalogListingsMap :key="1" v-if="mapCatalogIsOpen"/>
+			<CatalogListingsMap :key="mapKey" v-if="mapCatalogIsOpen"/>
 			<CatalogListingsList v-else/>
 		</div>
 		

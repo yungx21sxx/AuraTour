@@ -46,15 +46,27 @@ const dates = computed(() => {
 	return {checkIn, checkOut}
 });
 
-
+const isAdmin = computed(() => {
+	return  authUser.value && ['ADMIN', 'MANAGER'].includes(authUser.value.role);
+})
 
 
 </script>
 
 <template>
+	<div class="booking listing-block contacts" v-if="isAdmin && listing.owner">
+		<div class="id">Владелец объекта</div>
+		<div class="name">{{listing.owner.name}}</div>
+		<div class="phone">{{parsePhoneNumber(listing.owner.phone).formatNational()}}</div>
+		<div class="contacts__messengers">
+			<v-btn class="contacts__btn" variant="tonal"  :href="`whatsapp://send?phone=${listing.owner.phone}`" :prepend-icon="mdiWhatsapp" color="#2F9E45">
+				WhatsApp
+			</v-btn>
+		</div>
+	</div>
 	<div class="booking listing-block contacts" v-if="listing.manager">
-		<v-avatar v-if="listing.manager.avatar">
-			<v-img :src="listing.manager.avatar"/>
+		<v-avatar v-if="listing.manager.avatar" size="60">
+			<v-img :src="listing.manager.avatar.urlMin"/>
 		</v-avatar>
 		<v-avatar v-else color="#7059FF" size="60">{{listing.manager.name[0]}}</v-avatar>
 		<div class="name">{{listing.manager.name}}</div>
