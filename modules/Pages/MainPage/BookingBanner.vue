@@ -24,7 +24,7 @@ const bonusProgramInfo = ref(false);
                     посуточно
                 </h1>
                 <div class="banner__info" >
-                    <p>Вернем до 5% от суммы броинрования</p>
+                    <p>Вернем до 5% от суммы бронирования</p>
                     <button @click="bonusProgramInfo = true">
                         Подробнее
                         <v-icon :icon="mdiArrowRight" size="24" />
