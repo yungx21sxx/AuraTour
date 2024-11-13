@@ -52,7 +52,7 @@
 		v-if="seoPage"
 		class="header"
 		:style="{
-			backgroundImage: `url(${seoPage.photoUrl})`,
+			backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.05)), url(${seoPage.photoUrl})`,
 	    }"
 	>
 		<MenuMain variant="light" class="header__menu"/>

@@ -1,29 +1,32 @@
 <script setup lang="ts">
 
+import {mdiInstagram, mdiMapMarkerOutline, mdiPhoneOutline} from "@mdi/js";
+import MenuMain from "~/modules/Menu/components/MenuMain.vue";
 </script>
 
 <template>
+	<MenuMain/>
 	<div class="wrapper contacts-page mt-8">
 		
 		<div class="contacts-page__block">
 			<div class="contacts">
 				<h1 class="mb-4">Контакты</h1>
 				<NuxtLink class="contact" to="tel:/+79409976702">
-					<v-icon class="contact__icon" color="#7059FF">mdi-phone-outline</v-icon>
+					<v-icon class="contact__icon" color="#7059FF" :icon="mdiPhoneOutline"></v-icon>
 					<div class="contact__body">
 						<div class="contact__desc">Служба поддержки</div>
 						<div class="contact__text">+7 (940) 997-67-02</div>
 					</div>
 				</NuxtLink>
 				<NuxtLink class="contact">
-					<v-icon class="contact__icon" color="#7059FF">mdi-map-marker-outline</v-icon>
+					<v-icon class="contact__icon" color="#7059FF" :icon="mdiMapMarkerOutline"></v-icon>
 					<div class="contact__body">
 						<div class="contact__desc">Адрес</div>
 						<div class="contact__text">г. Гудаута, Очамчирская 90</div>
 					</div>
 				</NuxtLink>
 				<NuxtLink class="contact" to="https://www.instagram.com/reel/C3-uB8sIlkW/?igsh=MXE4OTM4djBqcDZsNA==">
-					<v-icon class="contact__icon" color="#7059FF">mdi-instagram</v-icon>
+					<v-icon class="contact__icon" color="#7059FF" :icon="mdiInstagram"></v-icon>
 					<div class="contact__body">
 						<div class="contact__desc">Мы в Instagram</div>
 						<div class="contact__text">aura_tur_abkhazia</div>

@@ -36,7 +36,7 @@
 			                        :key="type.id"
 			                        variant="outlined"
 			                        color="#333D46"
-			                        :href="`/search/type/${type.slug}`"
+			                        :href="`/search/?housingTypesId=${type.id}`"
 		                        >{{type.name}}</v-chip>
 	                        </div>
                         </v-card-item>
@@ -134,7 +134,7 @@
 			            </v-card-item>
 		            </v-card>
 	            </v-menu>
-                <BtnPrimary class="nav__btn">Сдать жилье</BtnPrimary>
+                <BtnPrimary class="nav__btn" @click="landLordInfoModalIsOpen = true">Сдать жилье</BtnPrimary>
             </div>
             <v-btn
                 icon
@@ -230,7 +230,8 @@ import MainLogo from "~/modules/Menu/icons/MainLogo.vue";
 import BtnSecondary from "~/modules/Common/UI/BtnSecondary.vue";
 import useSearch from "~/modules/Booking/composables/useSearch";
 import {useAuth} from "~/modules/Auth/composables/useAuth";
-
+import useLandLordModal from "~/modules/Common/useLandLordModal";
+const landLordInfoModalIsOpen = useLandLordModal()
 
 const { open } = useBurgerMenu();
 const {openAuthModal} = useAuthModal();

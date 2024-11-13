@@ -21,6 +21,7 @@
 	import BtnSecondary from "~/modules/Common/UI/BtnSecondary.vue";
 	import useAuthModal from "~/modules/Auth/composables/useAuthModal";
 	import {useAuth} from "~/modules/Auth/composables/useAuth";
+	import useLandLordModal from "~/modules/Common/useLandLordModal";
 	const {searchData} = useSearch();
 	const menu = ref(true)
 	const authUser = useAuthUser();
@@ -29,7 +30,9 @@
 	const {burgerMenuIsOpen, open, close} = useBurgerMenu();
 	const menuPosition = ref(1);
 	
-	const {openAuthModal} = useAuthModal()
+	const {openAuthModal} = useAuthModal();
+	
+	const landLordModal = useLandLordModal();
 </script>
 
 <template>
@@ -59,11 +62,11 @@
 								<HelpIcon class="nav__icon" />
 								<span>Помощь</span>
 							</NuxtLink>
-							<NuxtLink class="nav__link" to="/help" external>
+							<NuxtLink class="nav__link" to="/about" external>
 								<InfoIcon class="nav__icon" />
 								<span>О нас</span>
 							</NuxtLink>
-							<BtnPrimary block v-if="!authUser" :prepend-icon="mdiHomeVariantOutline">Сдать жилье</BtnPrimary>
+							<BtnPrimary block v-if="!authUser" :prepend-icon="mdiHomeVariantOutline" @click="landLordModal = true">Сдать жилье</BtnPrimary>
 							<div v-else style="margin: 0 -20px">
 									<v-list>
 										<v-list-item

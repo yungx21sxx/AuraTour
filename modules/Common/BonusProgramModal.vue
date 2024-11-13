@@ -2,8 +2,11 @@
 	import {mdiClose} from "@mdi/js";
 	import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 	import useAuthModal from "~/modules/Auth/composables/useAuthModal";
+	import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
 	
 	const isOpen = defineModel();
+	
+	const authUser = useAuthUser()
 	
 	const {isMobile} = useDevice();
 	
@@ -28,7 +31,8 @@
 				<p>
 					Присоединяйтесь к программе лояльности Аура Тур уже сегодня и начните экономить на своих путешествиях!
 				</p>
-				<BtnPrimary class="mt-4" @click="openAuth">Зарегестрироватся</BtnPrimary>
+				<BtnPrimary class="mt-4" @click="openAuth" v-if="!authUser">Зарегестрироватся</BtnPrimary>
+				<BtnPrimary class="mt-4" href="/search" v-else>Смотреть жилье</BtnPrimary>
 			</v-card-text>
 			<v-card-item>
 				<v-timeline side="end">

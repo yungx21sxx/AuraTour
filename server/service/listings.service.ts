@@ -578,16 +578,14 @@ class ListingsService {
 			})
 		}))
 
-		if (!updatedListing.validated && ['ADMIN', 'MANAGER'].includes(userRole)) {
-			await prisma.listing.update({
-				where: {
-					id: updatedListing.id
-				},
-				data: {
-					validated: true,
-				}
-			})
-		}
+		await prisma.listing.update({
+			where: {
+				id: updatedListing.id
+			},
+			data: {
+				validated: ['ADMIN', 'MANAGER'].includes(userRole),
+			}
+		})
 
 		return updatedListing;
 	}

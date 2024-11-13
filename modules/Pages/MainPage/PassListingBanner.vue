@@ -1,6 +1,10 @@
 <script setup lang="ts">
 
 import BtnSecondary from "~/modules/Common/UI/BtnSecondary.vue";
+import useLandLordModal from "~/modules/Common/useLandLordModal";
+
+const landLordModal = useLandLordModal()
+
 </script>
 
 <template>
@@ -8,7 +12,7 @@ import BtnSecondary from "~/modules/Common/UI/BtnSecondary.vue";
 		<div class="pass-content">
 			<h2>Сдать жилье на АураТур</h2>
 			<p>Мы возьмем на себя полное обслуживание, поиск гостей и гарантируем высокую заполняемость.</p>
-			<BtnSecondary>Подробнее</BtnSecondary>
+			<BtnSecondary @click="landLordModal = true">Подробнее</BtnSecondary>
 		</div>
 	</div>
 </template>

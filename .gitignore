@@ -6,6 +6,7 @@
 .cache
 dist
 uploads
+prisma
 
 # Node dependencies
 node_modules

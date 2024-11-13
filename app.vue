@@ -4,6 +4,7 @@
 		<NuxtPage/>
 		<AuthModal/>
 		<BurgerMenuModal/>
+		<LandLordInfoModal/>
 	</NuxtLayout>
 </template>
 
@@ -17,6 +18,7 @@
 import AuthModal from "~/modules/Auth/components/AuthModal.vue";
 import BurgerMenuModal from "~/modules/Menu/components/BurgerMenuModal.vue";
 import useSearch from "~/modules/Booking/composables/useSearch";
+import LandLordInfoModal from "~/modules/Common/LandLordInfoModal.vue";
 const {loadSearchData} = useSearch()
 await loadSearchData();
 </script>
