@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
     try {
         // Обмениваем код на access_token
         const tokenResponse = await $fetch('https://oauth.vk.com/access_token', {
-            params: {
+            query: {
                 client_id: '52476950',
                 client_secret: 'hjzUwhe10KrdFeQySaoe',
                 redirect_uri: 'https://aura-tour-abkhazia.ru/api/auth/vk/callback',
@@ -25,20 +25,19 @@ export default defineEventHandler(async (event) => {
         const { access_token, user_id, email } = tokenResponse.data;
 
         if (!access_token || !user_id) {
-            throw createError({ statusCode: 400, message: 'Failed to get access token' });
+            return  createError({ statusCode: 400, message: 'Failed to get access token' });
         }
 
         // Получаем информацию о пользователе
         const userInfoResponse = await $fetch('https://api.vk.com/method/users.get', {
-            params: {
-                user_ids: user_id,
-                fields: 'photo_200',
+            query: {
+                uids: user_id,
                 access_token,
-                v: '5.131',
+                v: '5.52',
             },
         });
 
-        const vkUser = userInfoResponse.data.response[0];
+        const vkUser = userInfoResponse.response[0];
 
         // Ищем пользователя в базе данных
         let user = await prisma.user.findUnique({
@@ -54,12 +53,6 @@ export default defineEventHandler(async (event) => {
                     email: email || null,
                     name: vkUser.first_name,
                     surname: vkUser.last_name,
-                    avatar: {
-                        create: {
-                            urlMin: vkUser.photo_200,
-                            urlFull: vkUser.photo_200,
-                        },
-                    },
                     isTemporary: false,
                     role: 'TOURIST', // Устанавливаем роль по умолчанию
                 },
@@ -75,7 +68,7 @@ export default defineEventHandler(async (event) => {
         }
 
         // Генерируем JWT токен
-        const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'your_jwt_secret', {
+        const token = jwt.sign({ userId: user.id }, 'gjc8aKwxK3dWgg00XiGqgaWXCuixVb7v', {
             expiresIn: '30d',
         });
 
@@ -84,7 +77,7 @@ export default defineEventHandler(async (event) => {
             httpOnly: true,
             sameSite: 'lax',
             path: '/',
-            maxAge: 60 * 60 * 24 * 30, // 7 дней
+            maxAge: 60 * 60 * 24 * 30,
         });
 
         // Перенаправляем пользователя на главную страницу или на нужный маршрут

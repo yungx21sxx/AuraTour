@@ -135,7 +135,7 @@
 								<RegisrationForm @on-success="onRegistrationSuccess" />
 							</v-tabs-window-item>
 						</v-tabs-window>
-						<p v-if="vkAuthIsLoaded" class="text-main mb-4 text-gray">Воити или зарегестрироваться через соц. сети</p>
+						<p class="text-main mb-4 text-gray">Воити или зарегестрироваться через соц. сети</p>
 						<div id="vk-widget-container"></div>
 					</v-window-item>
 					<v-window-item value="CONFIRM-CODE">

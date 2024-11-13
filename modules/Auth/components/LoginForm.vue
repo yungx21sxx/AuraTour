@@ -7,6 +7,7 @@
 			:rules="emailRules"
 			style="margin-bottom: 16px;"
 			required
+			type="email"
 		></v-text-field>
 		
 		<BtnPrimary
@@ -64,7 +65,7 @@ const submit = async () => {
 	serverErrors.value = [];
 	try {
 		const { email } = await AuthAPI.login({
-			email: emailInput.value,
+			email: emailInput.value.toLowerCase().trim(),
 		});
 		emit('onSuccess', email);
 	} catch (error: H3Error) {

@@ -88,7 +88,7 @@ const submit = async () => {
 	serverErrors.value = [];
 	try {
 		const {email} = await AuthAPI.registration({
-			email: emailInput.value,
+			email: emailInput.value.toLowerCase().trim(),
 			name: firstName.value,
 			surname: lastName.value,
 			phone: phone.value || undefined,

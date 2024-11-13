@@ -9,6 +9,15 @@ const {addToFavorites, removeFromFavorites, favoriteListingIDs} = useFavorites()
 const inFavorite = computed(() => {
 	return favoriteListingIDs.value.includes(listing.value.id)
 })
+
+async function copyToClipboard() {
+	try {
+		await navigator.clipboard.writeText(window.location.href);
+		alert('Ссылка скопирована в буфер обмена');
+	} catch (err) {
+		console.error('Ошибка при копировании: ', err);
+	}
+}
 </script>
 
 <template>
@@ -28,7 +37,7 @@ const inFavorite = computed(() => {
 				</template>
 				<v-list>
 					<v-list-item>
-						<v-btn>Скопировать ссылку</v-btn>
+						<v-btn @click="copyToClipboard">Скопировать ссылку</v-btn>
 					</v-list-item>
 				</v-list>
 			</v-menu>
