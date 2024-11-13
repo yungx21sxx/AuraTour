@@ -141,21 +141,16 @@ async function submit() {
 		prepayWithBonus: prices.value?.prepayWithBonus || 0
 	}
 	try {
-		// await Promise.all([
-		// 	// sendBookingInfo(
-		// 	// 	dto,
-		// 	// 	`https://aura-tour-abkhazia.ru/listing/${listing.value.id}`,
-		// 	// 	chosenRoom.value?.name || null
-		// 	// ),
-		// 	$fetch('/api/bookings/create', {
-		// 		method: 'POST',
-		// 		body: dto
-		// 	})
-		// ])
 		const {success, uuid} = await $fetch('/api/bookings/create', {
 			method: 'POST',
 			body: dto
 		})
+		await sendBookingInfo(
+				dto,
+				`https://aura-tour-abkhazia.ru/listing/${listing.value.id}`,
+				chosenRoom.value?.name || null,
+			listing.manager.name
+		);
 		if (!authUser.value) {
 			localStorage.setItem('bookingUUID', uuid);
 		}

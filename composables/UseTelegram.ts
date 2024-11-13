@@ -1,28 +1,29 @@
-import type {BookingCreateDTO} from "~/types/dto.types";
+import type {BookingCreateDTO} from "~/modules/Listing/types/dto.types";
+import {parsePhoneNumber} from "libphonenumber-js";
+import useBooking from "~/modules/Booking/composables/useBooking";
 
 export default () => {
 	const bookingBotToken = '7033762910:AAFQ-WgMN4uRWXl_ZQwn6snraEZyI1dR9eg';
 	const bookingBotChatID = -1002065449939;
-	
+	const {
+		beautifyDate,
+	} = useBooking();
 
-	function formatBookingMessageForTelegramLink(bookingData: BookingCreateDTO, listingLink: string, roomName: string | null) {
+	function formatBookingMessageForTelegramLink(bookingData: BookingCreateDTO, listingLink: string, roomName: string | null, managerName: string) {
 		const messageParts = [
 			`Новое бронирование:`,
-			`**Дата заезда:** ${bookingData.startDate.toISOString().split('T')[0]}`,
-			`**Дата выезда:** ${bookingData.endDate.toISOString().split('T')[0]}`,
+			`**Дата заезда:** ${beautifyDate( bookingData.checkIn)}`,
+			`**Дата выезда:** ${beautifyDate( bookingData.checkOut)}`,
 			`Взрослые: ${bookingData.adults}`,
 			`Дети: ${bookingData.childrens}`,
-			`Фамилия: ${bookingData.surname}`,
-			`Имя: ${bookingData.name}`,
+			`Фамилия: ${bookingData.userSurname}`,
+			`Имя: ${bookingData.userName}`,
 			`Комментарий: ${bookingData.comment}`,
-			`Телефон: ${bookingData.phone}`,
+			`Телефон: ${parsePhoneNumber(bookingData.userPhone).formatNational()}`,
 			`Трансфер: ${bookingData.transfer ? 'Да' : 'Нет'}`,
 			bookingData.transferComment ? `Комментарий к трансферу: ${bookingData.transferComment}` : '',
-			`ID объявления: ${bookingData.listingId}`,
 			`Ссылка на объект: ${listingLink}  `,
-			bookingData.roomId ? `ID Номера: ${bookingData.roomId}` : '',
-			bookingData.roomId ? `Номер ${roomName}` : '',
-			bookingData.userId ? `ID пользователя: ${bookingData.userId}` : ''
+			`Менеджер: ${managerName}`
 		];
 
 		// Фильтрация пустых строк и соединение частей сообщения с кодированным переносом строки
@@ -33,8 +34,8 @@ export default () => {
 	// @ts-ignore
 
 	// @ts-ignore
-	const sendBookingInfo = async (bookingData: BookingCreateDTO, listingLink: string, roomName: string | null) => {
-		const text = formatBookingMessageForTelegramLink(bookingData, listingLink, roomName);
+	const sendBookingInfo = async (bookingData: BookingCreateDTO, listingLink: string, roomName: string | null, managerName: string) => {
+		const text = formatBookingMessageForTelegramLink(bookingData, listingLink, roomName, managerName);
 		const url = getUrl(text, bookingBotToken, bookingBotChatID);
 		return useFetch(url)
 	}
