@@ -26,8 +26,8 @@ async function copyToClipboard() {
 	<div class="nav">
 		<ListingAncors/>
 		<div class="nav__actions" v-if="!isMobile">
-			<v-btn variant="text" v-if="!inFavorite" :prepend-icon="mdiHeartOutline">Сохранить</v-btn>
-			<v-btn variant="text" v-else :prepend-icon="mdiHeart">Сохранено</v-btn>
+			<v-btn variant="text" v-if="!inFavorite" :prepend-icon="mdiHeartOutline" @click="addToFavorites(listing.id)">Сохранить</v-btn>
+			<v-btn variant="text" v-else :prepend-icon="mdiHeart" @click="removeFromFavorites(listing.id)">Сохранено</v-btn>
 			<v-menu>
 				<template v-slot:activator="{ props }">
 					<v-btn v-bind="props" variant="text" :prepend-icon="mdiShareVariant">Поделиться</v-btn>

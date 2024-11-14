@@ -135,7 +135,7 @@ async function submit() {
 		listingId: listing.value.id,
 		roomId: chosenRoomId.value,
 		userId: authUser.value?.id || null,
-		bonusApplied: applyBonusToBooking,
+		bonusApplied: applyBonusToBooking || false,
 		bonusAppliedCount: applyBonusToBooking ? authUser.value?.bonusPoints : 0,
 		totalPriceWithBonus: prices.value?.totalPriceWithBonus || 0,
 		prepayWithBonus: prices.value?.prepayWithBonus || 0
@@ -149,7 +149,7 @@ async function submit() {
 				dto,
 				`https://aura-tour-abkhazia.ru/listing/${listing.value.id}`,
 				chosenRoom.value?.name || null,
-			listing.manager.name
+			listing.value.manager.name
 		);
 		if (!authUser.value) {
 			localStorage.setItem('bookingUUID', uuid);
@@ -168,7 +168,7 @@ async function submit() {
 		if (error && error.data) {
 			serverErrors.value = [error.data.message];
 		} else {
-			serverErrors.value = ['Произошла ошибка при регистрации'];
+			console.log(error)
 		}
 	} finally {
 		pending.value = false;

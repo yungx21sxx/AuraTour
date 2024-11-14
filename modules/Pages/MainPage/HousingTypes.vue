@@ -2,7 +2,7 @@
 	import ListingsSlider from "~/modules/Listing/components/shared/ListingsSlider.vue";
 	import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 	
-	const {data: housingTypes, pending} = await useFetch('/api/listings/all-types', {
+	const housingTypes = await $fetch('/api/listings/all-types', {
 		transform: housingTypes => housingTypes.filter(type => type.totalCount > 0)
 	});
 	const currentType = ref();
@@ -18,32 +18,26 @@
 </script>
 
 <template>
-	<div class="wrapper types">
-		<h2 class="types__title">Лучшие предложения</h2>
-		<VNoSsr>
-			<div class="types__catalog">
-				<v-tabs show-arrows center-active v-model="currentType" class="mt-4 mb-4 types__tabs">
-					<v-tab v-for="housingType of housingTypes"
-					       :value="housingType.id"
-					       color="#7059FF"
-					>{{housingType.name}}</v-tab>
-				</v-tabs>
-				<v-window v-model="currentType" :touch="false" disabled>
-					<v-window-item  v-for="housingType of housingTypes" :value="housingType.id">
-						<div class="types__list" style="height: 425px; margin-top: 16px;">
-							<v-lazy>
-								<ListingsSlider :listings="housingType.listings">
-									<template #action>
-										<BtnPrimary @click="goToCategory" class="types__btn" color="#7059FF" elevation="0">Смотреть {{numberToVariantsString(housingType.totalCount)}}</BtnPrimary>
-									</template>
-								</ListingsSlider>
-							</v-lazy>
-						</div>
-					</v-window-item>
-				</v-window>
-			</div>
-		</VNoSsr>
-		
+	<div class="types">
+		<div class="types__catalog">
+			<v-tabs show-arrows center-active v-model="currentType" class="mt-4 mb-4 types__tabs">
+				<v-tab v-for="housingType of housingTypes"
+				       :value="housingType.id"
+				       color="#7059FF"
+				>{{housingType.name}}</v-tab>
+			</v-tabs>
+			<v-window v-model="currentType" :touch="false" disabled>
+				<v-window-item :eager="true"  v-for="housingType of housingTypes" :value="housingType.id">
+					<div class="types__list" style="height: 425px; margin-top: 16px;">
+						<ListingsSlider :listings="housingType.listings" :key="housingType.id">
+							<template #action>
+								<BtnPrimary @click="goToCategory" class="types__btn" color="#7059FF" elevation="0">Смотреть {{numberToVariantsString(housingType.totalCount)}}</BtnPrimary>
+							</template>
+						</ListingsSlider>
+					</div>
+				</v-window-item>
+			</v-window>
+		</div>
 	</div>
 	
 </template>

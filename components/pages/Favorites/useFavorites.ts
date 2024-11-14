@@ -1,10 +1,13 @@
 import type {IListingPreviewResponse} from "~/types/response.types";
 import useStatistics from "~/modules/Common/useStatistics";
+import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
 
 export default () => {
 	const favoriteListingIDs = useState<number[]>('favorite',() => [])
 
 	const saveChanges = (listings: number[]) => localStorage.setItem('favorites', JSON.stringify(listings));
+
+	const authUser = useAuthUser()
 
 	const addToFavorites = (listingId: number) => {
 		favoriteListingIDs.value.push(listingId);

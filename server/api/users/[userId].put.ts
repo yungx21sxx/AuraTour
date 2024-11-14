@@ -49,23 +49,23 @@ export default defineEventHandler(async (event) => {
     }
 
     // Если пользователь пытается обновить профиль, но у него есть незавершённое изменение email
-    if (isEditingOwnAccount && !isAdminOrManager) {
-        const pendingEmailChange = await prisma.emailVerificationCode.findFirst({
-            where: {
-                userId: userId,
-                expiresAt: {
-                    gt: new Date(),
-                },
-            },
-        });
-
-        if (pendingEmailChange) {
-            throw createError({
-                statusCode: 403,
-                statusMessage: 'You must confirm your new email before updating your profile',
-            });
-        }
-    }
+    // if (isEditingOwnAccount && !isAdminOrManager) {
+    //     const pendingEmailChange = await prisma.emailVerificationCode.findFirst({
+    //         where: {
+    //             userId: userId,
+    //             expiresAt: {
+    //                 gt: new Date(),
+    //             },
+    //         },
+    //     });
+    //
+    //     if (pendingEmailChange) {
+    //         throw createError({
+    //             statusCode: 403,
+    //             statusMessage: 'You must confirm your new email before updating your profile',
+    //         });
+    //     }
+    // }
 
     // Читаем тело запроса и валидируем его
     const body = await readBody(event);

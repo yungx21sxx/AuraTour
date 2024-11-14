@@ -53,51 +53,51 @@
 		});
 	}
 	const vkAuthIsLoaded = ref(false);
-	onMounted(() => {
-		loadVKIDScript()
-			.then(VKID => {
-				vkAuthIsLoaded.value = true;
-				VKID.Config.init({
-					app: 52476950,
-					redirectUrl: 'https://aura-tour-abkhazia.ru/api/auth/vk/callback',
-					responseMode: VKID.ConfigResponseMode.Callback,
-					source: VKID.ConfigSource.LOWCODE,
-				});
-				
-				const oneTap = new VKID.OneTap();
-				
-				oneTap.render({
-					container: document.getElementById('vk-widget-container'),
-					showAlternativeLogin: true,
-					oauthList: [
-						'ok_ru',
-						'mail_ru'
-					]
-				})
-					.on(VKID.WidgetEvents.ERROR, vkidOnError)
-					.on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function (payload) {
-						const code = payload.code;
-						const deviceId = payload.device_id;
-						
-						VKID.Auth.exchangeCode(code, deviceId)
-							.then(vkidOnSuccess)
-							.catch(vkidOnError);
-					});
-				
-				
-				function vkidOnSuccess(data) {
-					// Обработка успешной авторизации
-				}
-				
-				function vkidOnError(error) {
-					// Обработка ошибки
-				}
-				
-			})
-			.catch(error => {
-				console.error(error);
-			})
-	})
+	// onMounted(() => {
+	// 	loadVKIDScript()
+	// 		.then(VKID => {
+	// 			vkAuthIsLoaded.value = true;
+	// 			VKID.Config.init({
+	// 				app: 52476950,
+	// 				redirectUrl: 'https://aura-tour-abkhazia.ru/api/auth/vk/callback',
+	// 				responseMode: VKID.ConfigResponseMode.Callback,
+	// 				source: VKID.ConfigSource.LOWCODE,
+	// 			});
+	//
+	// 			const oneTap = new VKID.OneTap();
+	//
+	// 			oneTap.render({
+	// 				container: document.getElementById('vk-widget-container'),
+	// 				showAlternativeLogin: true,
+	// 				oauthList: [
+	// 					'ok_ru',
+	// 					'mail_ru'
+	// 				]
+	// 			})
+	// 				.on(VKID.WidgetEvents.ERROR, vkidOnError)
+	// 				.on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, function (payload) {
+	// 					const code = payload.code;
+	// 					const deviceId = payload.device_id;
+	//
+	// 					VKID.Auth.exchangeCode(code, deviceId)
+	// 						.then(vkidOnSuccess)
+	// 						.catch(vkidOnError);
+	// 				});
+	//
+	//
+	// 			function vkidOnSuccess(data) {
+	// 				// Обработка успешной авторизации
+	// 			}
+	//
+	// 			function vkidOnError(error) {
+	// 				// Обработка ошибки
+	// 			}
+	//
+	// 		})
+	// 		.catch(error => {
+	// 			console.error(error);
+	// 		})
+	// })
 
 
 </script>
@@ -135,8 +135,8 @@
 								<RegisrationForm @on-success="onRegistrationSuccess" />
 							</v-tabs-window-item>
 						</v-tabs-window>
-						<p class="text-main mb-4 text-gray">Воити или зарегестрироваться через соц. сети</p>
-						<div id="vk-widget-container"></div>
+<!--						<p class="text-main mb-4 text-gray">Воити или зарегестрироваться через соц. сети</p>-->
+<!--						<div id="vk-widget-container"></div>-->
 					</v-window-item>
 					<v-window-item value="CONFIRM-CODE">
 						<OtpConfirmForm @on-success="onAuthSuccess"/>

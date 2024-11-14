@@ -87,8 +87,6 @@
 	const currentListings = ref<IListingPreviewResponse[] | null>(null);
 	const listingsLoading = ref(false);
 	
-	console.log('map component')
-	
 	const openListingModal = async (IDs: number[]) => {
 		listingModal.value = true;
 		listingsLoading.value = true;
@@ -119,7 +117,11 @@
 	
 	
 	watch(map, () => {
-		console.log(map.value)
+		mapLoading.value = false
+	})
+	
+	onMounted(() => {
+		// mapLoading.value = false
 	})
 	
 	watch(VueYandexMaps.loadStatus, (status) => {
@@ -130,7 +132,6 @@
 			mapError.value = true
 			mapLoading.value = false
 		}
-		console.log(status, VueYandexMaps.loadError.value)
 	});
 </script>
 
@@ -145,14 +146,19 @@
 				<h3 id="listings">Найдено {{ mapListingsList.count }} вариантов жилья</h3>
 				<BtnSecondary class="btn" :prepend-icon="mdiChevronLeft" @click="mapCatalogIsOpen = false">Назад к каталогу</BtnSecondary>
 			</div>
-			<div id="map" :class="['map', {
-			'map_modal': target === 'modal'
-		}]">
+			<div
+				id="map"
+				:class="['map', {
+					'map_modal': target === 'modal'
+				}]"
+				:style="{
+						display: mapLoading ? 'none' : 'block'
+				}"
+			>
 				<yandex-map
 					v-model="map"
 					id="map__canvas"
 					class="map__canvas"
-					v-show="!mapLoading"
 					:settings="{
 			        location: {
 			          center: [mapListingsList.listings[0].coords.longitude, mapListingsList.listings[0].coords.width],
@@ -180,17 +186,17 @@
 						</div>
 					</yandex-map-marker>
 				</yandex-map>
-				<div v-if="mapLoading && !mapError" style="display: flex; justify-content: center; height: 400px; flex-direction: column; align-items: center">
-					<v-progress-circular
-						color="primary"
-						indeterminate
-					></v-progress-circular>
-				</div>
-				<div v-if="mapError" style="display: flex; justify-content: center; height: 400px; flex-direction: column; align-items: center">
-					<v-alert type="error" title="Ошибка загрузки карты!" text="Попробуйте отключить VPN."/>
-				</div>
+				
 			</div>
-			
+			<div v-if="mapLoading && !mapError" style="display: flex; justify-content: center; height: 400px; flex-direction: column; align-items: center">
+				<v-progress-circular
+					color="primary"
+					indeterminate
+				></v-progress-circular>
+			</div>
+			<div v-if="mapError" style="display: flex; justify-content: center; height: 400px; flex-direction: column; align-items: center">
+				<v-alert type="error" title="Ошибка загрузки карты!" text="Попробуйте отключить VPN."/>
+			</div>
 			
 			<v-dialog v-model="listingModal" max-width="800px" v-if="target === 'catalog'" scrollable>
 				<v-card>

@@ -26,13 +26,13 @@ async function copyToClipboard() {
 			<v-btn :prepend-icon="mdiChevronLeft" @click="emits('onClose')">Назад</v-btn>
 		</template>
 		<template #append>
-			<v-btn v-if="isMobile && !inFavorite" :icon="mdiHeartOutline"/>
-			<v-btn v-if="isMobile && inFavorite" :icon="mdiHeart"/>
+			<v-btn v-if="isMobile && !inFavorite" :icon="mdiHeartOutline" @click="addToFavorites(listing.id)"/>
+			<v-btn v-if="isMobile && inFavorite" :icon="mdiHeart" @click="removeFromFavorites(listing.id)"/>
 			<v-btn variant="text" v-if="!isMobile && !inFavorite" :prepend-icon="mdiHeartOutline">Сохранить</v-btn>
 			<v-btn variant="text" v-if="!isMobile && inFavorite" :prepend-icon="mdiHeart">Сохранено</v-btn>
 			<v-menu>
 				<template v-slot:activator="{ props }">
-					<v-btn v-if="isMobile" :icon="mdiShareVariant"/>
+					<v-btn v-if="isMobile" v-bind="props" :icon="mdiShareVariant"/>
 					<v-btn v-else v-bind="props" variant="text" :prepend-icon="mdiShareVariant">Поделиться</v-btn>
 				</template>
 				<v-list>

@@ -131,7 +131,7 @@ watch(mapCatalogIsOpen, () => {
 			<FilterForm />
 		</div>
 		<div class="catalog__content">
-			<CatalogListingsMap :key="mapKey" v-if="mapCatalogIsOpen"/>
+			<CatalogListingsMap v-if="mapCatalogIsOpen"/>
 			<CatalogListingsList v-else/>
 		</div>
 		

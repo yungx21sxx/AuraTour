@@ -63,8 +63,7 @@ export default defineEventHandler(async (event) => {
 
         // Создание бронирования
         const bookingUUID = v1();
-        console.log()
-        const isAdminCreated = ['ADMIN', 'MANAGER'].includes(event.context.user.role);
+        const isAdminCreated = event.context.user && ['ADMIN', 'MANAGER'].includes(event.context.user.role);
 
         const newBooking = await prisma.booking.create({
             data: {

@@ -32,6 +32,15 @@
 		]
 	});
 	
+	async function copyToClipboard() {
+		try {
+			await navigator.clipboard.writeText(window.location.href);
+			alert('Ссылка скопирована в буфер обмена');
+		} catch (err) {
+			console.error('Ошибка при копировании: ', err);
+		}
+	}
+	
 
 </script>
 
@@ -52,6 +61,21 @@
 				<v-icon :icon="mdiWaves" size="20px"/>
 				<span>{{listing.seaDistance}}м до моря</span>
 			</div>
+			<div style="display: flex; margin-left: -12px; margin-top: 8px;" v-if="isMobile">
+				<v-btn color="#6A6D81" variant="text" v-if="!inFavorite" :prepend-icon="mdiHeartOutline" @click="addToFavorites(listing.id)">Сохранить</v-btn>
+				<v-btn color="#6A6D81" variant="text" v-else :prepend-icon="mdiHeart" @click="removeFromFavorites(listing.id)">Сохранено</v-btn>
+				<v-menu>
+					<template v-slot:activator="{ props }">
+						<v-btn color="#6A6D81" v-bind="props" variant="text" :prepend-icon="mdiShareVariant">Поделиться</v-btn>
+					</template>
+					<v-list>
+						<v-list-item>
+							<v-btn @click="copyToClipboard">Скопировать ссылку</v-btn>
+						</v-list-item>
+					</v-list>
+				</v-menu>
+			</div>
+			
 		</div>
 		<AncorsMenu class="header__nav mt-2"/>
 	</div>
