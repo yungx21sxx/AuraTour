@@ -1,5 +1,5 @@
 export default () => {
-    const applyBonus = useState(() => true);
+    const applyBonus = useState(() => false);
     return {
         applyBonus
     }

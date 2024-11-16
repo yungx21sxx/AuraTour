@@ -9,8 +9,15 @@ export default defineEventHandler(async event => {
         },
         include: {
             avatar: true,
-            BonusTransaction: true,
+            BonusTransaction: {
+                orderBy: {
+                    createdAt: 'desc',
+                }
+            },
             userBookings: {
+                orderBy: {
+                    createdAt: 'desc',
+                },
                 include: {
                     listing: {
                         include: {

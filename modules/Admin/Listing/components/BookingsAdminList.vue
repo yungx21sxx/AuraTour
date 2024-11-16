@@ -109,10 +109,6 @@
 		await refreshNuxtData('listing-bookings');
 	}
 	
-
-	
-	
-	
 </script>
 
 <template>
@@ -161,7 +157,10 @@
 					<!-- Дополнительная информация -->
 					<div class="details">
 						<div class="details__item">
-							<strong>Номер:</strong> {{ booking.room ? booking.room.name : 'Не указано' }}
+							<strong>Дата создания:</strong> {{ beautifyDate( booking.createdAt ) }}
+						</div>
+						<div class="details__item" v-if="booking.room">
+							<strong>Выбранный номер:</strong> {{ booking.room ? booking.room.name : 'Не указано' }}
 						</div>
 						<div class="details__item">
 							<strong>Телефон:</strong> {{ booking.userPhone }}

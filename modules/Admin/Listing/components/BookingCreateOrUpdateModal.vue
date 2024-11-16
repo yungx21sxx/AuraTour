@@ -211,14 +211,12 @@ const chosenRoom = computed(() => {
 		: null;
 });
 
+const bookingToUpdate = ref(props.bookingToUpdate);
+
 const calculatedPrices = computed(() => {
 	if (!dateRange.value.start || !dateRange.value.end) {
 		return null;
 	}
-	console.log('Пересчитываем цены');
-	
-	const withBonus = bonusApplied.value && chosenUser.value && chosenUser.value?.bonusPoints > 0;
-	
 	const pricePeriods = chosenRoom.value
 		? chosenRoom.value.pricePeriods
 		: listing.value.pricePeriods;
@@ -226,6 +224,30 @@ const calculatedPrices = computed(() => {
 	const minPrice = chosenRoom.value
 		? chosenRoom.value.minPrice
 		: listing.value.minPrice;
+	// Проверяем, редактируем ли бронь
+	const isEditing = props.bookingToUpdate.bonusApplied;
+	
+	if (isEditing) {
+		const { daysCount} = calculatePrices(
+			pricePeriods,
+			minPrice,
+			dateRange.value.start,
+			dateRange.value.end
+		);
+		return {
+			totalPrice: props.bookingToUpdate.totalPrice,
+			prepay: props.bookingToUpdate.prepay,
+			bonusApplied: props.bookingToUpdate.bonusApplied,
+			bonusAppliedCount: props.bookingToUpdate.bonusAppliedCount,
+			totalPriceWithBonus: props.bookingToUpdate.totalPriceWithBonus,
+			daysCount,
+			prepayWithBonus: props.bookingToUpdate.prepayWithBonus
+		};
+	}
+	// Если создаём новую бронь, рассчитываем данные
+	const withBonus = bonusApplied.value && chosenUser.value && chosenUser.value?.bonusPoints > 0;
+	
+	
 	
 	const { totalPrice, daysCount, dailyPrice } = calculatePrices(
 		pricePeriods,
@@ -233,23 +255,28 @@ const calculatedPrices = computed(() => {
 		dateRange.value.start,
 		dateRange.value.end
 	);
+	
 	const prepay = parseInt((totalPrice * PREPAY_PERCENT).toFixed(0));
 	
-	let totalPriceWithBonus = withBonus ? totalPrice - chosenUser.value?.bonusPoints : totalPrice;
-	let prepayWithBonus = withBonus ? parseInt((totalPriceWithBonus * PREPAY_PERCENT).toFixed(0)) : prepay;
+	const userBonusPoints = chosenUser.value?.bonusPoints || 0;
+	const bonusAppliedCount = withBonus ? Math.min(userBonusPoints, totalPrice) : 0;
 	
+	const totalPriceWithBonus = totalPrice - bonusAppliedCount;
+	const prepayWithBonus = parseInt((totalPriceWithBonus * PREPAY_PERCENT).toFixed(0));
 	
 	return {
 		totalPrice,
-		daysCount,
-		dailyPrice,
 		prepay,
+		bonusApplied: withBonus,
+		bonusAppliedCount,
 		totalPriceWithBonus,
-		prepayWithBonus
+		prepayWithBonus,
+		daysCount,
+		dailyPrice
 	};
 });
-// Локальные состояния
-const bookingToUpdate = ref(props.bookingToUpdate);
+
+
 
 const formData = ref({
 	userName: '',
@@ -314,6 +341,11 @@ watch(
 	}
 );
 
+watch(calculatedPrices, () => {
+	console.log(calculatedPrices.value)
+	console.log(bookingToUpdate.value)
+})
+
 
 // Инициализация формы
 function initializeForm() {
@@ -329,10 +361,12 @@ function initializeForm() {
 			transfer: bookingToUpdate.value.transfer || false,
 			transferComment: bookingToUpdate.value.transferComment || '',
 		};
+		bonusApplied.value = props.bookingToUpdate.bonusApplied;
 		dateRange.value.start = new Date(bookingToUpdate.value.checkIn) || null;
 		dateRange.value.end = new Date(bookingToUpdate.value.checkOut) || null;
 		chosenRoomId.value = bookingToUpdate.value.room ? bookingToUpdate.value.room.id : null;
 		chosenUserId.value = bookingToUpdate.value.user ? bookingToUpdate.value.user.id : null
+		chosenUser.value = bookingToUpdate.value.user;
 	} else {
 		// Если создание нового бронирования, очищаем форму
 		formData.value = {
@@ -346,6 +380,7 @@ function initializeForm() {
 			transfer: false,
 			transferComment: '',
 		};
+		bonusApplied.value = false;
 		dateRange.value.start = null
 		dateRange.value.end = null;
 		chosenRoomId.value = null;
@@ -425,13 +460,14 @@ async function onSubmit() {
 
 .price {
 	font-weight: 500;
+	display: flex;
+	gap: 8px;
 }
 .days {
 	color: #6a6d81;
 	line-height: 24px;
 }
 .price-block {
-	max-width: 300px;
 	color: #6a6d81;
 	margin-bottom: 16px;
 	display: flex;

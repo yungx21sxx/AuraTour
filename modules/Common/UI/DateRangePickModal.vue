@@ -45,7 +45,6 @@
 					<div class="modal__date">
 						<DatePicker
 							v-model.range="range"
-							:min-date="new Date()"
 							expanded
 							:rows="isMobileOrTablet ? 12 : 1"
 							:columns="isMobileOrTablet ? 1 : 2"

@@ -52,83 +52,79 @@ export default defineEventHandler(async (event) => {
             return  createError({ statusCode: 404, statusMessage: 'Бронирование не найдено' });
         }
 
-        // Начинаем транзакцию для обновления бронирования и начисления бонусов
-            // Обновляем бронирование
-            const booking = await prisma.booking.update({
-                where: { id: bookingId },
+
+        const booking = await prisma.booking.update({
+            where: { id: bookingId },
+            data: {
+                userName,
+                userPhone,
+                userSurname,
+                listingId,
+                roomId,
+                status,
+                checkIn: checkIn ? new Date(checkIn) : undefined,
+                checkOut: checkOut ? new Date(checkOut) : undefined,
+                adults,
+                childrens,
+                comment,
+                transfer,
+                transferComment,
+                totalPrice,
+                prepay,
+                bonusApplied,
+                bonusAppliedCount,
+                prepayWithBonus,
+                totalPriceWithBonus,
+                daysCount,
+                userId
+            },
+        });
+
+        if (currentBooking.status === 'PENDING' && status === 'CONFIRMED' && bonusApplied && booking.userId && bonusAppliedCount && userId) {
+            await prisma.bonusTransaction.create({
                 data: {
-                    userName,
-                    userPhone,
-                    userSurname,
-                    listingId,
-                    roomId,
-                    status,
-                    checkIn: checkIn ? new Date(checkIn) : undefined,
-                    checkOut: checkOut ? new Date(checkOut) : undefined,
-                    adults,
-                    childrens,
-                    comment,
-                    transfer,
-                    transferComment,
-                    totalPrice,
-                    prepay,
-                    bonusApplied,
-                    bonusAppliedCount,
-                    prepayWithBonus,
-                    totalPriceWithBonus,
-                    daysCount,
-                    userId
+                    userId: booking.userId,
+                    bookingId: booking.id,
+                    amount: bonusAppliedCount,
+                    description: `Списание бонусов за бронирование №${booking.id}.`,
                 },
             });
-
-            if (currentBooking.status === 'PENDING' && status === 'CONFIRMED' && bonusApplied &&  booking.userId && bonusAppliedCount && userId) {
-                await prisma.bonusTransaction.create({
-                    data: {
-                        userId: booking.userId,
-                        bookingId: booking.id,
-                        amount: bonusAppliedCount,
-                        description: `Списание бонусов за бронирование №${booking.id}.`,
+            await prisma.user.update({
+                where: { id: userId },
+                data: {
+                    bonusPoints: {
+                        decrement: bonusAppliedCount,
                     },
-                });
-                await prisma.user.update({
-                    where: { id: userId },
-                    data: {
-                        bonusPoints: {
-                            decrement: bonusAppliedCount,
-                        },
+                },
+            });
+        }
+
+        // Если статус изменился на 'COMPLETED', начисляем бонусы
+        if (status === 'COMPLETED' && currentBooking.status !== 'COMPLETED' && booking.userId && !bonusApplied && userId) {
+            const bonusAmount = Math.floor((booking.totalPrice || currentBooking.totalPrice) * 0.03);
+            const revenue =  Math.floor((booking.totalPrice || currentBooking.totalPrice) * 0.1);
+            // Создаем запись о бонусной транзакции
+            await prisma.bonusTransaction.create({
+                data: {
+                    userId: booking.userId,
+                    bookingId: booking.id,
+                    amount: bonusAmount,
+                    description: `Начисление бонусов за завершенное бронирование №${booking.id}`,
+                },
+            });
+            await upsertListingStatistic(listingId, 'bookings', 1);
+            await upsertListingStatistic(listingId, 'revenue', revenue);
+
+            // Обновляем бонусный счет пользователя
+            await prisma.user.update({
+                where: { id: booking.userId },
+                data: {
+                    bonusPoints: {
+                        increment: bonusAmount,
                     },
-                });
-            }
-
-            // Если статус изменился на 'COMPLETED', начисляем бонусы
-            if (status === 'COMPLETED' && currentBooking.status !== 'COMPLETED' && booking.userId) {
-                const bonusAmount = Math.floor((booking.totalPrice || currentBooking.totalPrice) * 0.03);
-                const revenue =  Math.floor((booking.totalPrice || currentBooking.totalPrice) * 0.1);
-                // Создаем запись о бонусной транзакции
-                await prisma.bonusTransaction.create({
-                    data: {
-                        userId: booking.userId,
-                        bookingId: booking.id,
-                        amount: bonusAmount,
-                        description: `Начисление бонусов за завершенное бронирование №${booking.id}`,
-                    },
-                });
-                await upsertListingStatistic(listingId, 'bookings', 1);
-                await upsertListingStatistic(listingId, 'revenue', revenue);
-
-                // Обновляем бонусный счет пользователя
-                await prisma.user.update({
-                    where: { id: booking.userId },
-                    data: {
-                        bonusPoints: {
-                            increment: bonusAmount,
-                        },
-                    },
-                });
-            }
-
-
-
+                },
+            });
+        }
 
         return {
             success: true,

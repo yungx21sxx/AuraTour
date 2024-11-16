@@ -10,7 +10,7 @@ import {
 	mdiMinus,
 	mdiPlus,
 	mdiWhatsapp,
-	mdiCalendarEditOutline
+	mdiCalendarEditOutline, mdiCashCheck, mdiInformationVariant
 } from "@mdi/js"
 import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 import { parsePhoneNumber } from 'libphonenumber-js';
@@ -18,6 +18,7 @@ import BtnSecondary from "~/modules/Common/UI/BtnSecondary.vue";
 import useBonus from "~/modules/Listing/composables/useBonus";
 import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
 import TelegramIcon from "~/modules/Listing/icons/TelegramIcon.vue";
+import {BONUS_CACHE_BACK_PERCENT} from "../../constans";
 
 const authUser = useAuthUser()
 const {applyBonus} = useBonus()
@@ -47,7 +48,7 @@ const dates = computed(() => {
 });
 
 const isAdmin = computed(() => {
-	return  authUser.value && ['ADMIN', 'MANAGER'].includes(authUser.value.role);
+	return authUser.value && ['ADMIN', 'MANAGER'].includes(authUser.value.role);
 })
 
 
@@ -216,7 +217,14 @@ const isAdmin = computed(() => {
 					block
 				/>
 			</div>
-		
+		</div>
+		<div v-if="!listing.isHotelType && !applyBonus && listing.calculatedPrices?.totalPrice" style="display: flex; justify-content: center; margin-top: 24px;">
+			<v-chip
+				:prepend-icon="mdiCashCheck"
+				:append-icon="mdiInformationVariant"
+				variant="outlined"
+				v-tooltip:bottom="'Зарегестрируйтесь у нас на сайте и получайте кэшбэк за каждое бронирование!'"
+			>Вернем {{(listing.calculatedPrices?.totalPrice * BONUS_CACHE_BACK_PERCENT).toFixed(0)}} ₽ бонусами</v-chip>
 		</div>
 	</div>
 	

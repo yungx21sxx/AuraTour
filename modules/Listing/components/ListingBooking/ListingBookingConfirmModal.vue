@@ -120,13 +120,17 @@ async function submit() {
 		console.error('Form ref is not defined');
 		return;
 	}
-	if (!prices) return;
+	
+	
 	pending.value = true;
 	serverErrors.value = [];
 	
-	const applyBonusToBooking = authUser.value && applyBonus.value && authUser.value.bonusPoints > 0
+	const applyBonusToBooking: boolean = !!(authUser.value && applyBonus.value && authUser.value.bonusPoints > 0);
+	if (!prices.value) return;
 	
 	const dto: BookingCreateDTO = {
+		childrens: 0,
+		status: 'PENDING',
 		...listingBookingInfo.value,
 		...bookingFormData.value,
 		totalPrice: prices.value?.totalPrice,
@@ -135,22 +139,22 @@ async function submit() {
 		listingId: listing.value.id,
 		roomId: chosenRoomId.value,
 		userId: authUser.value?.id || null,
-		bonusApplied: applyBonusToBooking || false,
+		bonusApplied: applyBonusToBooking,
 		bonusAppliedCount: applyBonusToBooking ? authUser.value?.bonusPoints : 0,
-		totalPriceWithBonus: prices.value?.totalPriceWithBonus || 0,
-		prepayWithBonus: prices.value?.prepayWithBonus || 0
+		totalPriceWithBonus: applyBonusToBooking ? prices.value?.totalPriceWithBonus : 0,
+		prepayWithBonus: applyBonusToBooking ? prices.value?.prepayWithBonus : 0
 	}
 	try {
 		const {success, uuid} = await $fetch('/api/bookings/create', {
 			method: 'POST',
 			body: dto
 		})
-		await sendBookingInfo(
-				dto,
-				`https://aura-tour-abkhazia.ru/listing/${listing.value.id}`,
-				chosenRoom.value?.name || null,
-			listing.value.manager.name
-		);
+		// await sendBookingInfo(
+		// 		dto,
+		// 		`https://aura-tour-abkhazia.ru/listing/${listing.value.id}`,
+		// 		chosenRoom.value?.name || null,
+		// 	listing.value.manager.name
+		// );
 		if (!authUser.value) {
 			localStorage.setItem('bookingUUID', uuid);
 		}
