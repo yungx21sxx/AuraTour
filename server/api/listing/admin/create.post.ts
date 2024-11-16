@@ -114,7 +114,11 @@ export default defineEventHandler(async event => {
 
 	if (listing.typeId === 1) {
 		//@ts-ignore
-		query.flatProperties = listing.flatProperties as FlatProperties
+		query.flatProperties = {
+			create: {
+				...listing.flatProperties
+			}
+		}
 	}
 
 	try {
