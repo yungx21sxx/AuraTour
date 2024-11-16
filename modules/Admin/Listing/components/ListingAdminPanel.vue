@@ -35,7 +35,7 @@
 		{
 			value: 2,
 			name: 'Заметки',
-			disabled: access.value.isListingOwner
+			disabled: access.value.isListingOwner && !access.value.fullAccess
 		},
 		{
 			value: 3,
@@ -166,9 +166,7 @@
 				<BtnPrimary @click="createNote">Сохранить</BtnPrimary>
 			</v-window-item>
 			<v-window-item :value="3">
-			
 				<ListingStatistic/>
-				
 			</v-window-item>
 		</v-window>
 	
