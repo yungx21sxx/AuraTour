@@ -136,6 +136,7 @@ export interface IListingResponse {
     note: string | null,
     title: string,
     description: string,
+    validated: boolean,
 
     photos: IPhoto[],
 

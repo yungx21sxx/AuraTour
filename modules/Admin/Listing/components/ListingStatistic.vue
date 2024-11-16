@@ -3,7 +3,7 @@
 		<div class="date-inputs mt-8">
 			<v-card class="dates" @click="datePickerModal = true">
 				<v-icon :icon="mdiCalendarMonthOutline"></v-icon>
-				<span v-if="dateRange.startDate && dateRange.endDate">{{formatDate(dateRange.startDate)}} - {{formatDate(dateRange.endDate)}}</span>
+				<span v-if="dateRange.start && dateRange.end">{{formatDate(dateRange.start)}} - {{formatDate(dateRange.end)}}</span>
 				<span v-else>Выберите диапазон</span>
 			</v-card>
 			<DateRangePickModal v-model:range="dateRange" v-model:is-open="datePickerModal"/>
@@ -39,9 +39,9 @@ interface StatisticItem {
 }
 
 const datePickerModal = ref(false)
-const dateRange = ref<{ startDate: string; endDate: string }>({
-	startDate: '',
-	endDate: '',
+const dateRange = ref<{ start: string; end: string }>({
+	start: '',
+	end: '',
 });
 
 const series = ref<{ name: string; data: number[] }[]>([]);
@@ -79,11 +79,11 @@ function formatDate(date: Date): string {
 }
 
 // Функция для получения массива дат в диапазоне
-function getDatesInRange(startDate: Date, endDate: Date): Date[] {
-	const date = new Date(startDate.getTime());
+function getDatesInRange(start: Date, end: Date): Date[] {
+	const date = new Date(start.getTime());
 	const dates: Date[] = [];
 	
-	while (date <= endDate) {
+	while (date <= end) {
 		dates.push(new Date(date));
 		date.setDate(date.getDate() + 1);
 	}
@@ -104,8 +104,8 @@ const fetchData = async (): Promise<void> => {
 	error.value = null;
 	
 	const params = new URLSearchParams();
-	if (dateRange.value.startDate) params.append('startDate', dateRange.value.startDate);
-	if (dateRange.value.endDate) params.append('endDate', dateRange.value.endDate);
+	if (dateRange.value.start) params.append('startDate', dateRange.value.start);
+	if (dateRange.value.end) params.append('endDate', dateRange.value.end);
 	
 	try {
 		const response = await $fetch(`/api/statistics/${listing.value.id}`, {
@@ -121,11 +121,11 @@ const fetchData = async (): Promise<void> => {
 };
 
 const processChartData = (data: StatisticItem[]): void => {
-	const startDate = new Date(dateRange.value.startDate);
-	const endDate = new Date(dateRange.value.endDate);
+	const start = new Date(dateRange.value.start);
+	const end = new Date(dateRange.value.end);
 	
 	// Получаем все даты в диапазоне
-	const datesInRange = getDatesInRange(startDate, endDate);
+	const datesInRange = getDatesInRange(start, end);
 	
 	// Инициализируем массивы данных
 	const views: number[] = [];
@@ -183,8 +183,8 @@ onMounted(() => {
 	const lastWeek = new Date();
 	lastWeek.setDate(today.getDate() - 7);
 	
-	dateRange.value.startDate = lastWeek;
-	dateRange.value.endDate = today;
+	dateRange.value.start = lastWeek;
+	dateRange.value.end = today;
 	
 	fetchData(); // Загружаем данные при первой загрузке
 });
@@ -194,7 +194,7 @@ watch(
 	() => dateRange.value,
 	() => {
 		// Проверяем, что обе даты заполнены
-		if (dateRange.value.startDate && dateRange.value.endDate) {
+		if (dateRange.value.start && dateRange.value.end) {
 			fetchData();
 		}
 	},

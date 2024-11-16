@@ -48,7 +48,9 @@
 	const dates = computed(() => {
 		const {checkIn, checkOut} = dateModal.value;
 		return {checkIn, checkOut};
-	})
+	});
+	
+	
 	
 	watch(dates, async ({checkIn, checkOut}) => {
 		updateListingPrices(checkIn, checkOut);
@@ -78,6 +80,11 @@
 			incrementStatistic('views', listing.value.id)
 		}
 	})
+	
+	
+	
+	
+
 	
 
 </script>

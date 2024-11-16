@@ -4,7 +4,10 @@ import useBooking from "~/modules/Booking/composables/useBooking";
 
 export default () => {
 	const bookingBotToken = '7033762910:AAFQ-WgMN4uRWXl_ZQwn6snraEZyI1dR9eg';
+	const moderationBotToken = '7596912157:AAHuxdK-tA7E0YWUS99C7uKQqHZlYbsKCKA'
 	const bookingBotChatID = -1002065449939;
+	const moderationBotChatId = -1002458354946;
+
 	const {
 		beautifyDate,
 	} = useBooking();
@@ -42,7 +45,7 @@ export default () => {
 	
 	const sendListingValidationMassage = (type: 'create' | 'update', listingId: number) => {
 		const text = `Отельер оставил заявку на ${type === 'create' ? 'размещение жилья' : 'обновление жилья'}. Ссылка: https://aura-tour-abkhazia.ru/listing/${listingId}`;
-		const url = getUrl(text, bookingBotToken, bookingBotChatID);
+		const url = getUrl(text, moderationBotToken, moderationBotChatId);
 		return useFetch(url)
 	}
 

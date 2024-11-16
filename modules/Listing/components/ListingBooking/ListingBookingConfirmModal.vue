@@ -149,12 +149,12 @@ async function submit() {
 			method: 'POST',
 			body: dto
 		})
-		// await sendBookingInfo(
-		// 		dto,
-		// 		`https://aura-tour-abkhazia.ru/listing/${listing.value.id}`,
-		// 		chosenRoom.value?.name || null,
-		// 	listing.value.manager.name
-		// );
+		await sendBookingInfo(
+				dto,
+				`https://aura-tour-abkhazia.ru/listing/${listing.value.id}`,
+				chosenRoom.value?.name || null,
+			listing.value.manager.name
+		);
 		if (!authUser.value) {
 			localStorage.setItem('bookingUUID', uuid);
 		}

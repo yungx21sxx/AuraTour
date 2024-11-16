@@ -65,7 +65,7 @@
 	}
 	
 	async function deleteListing() {
-		await useFetch(`/api/listing/admin/${listing.value.id}`, {
+		await $fetch(`/api/listing/admin/${listing.value.id}`, {
 			method: 'DELETE'
 		})
 		alert('Объект удален');
@@ -74,11 +74,70 @@
 		})
 	}
 	
-	const listingDeleteSnackBar = ref(false)
+	const listingDeleteSnackBar = ref(false);
+	
+	const managers = await $fetch('/api/users/load-managers');
+	const selectedManagerId = ref(null);
+	const errorMassage = ref<string | null>(null)
+	
+	const setManager = async () => {
+		if (!selectedManagerId.value) {
+			alert('Выберите менеджера');
+			return;
+		}
+		try {
+			await $fetch(`/api/listing/set-manager/${listing.value.id}`, {
+				method: 'POST',
+				body: {
+					managerId: selectedManagerId.value
+				}
+			});
+			alert('Менеджер назначен. Объект будет давален в каталог');
+			errorMassage.value = null;
+			window.location.reload();
+		} catch (e) {
+			console.log(e)
+		}
+	}
+	
+	const validateListingChanges = async () => {
+		try {
+			await $fetch(`/api/listing/confirm-changes/${listing.value.id}`);
+			alert('Изменения подтверждены. Объект будет давален в каталог');
+			errorMassage.value = null;
+			window.location.reload();
+		} catch (e) {
+			console.log(e)
+		}
+	}
+	
+	const validateListing = async () => {
+		if (!listing.value.manager) {
+			await setManager()
+		} else {
+			await validateListingChanges();
+		}
+	}
+	
 </script>
 
 <template>
 	<div class="listing-block">
+		
+		<div class="mb-5" v-if="access.fullAccess && !listing.validated">
+			<h3 class="mb-4">Модерация объекта</h3>
+			<v-select
+				v-if="!listing.manager"
+				:items="managers"
+				v-model="selectedManagerId"
+				max-width="400px"
+				item-value="id"
+				item-title="fullName"
+				label="Выберите менеджера"
+			/>
+			<v-alert v-else type="info" class="mb-4" text="Был запрос на редактирование объекта, опубликовать его?"></v-alert>
+			<BtnPrimary @click="validateListing">Опубликовать объект</BtnPrimary>
+		</div>
 		<div class="mb-5 menu" v-if="access.fullAccess">
 			<v-btn color="green" :href="`/admin/edit-listing/${listing.id}`" :prepend-icon="mdiPencil">Редактировать объект</v-btn>
 			<v-btn color="blue" href="/admin/create-listing" :prepend-icon="mdiPlus" v-if="access.fullAccess">Создать объект</v-btn>
