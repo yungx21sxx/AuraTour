@@ -53,6 +53,8 @@ const chosenRoom = computed<IRoomResponse | null>(() => {
 	return room;
 })
 
+console.log(chosenRoom.value)
+
 interface IPrices {
 	daysCount: number
 	totalPrice: number,
@@ -264,7 +266,7 @@ const goBack = () => {
 							</v-menu>
 						</div>
 						<div class="room mb-4" v-if="chosenRoom">
-							<img :src="chosenRoom.photos[0].urlMin" v-if="chosenRoom.photos" class="room__img"/>
+							<img :src="chosenRoom.photos[0].urlMin" v-if="chosenRoom.photos.length > 0" class="room__img"/>
 							<div class="room__info">
 								<div class="room__name">{{chosenRoom.name}}</div>
 								<div class="room__places">{{getWordWithProperEnding(chosenRoom.places, 'место')}}</div>

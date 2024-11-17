@@ -51,7 +51,7 @@ const links: Link[] = [
 		enable: true,
 	},
 	{
-		name: 'На карта',
+		name: 'На карте',
 		id: 'map',
 		enable: true,
 	},

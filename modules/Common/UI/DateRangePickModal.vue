@@ -29,10 +29,7 @@
 							<h3>Выберите даты</h3>
 						</div>
 						<div class="header__dates dates" v-if="!range.start && !range.end">
-							<h2 class="header__date">
-								Заезд
-							</h2>
-							<p>Введите даты поездки чтобы увидеть цены</p>
+						
 						</div>
 						<div class="header__dates" v-else>
 							<h2 class="header__date">
@@ -46,7 +43,7 @@
 						<DatePicker
 							v-model.range="range"
 							expanded
-							:rows="isMobileOrTablet ? 12 : 1"
+							:rows="isMobileOrTablet ? 1 : 1"
 							:columns="isMobileOrTablet ? 1 : 2"
 						/>
 					</div>

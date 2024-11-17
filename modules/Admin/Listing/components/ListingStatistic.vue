@@ -171,7 +171,6 @@ const processChartData = (data: StatisticItem[]): void => {
 		{ name: 'Избранное', data: favorites },
 		{ name: 'Бронирования', data: bookings },
 		{ name: 'Заявки', data: submits },
-		{ name: 'Доход', data: revenue },
 	];
 	
 	chartOptions.value.xaxis.categories = categories;
