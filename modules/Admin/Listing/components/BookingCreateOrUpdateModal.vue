@@ -225,7 +225,7 @@ const calculatedPrices = computed(() => {
 		? chosenRoom.value.minPrice
 		: listing.value.minPrice;
 	// Проверяем, редактируем ли бронь
-	const isEditing = props.bookingToUpdate.bonusApplied;
+	const isEditing = props.bookingToUpdate?.bonusApplied;
 	
 	if (isEditing) {
 		const { daysCount} = calculatePrices(

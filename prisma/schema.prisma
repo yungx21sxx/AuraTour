@@ -124,7 +124,7 @@ model FlatProperties {
   maxFloor Int
   elevator Boolean
   flatId   Int     @unique
-  flat     Listing @relation(fields: [flatId], references: [id])
+  flat     Listing @relation(fields: [flatId], references: [id], onDelete: Cascade)
 }
 
 model ListingStatistic {
