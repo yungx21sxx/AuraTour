@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
 		const filePathFull = uploadDir + '/' + photo.urlFull.split('/')[2];
 		const filePathMin = uploadDir + '/' + photo.urlMin.split('/')[2];
 		if (!fs.existsSync(filePathFull) || !fs.existsSync(filePathMin)) {
-			return {status: 500}
+			continue;
 		}
 		fs.rmSync(filePathFull)
 		fs.rmSync(filePathMin)

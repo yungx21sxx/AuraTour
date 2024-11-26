@@ -313,6 +313,11 @@ class ListingsService {
 				...queryConditions,
 				validated: true
 			},
+			orderBy: [
+				{
+					createdAt: 'desc'
+				}
+			],
 			include: {
 				pricePeriods: true,
 				photos: true,
