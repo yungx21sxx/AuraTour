@@ -31,11 +31,7 @@ export default defineEventHandler(async event => {
 				id : listing.typeId
 			}
 		},
-		owner: {
-			connect: {
-				id: createByUser ? user.id : listing.ownerId
-			}
-		},
+		
 		coords: {
 			create: {
 				// @ts-ignore
@@ -57,6 +53,20 @@ export default defineEventHandler(async event => {
 		query.manager = {
 			connect: {
 				id: listing.managerId,
+			}
+		}
+		if (listing.ownerId) {
+			query.owner = {
+				connect: {
+					id: listing.ownerId
+				}
+			}
+		}
+	}
+	if (createByUser && user.id) {
+		query.owner = {
+			connect: {
+				id: user.id
 			}
 		}
 	}
