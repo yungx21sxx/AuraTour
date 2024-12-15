@@ -80,12 +80,6 @@
 			incrementStatistic('views', listing.value.id)
 		}
 	})
-	
-	
-	
-	
-
-	
 
 </script>
 

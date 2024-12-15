@@ -98,6 +98,7 @@ class FiltersService {
 			}
 		});
 		// Возвращаем результат
+		console.log({ minPrice, maxPrice })
 		return { minPrice, maxPrice };
 	}
 	async countListingsPerAmenityByCity(cityId: number | null) {

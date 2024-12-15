@@ -30,6 +30,7 @@
 		</defs>
 	</svg>
 
+
 </template>
 
 <style scoped lang="scss">

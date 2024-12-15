@@ -1,7 +1,5 @@
 import type {LocationQuery} from "vue-router";
 import type {IQueryBooking} from "~/modules/Booking/types/query.types";
-import {Buffer} from "unenv/runtime/node/buffer/_buffer";
-import from = Buffer.from;
 
 interface IBookingModals {
 	location: {
@@ -75,8 +73,8 @@ export default () => {
 	const getBookingQueryLinkParameters = computed(() => {
 		const { from: checkIn, to: checkOut } = bookingModals.value.date
 		return {
-			checkIn: checkIn?.toDateString(),
-			checkOut: checkOut?.toDateString(),
+			checkIn: checkIn?.toISOString(),
+			checkOut: checkOut?.toISOString(),
 			adults: peopleCount.value.adults,
 			children: peopleCount.value.children
 		}

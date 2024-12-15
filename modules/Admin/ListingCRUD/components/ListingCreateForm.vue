@@ -47,18 +47,9 @@ onMounted(() => {
 		...dto,
 		rooms: rooms.map(room => {
 			const {pricePeriods, ...roomData} = room
-			pricePeriods.forEach(pricePeriod => ({
-				chechIn: new Date(pricePeriod.checkIn),
-				chechOut: new Date(pricePeriod.checkOut),
-				minPrice: pricePeriod.minPrice,
-			}))
-			return {...roomData, pricePeriods}
+			return {...roomData, pricePeriods: []}
 		}),
-		pricePeriods: pricePeriods ? pricePeriods.forEach(pricePeriod => ({
-			chechIn: new Date(pricePeriod.checkIn),
-			chechOut: new Date(pricePeriod.checkOut),
-			minPrice: pricePeriod.minPrice,
-		})) : []
+		pricePeriods: []
 	}
 })
 

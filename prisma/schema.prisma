@@ -188,14 +188,16 @@ model RoomAmenity {
 }
 
 model PricePeriod {
-  id        Int      @id @default(autoincrement())
-  price     Int
-  startDate DateTime
-  endDate   DateTime
-  listingId Int?
-  roomId    Int?
-  room      Room?    @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  listing   Listing? @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  id         Int      @id @default(autoincrement())
+  price      Int
+  startDay   Int
+  startMonth Int
+  endDay     Int
+  endMonth   Int
+  listingId  Int?
+  roomId     Int?
+  room       Room?    @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  listing    Listing? @relation(fields: [listingId], references: [id], onDelete: Cascade)
 }
 
 model Booking {

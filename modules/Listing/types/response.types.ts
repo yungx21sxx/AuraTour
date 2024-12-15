@@ -95,8 +95,11 @@ export interface IListingOwner {
 
 export interface IListingPricePeriod {
     price: number,
-    startDate: Date,
-    endDate: Date,
+    startDay: number,
+    endDay: number,
+
+    startMonth: number,
+    endMonth: number
 }
 export interface IReviewResponse {
     id: number;

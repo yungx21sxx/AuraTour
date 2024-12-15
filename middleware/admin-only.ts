@@ -2,10 +2,10 @@ import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
 
 export default defineNuxtRouteMiddleware(async () => {
     const user = useAuthUser();
-    const roles = ['ADMIN' | 'MANAGER'];
+    const roles: string[] = ['ADMIN', 'MANAGER'];
 
     if (!user.value &&
-        !roles.includes(user.value.role)
+        !roles.includes(user.value?.role)
     ) {
         return navigateTo({ name: "index" });
     }

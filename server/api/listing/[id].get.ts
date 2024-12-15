@@ -62,22 +62,10 @@ export default defineEventHandler(async (event) => {
 					width: true
 				}
 			},
-			pricePeriods: {
-				select: {
-					price: true,
-					startDate: true,
-					endDate: true,
-				}
-			},
+			pricePeriods: true,
 			rooms: {
 				include: {
-					pricePeriods: {
-						select: {
-							price: true,
-							startDate: true,
-							endDate: true,
-						}
-					},
+					pricePeriods: true,
 					amenities: {
 						select: {
 							name: true

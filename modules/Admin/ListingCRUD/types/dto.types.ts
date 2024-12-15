@@ -55,5 +55,4 @@ export interface ListingCreateDTO {
     pricePeriods: PricePeriodCreateDTO[];
 
     rooms: RoomCreateDTO[]
-
 }

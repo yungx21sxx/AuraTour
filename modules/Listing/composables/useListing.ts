@@ -9,23 +9,28 @@ export default () => {
 	const queryForGoBack = useState();
 
 	async function initListingData(listingId: number, bookingQuery: IQueryBooking) {
-		const listingResponse: IListingResponse = await ListingApi.fetchListing(listingId);
-		console.log(listingResponse)
-		if (bookingQuery.checkIn && bookingQuery.checkOut) {
-			const {checkIn, checkOut } = bookingQuery;
-			const {pricePeriods, minPrice} = listingResponse;
-			listingResponse.calculatedPrices = calculatePrices(
-				pricePeriods, minPrice, checkIn, checkOut
-			)
+		try {
+			const listingResponse: IListingResponse = await ListingApi.fetchListing(listingId);
+			if (bookingQuery.checkIn && bookingQuery.checkOut) {
+				const {checkIn, checkOut } = bookingQuery;
+				const {pricePeriods, minPrice} = listingResponse;
+				listingResponse.calculatedPrices = calculatePrices(
+					pricePeriods, minPrice, checkIn, checkOut
+				)
 
-			if (listingResponse.rooms.length > 0) {
-				listingResponse.rooms.forEach(room => {
-					room.calculatedPrices = calculatePrices(room.pricePeriods, room.minPrice, checkIn, checkOut)
-				})
+				if (listingResponse.rooms.length > 0) {
+					listingResponse.rooms.forEach(room => {
+						room.calculatedPrices = calculatePrices(room.pricePeriods, room.minPrice, checkIn, checkOut)
+					})
+				}
 			}
+			listing.value = listingResponse
+		} catch (e) {
+			console.log(e)
 		}
 
-		listing.value = listingResponse
+
+
 	}
 
 	function updateListingPrices(checkIn: Date, checkOut: Date) {

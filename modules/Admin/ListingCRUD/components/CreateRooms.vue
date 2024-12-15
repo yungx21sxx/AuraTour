@@ -74,6 +74,7 @@
 			return;
 		}
 		listingFormData.value.rooms.push(roomFormData.value);
+		console.log(listingFormData.value.rooms)
 		roomFormData.value = {...structuredClone(roomDefault), id: Math.floor(Math.random() * 1001)}
 		
 		const minRoomPrice = Math.min.apply(null, listingFormData.value.rooms.map(i => i.minPrice));
@@ -90,7 +91,7 @@
 	}
 	
 	const saveRoomChanges = async () => {
-		
+		console.log('dsfdsf')
 		if (formRef.value) {
 			const { valid } = await formRef.value.validate();
 			if (!valid) {
@@ -114,7 +115,6 @@
 		listingFormData.value.minPrice = minRoomPrice;
 		roomFormModal.value = false;
 		roomToEdit.value = null;
-	
 	}
 	
 	const formRef = ref(null)
@@ -126,7 +126,7 @@
 	}
 	
 	const onSubmit = async () => {
-		if (roomToEdit) {
+		if (roomToEdit.value) {
 			await saveRoomChanges()
 		} else {
 			await createRoom()
@@ -181,10 +181,20 @@
 					<FileUploader v-model="roomFormData.photos" class="mb-4"/>
 					<v-divider/>
 					<p class="hint mt-4">В котологе будет отображаться цена за самый дешевый номер.</p>
+					<h3>Цены</h3>
+					<p>Укажите минимальную цену, после чего добавьте периоды цен.</p>
 					<v-text-field :rules="formRules.minPrice" variant="outlined" class="mt-4" type="number" v-model.number="roomFormData.minPrice" label="Минимальная цена"/>
+					<h3>Периоды цен</h3>
+					<p>Нужны для того, чтобы пользователь видел актуальную цену в зависимости от выбранных дат.</p>
 					<PeriodsCreater v-model="roomFormData.pricePeriods"/>
 					<v-divider class="mt-4"/>
 					<BtnPrimary width="100%" class="mt-4" type="submit">Сохранить номер</BtnPrimary>
+					<ul>
+						<li
+							style="color: red; margin-top: 16px; margin-left: 16px;"
+							v-for="error of errors"
+						>{{error}}</li>
+					</ul>
 				</v-form>
 		</v-card>
 	</v-dialog>

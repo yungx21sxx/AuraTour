@@ -134,6 +134,8 @@ export interface RoomCreateDTO {
 
 export interface PricePeriodCreateDTO {
 	price: number,
-	startDate: Date,
-	endDate: Date,
+	startDay: number,
+	endDay: number,
+	startMonth: number,
+	endMonth: number
 }
