@@ -314,7 +314,7 @@ class ListingsService {
 	}
 
 
-	async searchFilteredListings(bookingInfo: BookingInfoDTO, sortFilters: FiltersDTO, sortBy: GetAvailableListingsDTO['sortBy'] = "popularity", target: 'map' | 'list',  page: number) {
+	async searchFilteredListings(bookingInfo: BookingInfoDTO, sortFilters: FiltersDTO, sortBy: GetAvailableListingsDTO['sortBy'] = "popularity", target: 'map' | 'list',  page: number, managerId: number | null) {
 		const pageSize: number = 10;
 
 
@@ -347,14 +347,18 @@ class ListingsService {
 				queryConditions.badCount =  { gte: 0 }
 			}
 		}
+
+		if (managerId) {
+			queryConditions.managerId = managerId
+		}
 		let listings = await prisma.listing.findMany({
 			where: {
 				...queryConditions,
-				validated: true
+				validated: true,
 			},
 			orderBy: [
 				{
-					createdAt: 'desc'
+					createdAt: sortBy === 'early' ?  'asc' : 'desc'
 				}
 			],
 			include: {

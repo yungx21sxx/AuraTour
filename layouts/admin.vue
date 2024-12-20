@@ -34,6 +34,7 @@
 					<v-list-item title="Статистика" value="shared" href="/admin/statistics"></v-list-item>
 					<v-list-item title="Объекты на модерации" value="starred" href="/admin/moderation"></v-list-item>
 					<v-list-item title="Создать объект" value="starred" href="/admin/create-listing"></v-list-item>
+					<v-list-item title="Найти объект" value="starred" href="/admin/listing-search"></v-list-item>
 				</v-list>
 				<BtnSecondary block href="/">Назад на главную</BtnSecondary>
 			</v-navigation-drawer>

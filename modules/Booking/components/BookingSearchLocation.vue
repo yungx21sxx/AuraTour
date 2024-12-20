@@ -146,6 +146,7 @@
 											<p>
 												{{ city.cityName }}, <span>{{ city.regionName }}</span>
 											</p>
+											<p class="ml-auto">{{city.listingsCount}}</p>
 										</div>
 									</v-card>
 									<v-chip class="mt-2 mb-2" color="#7059FF" :append-icon="mdiArrowRightCircleOutline" @click="slide = 2">Все направления</v-chip>
@@ -176,6 +177,7 @@
 											<p>
 												{{ city.cityName }}, <span>{{ city.regionName }}</span>
 											</p>
+											<p class="ml-auto">{{city.listingsCount}}</p>
 										</div>
 									</v-card>
 								</v-window-item>

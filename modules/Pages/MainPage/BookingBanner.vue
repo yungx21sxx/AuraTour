@@ -4,6 +4,8 @@ import { mdiArrowRight } from "@mdi/js";
 import MenuMain from "~/modules/Menu/components/MenuMain.vue";
 import useSearch from "~/modules/Booking/composables/useSearch";
 import BonusProgramModal from "~/modules/Common/BonusProgramModal.vue";
+import InstIcon from "~/modules/Pages/MainPage/Icons/InstIcon.vue";
+import TelegaIcon from "~/modules/Pages/MainPage/Icons/TelegaIcon.vue";
 
 const {searchData} = useSearch();
 
@@ -13,7 +15,7 @@ const bonusProgramInfo = ref(false);
 <template>
 	
 	
-    <div
+    <header
         class="banner"
     >
         <div class="banner__body">
@@ -23,12 +25,19 @@ const bonusProgramInfo = ref(false);
                     Жилье в Абхазии <br />
                     посуточно
                 </h1>
-                <div class="banner__info" >
-                    <p>Вернем до 5% от суммы бронирования</p>
-                    <button @click="bonusProgramInfo = true">
-                        Подробнее
-                        <v-icon :icon="mdiArrowRight" size="24" />
-                    </button>
+                <div class="share">
+                   <h3 class="share__title">Новости и лучшие предложения</h3>
+	                <div class="share__links">
+		                <NuxtLink target="_blank" to="https://www.instagram.com/aura_tur_abkhazia?igsh=ejVkeXV2dDV2YzB0" class="share__link">
+			                <InstIcon/>
+			                <span>Instagram</span>
+		                </NuxtLink>
+		                <div class="divider"></div>
+		                <NuxtLink target="_blank" to="https://t.me/laura_tour" class="share__link">
+			                <TelegaIcon/>
+			                <span>Telegram</span>
+		                </NuxtLink>
+	                </div>
                 </div>
                 <BookingMainForm />
                 <div class="banner__cities">
@@ -52,7 +61,7 @@ const bonusProgramInfo = ref(false);
                 </div>
             </div>
         </div>
-    </div>
+    </header>
 	<BonusProgramModal v-model="bonusProgramInfo"/>
 </template>
 
@@ -69,7 +78,33 @@ const bonusProgramInfo = ref(false);
         left: 0;
         right: 0;
     }
-
+	
+	.share__title {
+		color: rgba(white, .9);
+		margin-bottom: 16px;
+		font-weight: 500;
+	}
+	
+	.share__link {
+		display: flex;
+		gap: 10px;
+		color: #FFFFFF;
+		align-items: center;
+	}
+	
+	.divider {
+		width: 1px;
+		height: 24px;
+		background: rgba(white, .8);
+	}
+	
+	.share__links {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		margin-bottom: 32px;
+	}
+	
     &__title {
         font-size: 42px;
         color: #ffffff;

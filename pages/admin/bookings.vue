@@ -1,4 +1,5 @@
 <template>
+	<h1>Бронирования</h1>
 	<v-container>
 		<!-- Фильтры -->
 		<v-row>

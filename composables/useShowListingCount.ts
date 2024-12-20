@@ -2,7 +2,11 @@ import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
 
 export default () => {
 	const user = useAuthUser();
-	const roles = ['ADMIN' | 'MANAGER'];
+	const roles: string[] = ['ADMIN', 'MANAGER'];
 
-	return user.value && roles.includes(user.value.role);
+	if (!user.value) {
+		return false;
+	}
+
+	return roles.includes(user.value.role);
 }

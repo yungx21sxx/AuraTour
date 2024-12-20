@@ -1,4 +1,4 @@
-import {IAuthStep} from "~/modules/Auth/types/auth.types";
+import type {IAuthStep} from "~/modules/Auth/types/auth.types";
 
 export default () => {
 

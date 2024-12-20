@@ -80,50 +80,50 @@ export default defineEventHandler(async (event) => {
             },
         });
 
-        if (currentBooking.status === 'PENDING' && status === 'CONFIRMED' && bonusApplied && booking.userId && bonusAppliedCount && userId) {
-            await prisma.bonusTransaction.create({
-                data: {
-                    userId: booking.userId,
-                    bookingId: booking.id,
-                    amount: bonusAppliedCount,
-                    description: `Списание бонусов за бронирование №${booking.id}.`,
-                },
-            });
-            await prisma.user.update({
-                where: { id: userId },
-                data: {
-                    bonusPoints: {
-                        decrement: bonusAppliedCount,
-                    },
-                },
-            });
-        }
+        // if (currentBooking.status === 'PENDING' && status === 'CONFIRMED' && bonusApplied && booking.userId && bonusAppliedCount && userId) {
+        //     await prisma.bonusTransaction.create({
+        //         data: {
+        //             userId: booking.userId,
+        //             bookingId: booking.id,
+        //             amount: bonusAppliedCount,
+        //             description: `Списание бонусов за бронирование №${booking.id}.`,
+        //         },
+        //     });
+        //     await prisma.user.update({
+        //         where: { id: userId },
+        //         data: {
+        //             bonusPoints: {
+        //                 decrement: bonusAppliedCount,
+        //             },
+        //         },
+        //     });
+        // }
 
         // Если статус изменился на 'COMPLETED', начисляем бонусы
         if (status === 'COMPLETED' && currentBooking.status !== 'COMPLETED' && booking.userId && !bonusApplied && userId) {
             const bonusAmount = Math.floor((booking.totalPrice || currentBooking.totalPrice) * 0.03);
             const revenue =  Math.floor((booking.totalPrice || currentBooking.totalPrice) * 0.1);
             // Создаем запись о бонусной транзакции
-            await prisma.bonusTransaction.create({
-                data: {
-                    userId: booking.userId,
-                    bookingId: booking.id,
-                    amount: bonusAmount,
-                    description: `Начисление бонусов за завершенное бронирование №${booking.id}`,
-                },
-            });
+            // await prisma.bonusTransaction.create({
+            //     data: {
+            //         userId: booking.userId,
+            //         bookingId: booking.id,
+            //         amount: bonusAmount,
+            //         description: `Начисление бонусов за завершенное бронирование №${booking.id}`,
+            //     },
+            // });
             await upsertListingStatistic(listingId, 'bookings', 1);
             await upsertListingStatistic(listingId, 'revenue', revenue);
 
             // Обновляем бонусный счет пользователя
-            await prisma.user.update({
-                where: { id: booking.userId },
-                data: {
-                    bonusPoints: {
-                        increment: bonusAmount,
-                    },
-                },
-            });
+            // await prisma.user.update({
+            //     where: { id: booking.userId },
+            //     data: {
+            //         bonusPoints: {
+            //             increment: bonusAmount,
+            //         },
+            //     },
+            // });
         }
 
         return {

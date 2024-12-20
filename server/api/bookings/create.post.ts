@@ -94,24 +94,24 @@ export default defineEventHandler(async (event) => {
             },
         });
 
-        if (userId && status === 'CONFIRMED' && bonusApplied) {
-            await prisma.bonusTransaction.create({
-                data: {
-                    userId,
-                    bookingId: newBooking.id,
-                    amount: bonusAppliedCount,
-                    description: `Списание бонусов за бронирование №${newBooking.id}.`,
-                },
-            });
-            await prisma.user.update({
-                where: { id: userId },
-                data: {
-                    bonusPoints: {
-                        decrement: bonusAppliedCount,
-                    },
-                },
-            });
-        }
+        // if (userId && status === 'CONFIRMED' && bonusApplied) {
+        //     await prisma.bonusTransaction.create({
+        //         data: {
+        //             userId,
+        //             bookingId: newBooking.id,
+        //             amount: bonusAppliedCount,
+        //             description: `Списание бонусов за бронирование №${newBooking.id}.`,
+        //         },
+        //     });
+        //     await prisma.user.update({
+        //         where: { id: userId },
+        //         data: {
+        //             bonusPoints: {
+        //                 decrement: bonusAppliedCount,
+        //             },
+        //         },
+        //     });
+        // }
 
         await upsertListingStatistic(listingId, 'submits', 1)
 

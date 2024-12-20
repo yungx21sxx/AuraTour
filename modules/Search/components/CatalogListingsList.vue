@@ -7,30 +7,55 @@ import ListingItemCatalog from "~/modules/Listing/components/shared/ListingItemC
 import useCatalog from "~/modules/Search/composables/useCatalog";
 import useMapCatalog from "~/modules/Search/composables/useMapCatalog";
 import CatalogListingsMapModal from "~/modules/Search/components/CatalogListingsMapModal.vue";
+import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
+import useAdmin from "~/modules/Auth/composables/useAdmin";
 
-const {listingsList, sortBy, isLoading, isFiltering, debouncedRefreshListingList, hasMore, loadListings, fetchCatalog, currentPage} = useCatalog();
+const {listingsList, sortBy, selectedManagerId, isLoading, isFiltering, debouncedRefreshListingList, hasMore, loadListings, fetchCatalog, currentPage} = useCatalog();
 
-const sortSelect = [
-	{
-		text: 'По популярности',
-		value: 'popularity',
-	},
-	{
-		text: 'Близость к морю',
-		value: 'sea-distance',
-	},
-	{
-		text: 'По возрастанию цены',
-		value: 'increase',
-	},
-	{
-		text: 'По убыванию цены',
-		value: 'decrease',
-	},
-];
+const authUser = useAuthUser();
 
-watch(sortBy, async () => {
-	debouncedRefreshListingList()
+const isAdmin = useAdmin();
+
+const {data: managers} = await useFetch('/api/users/load-managers');
+
+
+const sortSelect = computed(() => {
+	let sortSelect = [
+		{
+			text: 'По популярности',
+			value: 'popularity',
+		},
+		{
+			text: 'Близость к морю',
+			value: 'sea-distance',
+		},
+		{
+			text: 'По возрастанию цены',
+			value: 'increase',
+		},
+		{
+			text: 'По убыванию цены',
+			value: 'decrease',
+		},
+	];
+	if (isAdmin) {
+		sortSelect = [
+			{
+				text: 'Последние',
+				value: 'last',
+			},
+			{
+				text: 'Самые старые',
+				value: 'early',
+			},
+			...sortSelect,
+		]
+	}
+	return sortSelect;
+})
+
+watch([sortBy, selectedManagerId], async () => {
+	debouncedRefreshListingList();
 });
 
 const { data: initialData, error: initialError } = await useAsyncData('initialCatalog', () => fetchCatalog());
@@ -108,6 +133,15 @@ const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog()
 				variant="outlined"
 			/>
 		</div>
+		<v-select
+			clearable
+			:items="managers"
+			v-model="selectedManagerId"
+			v-if="isAdmin"
+			item-title="fullName"
+			item-value="id"
+			label="Администратор"
+		/>
 		
 		<div class="map">
 			<img src="/map.png" alt="map">

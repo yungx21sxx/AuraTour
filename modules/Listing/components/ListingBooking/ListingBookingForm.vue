@@ -170,14 +170,14 @@ const isAdmin = computed(() => {
 				<span class="price">{{listing.calculatedPrices ? listing.calculatedPrices.dailyPrice.toLocaleString() : listing.minPrice.toLocaleString()}} ₽</span>
 			</div>
 			<div v-if="listing.calculatedPrices">
-				<div class="mt-4" v-if="authUser && authUser.bonusPoints > 0">Количество бонусов: <strong>{{authUser.bonusPoints}}</strong></div>
-				<v-switch
-					v-if="authUser && authUser.bonusPoints > 0"
-					v-model="applyBonus"
-					label="Списать бонусы"
-					color="rgb(112, 89, 255)"
-					hide-details
-				/>
+<!--				<div class="mt-4" v-if="authUser && authUser.bonusPoints > 0">Количество бонусов: <strong>{{authUser.bonusPoints}}</strong></div>-->
+<!--				<v-switch-->
+<!--					v-if="authUser && authUser.bonusPoints > 0"-->
+<!--					v-model="applyBonus"-->
+<!--					label="Списать бонусы"-->
+<!--					color="rgb(112, 89, 255)"-->
+<!--					hide-details-->
+<!--				/>-->
 				<div class="price-block">
 					<span class="days">За {{formatDays(listing.calculatedPrices.daysCount)}}</span>
 					<div class="price" style="color: #2a2536;" v-if="authUser && authUser.bonusPoints > 0 && applyBonus">
@@ -207,25 +207,25 @@ const isAdmin = computed(() => {
 		></v-alert>
 		<div v-if="listing.isHotelType && dates.checkIn && dates.checkOut">
 			<BtnSecondary block class="mt-6" @click="openSetDateModal" :prepend-icon="mdiCalendarEditOutline">Изменить даты</BtnSecondary>
-			<div v-if="authUser && authUser.bonusPoints > 0">
-				<div class="mt-4">Количество бонусов: <strong>{{authUser.bonusPoints}}</strong></div>
-				<v-switch
-					v-model="applyBonus"
-					label="Списать бонусы"
-					color="rgb(112, 89, 255)"
-					hide-details
-					block
-				/>
-			</div>
+<!--			<div v-if="authUser && authUser.bonusPoints > 0">-->
+<!--				<div class="mt-4">Количество бонусов: <strong>{{authUser.bonusPoints}}</strong></div>-->
+<!--				<v-switch-->
+<!--					v-model="applyBonus"-->
+<!--					label="Списать бонусы"-->
+<!--					color="rgb(112, 89, 255)"-->
+<!--					hide-details-->
+<!--					block-->
+<!--				/>-->
+<!--			</div>-->
 		</div>
-		<div v-if="!listing.isHotelType && !applyBonus && listing.calculatedPrices?.totalPrice" style="display: flex; justify-content: center; margin-top: 24px;">
-			<v-chip
-				:prepend-icon="mdiCashCheck"
-				:append-icon="mdiInformationVariant"
-				variant="outlined"
-				v-tooltip:bottom="'Зарегестрируйтесь у нас на сайте и получайте кэшбэк за каждое бронирование!'"
-			>Вернем {{(listing.calculatedPrices?.totalPrice * BONUS_CACHE_BACK_PERCENT).toFixed(0)}} ₽ бонусами</v-chip>
-		</div>
+<!--		<div v-if="!listing.isHotelType && !applyBonus && listing.calculatedPrices?.totalPrice" style="display: flex; justify-content: center; margin-top: 24px;">-->
+<!--			<v-chip-->
+<!--				:prepend-icon="mdiCashCheck"-->
+<!--				:append-icon="mdiInformationVariant"-->
+<!--				variant="outlined"-->
+<!--				v-tooltip:bottom="'Зарегестрируйтесь у нас на сайте и получайте кэшбэк за каждое бронирование!'"-->
+<!--			>Вернем {{(listing.calculatedPrices?.totalPrice * BONUS_CACHE_BACK_PERCENT).toFixed(0)}} ₽ бонусами</v-chip>-->
+<!--		</div>-->
 	</div>
 	
 	<ListingBookingSetDate/>

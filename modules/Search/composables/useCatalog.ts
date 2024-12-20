@@ -16,6 +16,7 @@ export default () => {
 	const isLoading = useState<boolean>('isLoading', () => false);
 	const loadingError = useState<string | null>('loadingError', () => null);
 	const isFiltering = useState<boolean>('filtering', () => false);
+	const selectedManagerId = useState<number | null>(() => null);
 
 	const listingTypeSEOPage = useState<boolean>('listingTypeSEOPage', () => false);
 	const cityListingTypeSEOPage = useState<boolean>('cityListingTypeSEOPage', () => false);
@@ -106,7 +107,7 @@ export default () => {
 		refreshListingList();
 		try {
 			const {count, listings} = await fetchCatalog();
-			console.log('Отложенная загрузка после изменения фильтров')
+			console.log(listings)
 			listingsList.value.listings = listings;
 			listingsList.value.count = count;
 			currentPage.value = 2;
@@ -123,6 +124,10 @@ export default () => {
 		isLoading.value = true;
 		console.log('Подгрузка', currentPage.value);
 		try {
+			if (listingsList.value.count < 10) {
+				hasMore.value = false;
+				return;
+			}
 			const {count, listings} = await fetchCatalog();
 			if (listings.length === 0) {
 				hasMore.value = false;
@@ -137,8 +142,6 @@ export default () => {
 		} finally {
 			isLoading.value = false;
 		}
-
-
 	}
 
 
@@ -149,7 +152,8 @@ export default () => {
 			body: {
 				booking: bookingDTO.value,
 				filters: filtersDTO.value,
-				sortBy: sortBy.value
+				sortBy: sortBy.value,
+				managerId: selectedManagerId.value,
 			} as GetAvailableListingsDTO
 		})
 	}
@@ -173,6 +177,7 @@ export default () => {
 		filtersDTO,
 		getRedirectPath,
 		getSeoPage,
-		seoPage
+		seoPage,
+		selectedManagerId
 	}
 }

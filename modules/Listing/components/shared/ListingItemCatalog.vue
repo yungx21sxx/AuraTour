@@ -26,12 +26,17 @@
 	})
 	
 	
+	
 	async function goToListing() {
-		await navigateTo({
-			name: 'listing-id',
-			params: {id: listing.id},
-			query: {...getBookingQueryLinkParameters.value},
-		}, {external: true})
+		const url = new URL(window.location.href); // Получаем текущий URL
+		const queryParams = new URLSearchParams(url.search);
+		
+		const queryString = queryParams.toString();
+		await navigateTo(`/listing/${listing.id}/?${queryString}`, {
+			open: {
+				target: '_blank'
+			}
+		})
 	}
 </script>
 

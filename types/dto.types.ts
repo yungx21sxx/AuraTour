@@ -24,7 +24,7 @@ export interface FiltersDTO {
 export interface GetAvailableListingsDTO {
 	booking: BookingInfoDTO,
 	filters: FiltersDTO | null,
-	sortBy: 'increase' | 'decrease' | 'popularity' | 'sea-distance'
+	sortBy: 'increase' | 'decrease' | 'popularity' | 'sea-distance' | 'early' | 'last'
 }
 
 

@@ -13,5 +13,6 @@ export interface FiltersDTO {
 export interface GetAvailableListingsDTO {
     booking: BookingInfoDTO,
     filters: FiltersDTO,
-    sortBy: 'increase' | 'decrease' | 'popularity' | 'sea-distance'
+    sortBy: 'increase' | 'decrease' | 'popularity' | 'sea-distance',
+    managerId: null | number
 }

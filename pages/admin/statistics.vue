@@ -59,6 +59,7 @@
 </script>
 
 <template>
+	<h1>Статистика</h1>
 	<v-data-table-server
 		class="mt-8"
 		v-model:items-per-page="itemsPerPage"

@@ -4,9 +4,8 @@ export default defineNuxtRouteMiddleware(async () => {
     const user = useAuthUser();
     const roles: string[] = ['ADMIN', 'MANAGER'];
 
-    if (!user.value &&
-        !roles.includes(user.value?.role)
-    ) {
+    const role = user.value?.role;
+    if (!role || !roles.includes(role)) {
         return navigateTo({ name: "index" });
     }
 });

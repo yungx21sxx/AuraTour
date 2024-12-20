@@ -3,7 +3,6 @@ import type {InitialDataResponse} from "~/modules/Admin/ListingCRUD/types/respon
 import type {Feature} from "@yandex/ymaps3-types";
 import type {ListingCreateFormData} from "~/modules/Admin/ListingCRUD/types/form-data.types";
 import useTelegram from "~/composables/UseTelegram";
-import {use} from "h3";
 
 export default () => {
 	const listingFormData = useState<ListingCreateFormData>('listing-dto', () => ({

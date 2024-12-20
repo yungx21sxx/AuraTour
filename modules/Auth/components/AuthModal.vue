@@ -143,8 +143,7 @@
 					</v-window-item>
 				</v-window>
 				
-				<p class="policy text-gray">Совершая авторизацию, вы соглашаетесь
-					c обработкой персональных данных и условиями пользовательских соглашений</p>
+				<p class="policy text-gray">Совершая авторизацию, вы соглашаетесь c <NuxtLink to="/obrabotka_personalnyh_dannyh">обработкой персональных данных</NuxtLink> и <NuxtLink to="/polzovatelskoe_soglashenie">условиями пользовательских соглашений</NuxtLink></p>
 			</v-card-item>
 	
 		</v-card>
@@ -171,7 +170,6 @@
 
 .policy {
 	font-size: 12px;
-	margin-top: 24px;
 }
 
 </style>

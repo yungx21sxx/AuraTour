@@ -67,6 +67,9 @@
 	            >
 		            Избранное
 	            </v-btn>
+	            <div :class="['divider', {
+					'divider_dark': variant === 'dark'
+	            }]"></div>
 	            <v-btn
 		            class="nav__cities"
 		            variant="text"
@@ -97,8 +100,8 @@
 						           :subtitle="authUser.email"
 					           >
 						           <template #prepend>
-							           <v-avatar v-if="authUser.avatar">
-								           <v-img :src="authUser.avatar"/>
+							           <v-avatar v-if="authUser?.avatar">
+								           <v-img :src="authUser?.avatar"/>
 							           </v-avatar>
 							           <v-avatar v-else color="#7059FF">{{authUser.name[0]}}</v-avatar>
 						           </template>
@@ -134,6 +137,15 @@
 			            </v-card-item>
 		            </v-card>
 	            </v-menu>
+	            <div :class="['divider', {
+					'divider_dark': variant === 'dark'
+	            }]"></div>
+	            <VBtn icon variant="text" target="_blank" href="https://www.instagram.com/aura_tur_abkhazia?igsh=ejVkeXV2dDV2YzB0">
+		            <InstMenuIcon :variant="variant"/>
+	            </VBtn>
+	            <VBtn icon variant="text" class="telega" target="_blank" href="https://t.me/laura_tour">
+		            <TelegaMenuIcon :variant="variant"/>
+	            </VBtn>
                 <BtnPrimary class="nav__btn" @click="landLordInfoModalIsOpen = true">Сдать жилье</BtnPrimary>
             </div>
             <v-btn
@@ -150,7 +162,9 @@
 </template>
 
 <style lang="scss" scoped>
-
+.telega {
+	margin-left: -6px;
+}
 h4 {
 	color: $text-gray;
 }
@@ -173,7 +187,19 @@ h4 {
     }
     &__right {
         margin-left: auto;
+	    display: flex;
+	    align-items: center;
     }
+	
+	.divider {
+		background: rgba(white, .4);
+		height: 24px;
+		width: 1px;
+		
+		&_dark {
+			background: rgba($text-main, .5);
+		}
+	}
     &__btn {
         margin-left: 10px;
     }
@@ -186,7 +212,7 @@ h4 {
     }
     @media screen and (max-width: 730px) {
 	    padding: 7px 0;
-        &__right {
+        &__right, .divider {
             display: none;
         }
         &__logo {
@@ -231,6 +257,8 @@ import BtnSecondary from "~/modules/Common/UI/BtnSecondary.vue";
 import useSearch from "~/modules/Booking/composables/useSearch";
 import {useAuth} from "~/modules/Auth/composables/useAuth";
 import useLandLordModal from "~/modules/Common/useLandLordModal";
+import InstMenuIcon from "~/modules/Menu/icons/InstMenuIcon.vue";
+import TelegaMenuIcon from "~/modules/Menu/icons/TelegaMenuIcon.vue";
 const landLordInfoModalIsOpen = useLandLordModal()
 
 const { open } = useBurgerMenu();

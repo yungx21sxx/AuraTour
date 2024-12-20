@@ -17,7 +17,7 @@
 	const {isMobile} = useDevice();
 	
 	const breadcrumbs = computed(() => {
-		const datesQuery = dateModal.value.from && dateModal.value.to ? `&checkIn=${dateModal.value.from.toDateString()}&checkOut=${dateModal.value.to.toDateString()}` : ''
+		const datesQuery = dateModal.value.checkIn && dateModal.value.checkOut ? `&checkIn=${dateModal.value.checkIn.toDateString()}&checkOut=${dateModal.value.checkOut.toDateString()}` : ''
 		return [
 			{
 				title: 'Поиск',
@@ -27,7 +27,7 @@
 			{
 				title: listing.value.city.name,
 				disabled: false,
-				href: `/search/city/${listing.value.city.slug}`,
+				href: `/search/city/${listing.value.city.slug}?${datesQuery}`,
 			},
 		]
 	});

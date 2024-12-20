@@ -9,6 +9,7 @@ import PromoBanner from "~/modules/Pages/MainPage/PromoBanner.vue";
 import PassListingBanner from "~/modules/Pages/MainPage/PassListingBanner.vue";
 import HousingTypesLoader from "~/modules/Pages/MainPage/HousingTypesLoader.vue";
 import {hydrateOnVisible, defineAsyncComponent} from "vue";
+import CallBackForm from "~/modules/Common/CallBackForm.vue";
 
 const { isMobile } = useDevice();
 const { loadSearchData } = useSearch();
@@ -50,6 +51,7 @@ onMounted(() => {
 		</div>
 		
 	</div>
+	<CallBackForm/>
 	<div class="wrapper">
 		<PassListingBanner/>
 	</div>

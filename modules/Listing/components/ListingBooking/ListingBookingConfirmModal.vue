@@ -279,16 +279,16 @@ const goBack = () => {
 						</div>
 						<div class="prices" v-if="prices">
 							<div class="total">Итоговая сумма:</div>
-							<div v-if="authUser && authUser.bonusPoints > 0">
-								<v-switch
-									v-model="applyBonus"
-									label="Списать бонусы"
-									color="rgb(112, 89, 255)"
-									hide-details
-									block
-								/>
-							</div>
-							<div class="price-block">
+<!--							<div v-if="authUser && authUser.bonusPoints > 0">-->
+<!--								<v-switch-->
+<!--									v-model="applyBonus"-->
+<!--									label="Списать бонусы"-->
+<!--									color="rgb(112, 89, 255)"-->
+<!--									hide-details-->
+<!--									block-->
+<!--								/>-->
+<!--							</div>-->
+							<div class="price-block mt-4">
 								<span class="days">За {{formatDays(prices.daysCount)}}</span>
 								<div class="price" style="color: #2a2536;" v-if="authUser && authUser.bonusPoints > 0 && applyBonus">
 									<span>{{(prices.totalPriceWithBonus).toLocaleString()}} ₽</span>
@@ -344,6 +344,7 @@ const goBack = () => {
 									</li>
 								</ul>
 							</div>
+							<p class="policy text-gray text-center mt-6">Отправляя заявку на бронирование, вы соглашаетесь c <NuxtLink to="/obrabotka_personalnyh_dannyh">обработкой персональных данных</NuxtLink> и <NuxtLink to="/polzovatelskoe_soglashenie">условиями пользовательских соглашений</NuxtLink></p>
 						</v-form>
 					</div>
 				</v-window-item>
