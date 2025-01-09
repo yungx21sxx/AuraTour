@@ -49,20 +49,18 @@ export default defineNuxtConfig({
       }
     },
   },
-
-  // yandexMetrika: {
-  //   id: '96929944',
-  //   clickmap:true,
-  //   trackLinks:true,
-  //   accurateTrackBounce:true,
-  //   webvisor:true,
-  //   consoleLog: false,
-  //   defer: true,
-  // },
+  yandexMetrika: {
+    id: '96929944',
+    clickmap:true,
+    trackLinks:true,
+    accurateTrackBounce:true,
+    webvisor:true,
+    consoleLog: false,
+    defer: true,
+  },
   site: {
     url: 'https://aura-tour-abkhazia.ru/',
   },
-
   routeRules: {
     '/api/**': {cors: true},
     '/': {prerender: true},

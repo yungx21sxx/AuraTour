@@ -10,6 +10,7 @@ import PassListingBanner from "~/modules/Pages/MainPage/PassListingBanner.vue";
 import HousingTypesLoader from "~/modules/Pages/MainPage/HousingTypesLoader.vue";
 import {hydrateOnVisible, defineAsyncComponent} from "vue";
 import CallBackForm from "~/modules/Common/CallBackForm.vue";
+import TourBanner from "~/modules/Pages/MainPage/TourBanner.vue";
 
 const { isMobile } = useDevice();
 const { loadSearchData } = useSearch();
@@ -43,6 +44,9 @@ onMounted(() => {
     <BookingBanner />
 	<PromoBanner/>
     <PopularCities />
+	<div class="wrapper">
+		<TourBanner/>
+	</div>
 	<div class="wrapper">
 		<h2 class="types__title">Лучшие предложения</h2>
 		<div ref="componentContainer" style="min-height: 400px">

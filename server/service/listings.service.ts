@@ -181,6 +181,11 @@ class ListingsService {
 		let categories = await prisma.listingType.findMany({
 			include: {
 				listings: {
+					orderBy: [
+						{
+							createdAt: 'desc'
+						}
+					],
 					include: {
 						photos: true,
 						amenities: {

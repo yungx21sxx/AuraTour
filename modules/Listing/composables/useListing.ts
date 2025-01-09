@@ -26,7 +26,7 @@ export default () => {
 			}
 			listing.value = listingResponse
 		} catch (e) {
-			console.log(e)
+			throw createError({statusCode: 404, message: 'Объект не найден'})
 		}
 
 

@@ -15,7 +15,6 @@
 	})
 	
 	const {isMobile} = useDevice();
-	
 	const breadcrumbs = computed(() => {
 		const datesQuery = dateModal.value.checkIn && dateModal.value.checkOut ? `&checkIn=${dateModal.value.checkIn.toDateString()}&checkOut=${dateModal.value.checkOut.toDateString()}` : ''
 		return [
