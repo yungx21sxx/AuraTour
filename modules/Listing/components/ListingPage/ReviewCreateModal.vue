@@ -55,7 +55,7 @@
 			return;
 		}
 		
-		createDate.value = review.createdAt;
+		createDate.value = new Date(review.createdAt);
 		ratingInput.value = review.rating;
 		nameInput.value = review.userName;
 		textInput.value = review.text;

@@ -24,6 +24,7 @@
 	import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 	import useGallery from "~/modules/Listing/composables/useGallery";
 	import useStatistics from "~/modules/Common/useStatistics";
+	import ListingVideoPlayer from "~/modules/Listing/components/ListingPage/ListingVideoPlayer.vue";
 	const {isMobileOrTablet} = useDevice();
 	
 	const authUser = useAuthUser();
@@ -101,6 +102,7 @@
 				<div v-if="isMobileOrTablet" style="text-align: center; margin-bottom: 24px;">
 					<BtnPrimary  width="300px" :prepend-icon="mdiImage" @click="galleyThumbsModalIsOpen = true">Показать все фото</BtnPrimary>
 				</div>
+<!--				<ListingVideoPlayer/>-->
 				<ListingBookingForm target="sidebar" v-if="isMobileOrTablet"/>
 				<ListingRooms id="rooms" />
 				<ListingDescription id="about"/>
