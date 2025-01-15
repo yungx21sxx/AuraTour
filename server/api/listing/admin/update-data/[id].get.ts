@@ -71,6 +71,7 @@ export default defineEventHandler(async (event) => {
                     }
                 }
             },
+            videos: true
         }
     })
     //@ts-ignore
@@ -82,6 +83,12 @@ export default defineEventHandler(async (event) => {
         amenities: amenities.map(i => i.amenity.id),
         //@ts-ignore
         foodOptions: food.map(i => i.food.id),
+        videos: listingData.videos.map(video => ({
+            title: video.title,
+            videoId: video.id,
+            formatedDuration: video.formatedDuration,
+            url: video.url
+        })),
         rooms: rooms.map((room: Room) => {
             //@ts-ignore
             const {amenities, photos, ...roomData} = room

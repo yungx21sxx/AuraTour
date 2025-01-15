@@ -10,6 +10,7 @@ import CreateRooms from "~/modules/Admin/ListingCRUD/components/CreateRooms.vue"
 import SetManager from "~/modules/Admin/ListingCRUD/components/SetManager.vue";
 import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
 import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
+import VideoUploader from "~/modules/Admin/ListingCRUD/components/VideoUploader.vue";
 const authUser = useAuthUser();
 
 const isAdminOrManager = computed(() => ['ADMIN', 'MANAGER'].includes(authUser.value?.role))
@@ -47,6 +48,7 @@ const isHotelType = computed<boolean>(() => {
 			
 			<SetLocation/>
 			<FileUploader v-model="listingFormData.photos"/>
+			<VideoUploader v-model="listingFormData.videos"/>
 			<v-alert type="warning" v-if="!listingFormData.typeId" class="mt-4" text="Выберите тип жилья, для того чтобы ввести параметры объекта."/>
 			<v-card v-else class="mt-4" title="Параметры объекта">
 				<v-card-item>

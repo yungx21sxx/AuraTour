@@ -87,6 +87,7 @@
 	
 	const startRoomEdit = (room: RoomCreateFormData) => {
 		roomFormData.value = room;
+		roomToEdit.value = room;
 		roomFormModal.value = true;
 	}
 	
@@ -126,6 +127,7 @@
 	}
 	
 	const onSubmit = async () => {
+		console.log(roomToEdit.value)
 		if (roomToEdit.value) {
 			await saveRoomChanges()
 		} else {

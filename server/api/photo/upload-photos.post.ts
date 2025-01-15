@@ -35,7 +35,7 @@ export default defineEventHandler(async (event: H3Event) => {
 			console.log(e)
 			return createError({
 				statusCode: 403,
-				message: 'Возможно одна из фоток в неправильном формате, принимаем все кроме heic от айфона'
+				message: 'Возможно одна из фоток в неправильном формате'
 			})
 		}
 	}

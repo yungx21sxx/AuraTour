@@ -503,7 +503,7 @@ class ListingsService {
 
 	}
 	async updateListing(listingDto: ListingCreateDTO, id: number, isHotelType: boolean, userRole: 'ADMIN' | 'MANAGER' | 'LANDLORD' | 'TOURIST') {
-		const { amenities, managerId, foodOptions, ownerId, flatProperties, photos, places, rooms, pricePeriods, coords, cityId, typeId, ...rest } = listingDto;
+		const { amenities, managerId, foodOptions, ownerId, flatProperties, photos, places, rooms, pricePeriods, coords, cityId, typeId,videos, ...rest } = listingDto;
 
 		let photosWithPosition = []
 
@@ -544,6 +544,11 @@ class ListingsService {
 						id: typeId
 					}
 				},
+				videos: videos?.length > 0
+					? {
+						connect: videos.map(video => ({ id: video.videoId }))
+					}
+					: undefined,
 				photos: {
 					connect: photosWithPosition.map(photo => ({id: photo.photoId})),
 				},
@@ -693,7 +698,7 @@ class ListingsService {
 				}
 			}
 
-			if (roomId) {
+			if (roomId && existingRooms.find(room => room.id === roomId)) {
 				await prisma.pricePeriod.deleteMany({
 					where: {
 						roomId: roomId,

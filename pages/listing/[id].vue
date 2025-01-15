@@ -102,7 +102,7 @@
 				<div v-if="isMobileOrTablet" style="text-align: center; margin-bottom: 24px;">
 					<BtnPrimary  width="300px" :prepend-icon="mdiImage" @click="galleyThumbsModalIsOpen = true">Показать все фото</BtnPrimary>
 				</div>
-<!--				<ListingVideoPlayer/>-->
+				<ListingVideoPlayer v-if="listing.videos.length > 0"/>
 				<ListingBookingForm target="sidebar" v-if="isMobileOrTablet"/>
 				<ListingRooms id="rooms" />
 				<ListingDescription id="about"/>

@@ -39,6 +39,7 @@ export default () => {
 		amenities: [],
 		foodOptions: [],
 		photos: [],
+		videos: [],
 		//Не проверяем
 		pricePeriods: [],
 

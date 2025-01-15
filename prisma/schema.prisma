@@ -117,6 +117,17 @@ model Listing {
   pricePeriods   PricePeriod[]
   reviews        Review[]
   rooms          Room[]
+  videos         Video[]
+}
+
+model Video {
+  id               Int      @id @default(autoincrement())
+  url              String
+  title            String
+  duration         Int
+  formatedDuration String
+  listing          Listing? @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  listingId        Int?
 }
 
 model FlatProperties {

@@ -47,6 +47,7 @@ export interface ListingCreateFormData {
     amenities: number[];
     foodOptions: number[];
     photos: {photoId: number, urlMin: string, position?: number}[];
+    videos: {videoId: number; url: string; title: string; durationFormated: string}
     pricePeriods: PricePeriodCreateDTO[];
 
     rooms: RoomCreateFormData[]

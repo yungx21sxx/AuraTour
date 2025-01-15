@@ -10,3 +10,10 @@ export interface PhotoUploadResponse {
     photoId: number,
     urlMin: string,
 }
+
+export interface VideoUploadResponse {
+    formatedDuration: string;
+    videoId: number;
+    url: string;
+    title: string;
+}

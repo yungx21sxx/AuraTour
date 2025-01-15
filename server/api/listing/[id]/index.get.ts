@@ -24,6 +24,13 @@ export default defineEventHandler(async (event) => {
 					}
 				}
 			},
+			videos: {
+				select: {
+					title: true,
+					formatedDuration: true,
+					url: true
+				}
+			},
 			type: {
 				select: {
 					name: true,

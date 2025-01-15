@@ -133,6 +133,12 @@ export interface IRoomResponse {
     } | null;
 }
 
+export interface IVideoResponse {
+    title: string;
+    formatedDuration: string;
+    url: string;
+}
+
 export interface IListingResponse {
     id: number,
     isHotelType: boolean,
@@ -183,6 +189,8 @@ export interface IListingResponse {
     } | null;
 
     rooms: IRoomResponse[] | [];
+
+    videos: IVideoResponse[];
 
     reviewCount: number,
     averageRating: number,

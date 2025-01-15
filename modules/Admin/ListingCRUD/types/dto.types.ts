@@ -52,6 +52,7 @@ export interface ListingCreateDTO {
     amenities: number[];
     foodOptions: number[];
     photos: {photoId: number, urlMin: string}[];
+    videos: {videoId: number}[];
     pricePeriods: PricePeriodCreateDTO[];
 
     rooms: RoomCreateDTO[]
