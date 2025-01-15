@@ -11,7 +11,9 @@ definePageMeta({
 </script>
 
 <template>
-	<ListingCreateForm/>
+	<client-only>
+		<ListingCreateForm/>
+	</client-only>
 </template>
 
 <style scoped lang="scss">

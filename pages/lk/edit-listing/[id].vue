@@ -10,8 +10,9 @@ definePageMeta({
 </script>
 
 <template>
-	<ListingUpdateForm/>
-
+	<client-only>
+		<ListingUpdateForm/>
+	</client-only>
 </template>
 
 <style scoped lang="scss">
