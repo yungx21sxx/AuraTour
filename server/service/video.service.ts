@@ -4,11 +4,8 @@ import {MultiPartData} from "h3";
 import path, { join } from "path";
 import { writeFile, unlink } from "fs/promises";
 import ffmpeg from "fluent-ffmpeg";
-import ffmpegStatic from "ffmpeg-static";
 import fs from "fs";
 import {prisma} from "~/server/service/prisma.service";
-
-ffmpeg.setFfmpegPath(<string>ffmpegStatic);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.resolve(path.dirname(__filename), "../../");
