@@ -67,35 +67,49 @@ class VideoService {
     }
 
     async writeVideo(file: File, title: string, listingId: number) {
-        console.log(listingId)
-        const {filePathCompressed, fileUrl, filePathOriginal, uploadDir} = this.createFileURL(file.name);
+        const { filePathCompressed, fileUrl, filePathOriginal, uploadDir } = this.createFileURL(file.name);
 
         if (!fs.existsSync(uploadDir)) {
             fs.mkdirSync(uploadDir, '0777');
         }
 
         try {
+            console.time("01: Write original video file");
+
             const videoBuffer = await file.arrayBuffer();
             await writeFile(filePathOriginal, Buffer.from(videoBuffer));
+
+            console.timeEnd("01: Write original video file");
+
+            console.time("02: Get video duration");
+
             const videoDuration = await this.getVideoDuration(filePathOriginal);
-            const formatedDuration = this.formatTime(Math.round(videoDuration))
+            const formatedDuration = this.formatTime(Math.round(videoDuration));
+
+            console.timeEnd("02: Get video duration");
 
             const videoCodec = "libx264";
             const audioCodec = "aac";
-            const videoBitrate = "1500k";
+            const videoBitrate = "4000k";
+
+            console.time("03: Compress video with ffmpeg");
+
             await new Promise((resolve, reject) => {
                 ffmpeg()
                     .input(filePathOriginal)
                     .videoFilters(
-                        "scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2"
+                        "scale=1280:720:force_original_aspect_ratio=decrease"
                     )
                     .videoCodec(videoCodec)
                     .audioCodec(audioCodec)
                     .outputOptions([
                         "-preset", "ultrafast",
-                        // "-b:v", videoBitrate,
+                        "-b:v", videoBitrate,
+                        "-c:a", "copy",
+                        "-crf", "28",
                         "-movflags", "faststart",
-                        // "-pix_fmt", "yuv420p",
+                        "-threads", "2",
+                        "-pix_fmt", "yuv420p",
                     ])
                     .format("mp4")
                     .output(filePathCompressed)
@@ -104,7 +118,15 @@ class VideoService {
                     .run();
             });
 
+            console.timeEnd("03: Compress video with ffmpeg");
+
+            console.time("04: Delete original file");
+
             unlink(filePathOriginal);
+
+            console.timeEnd("04: Delete original file");
+
+            console.time("05: Save video metadata to database");
 
             const createdVideo = await prisma.video.create({
                 data: {
@@ -114,19 +136,21 @@ class VideoService {
                     duration: Math.round(videoDuration),
                     formatedDuration: formatedDuration
                 }
-            })
+            });
 
-            console.log(createdVideo)
+            console.timeEnd("05: Save video metadata to database");
+
+            console.log(createdVideo);
 
             return {
                 title,
                 url: fileUrl,
                 formatedDuration: createdVideo.formatedDuration,
                 videoId: createdVideo.id
-            }
+            };
         } catch (e: any) {
-            console.log(e)
-            throw new Error(e)
+            console.log(e);
+            throw new Error(e);
         }
     }
 }
