@@ -137,6 +137,7 @@ export interface IVideoResponse {
     title: string;
     formatedDuration: string;
     url: string;
+    id: number;
 }
 
 export interface IListingResponse {

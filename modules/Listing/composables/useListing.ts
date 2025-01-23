@@ -8,10 +8,10 @@ export default () => {
 	const listing = useState<IListingResponse>('listing-data');
 	const queryForGoBack = useState();
 
-	async function initListingData(listingId: number, bookingQuery: IQueryBooking) {
+	async function initListingData(listingId: number, bookingQuery?: IQueryBooking) {
 		try {
 			const listingResponse: IListingResponse = await ListingApi.fetchListing(listingId);
-			if (bookingQuery.checkIn && bookingQuery.checkOut) {
+			if (bookingQuery && bookingQuery.checkIn && bookingQuery.checkOut) {
 				const {checkIn, checkOut } = bookingQuery;
 				const {pricePeriods, minPrice} = listingResponse;
 				listingResponse.calculatedPrices = calculatePrices(

@@ -66,22 +66,23 @@ class VideoService {
         return forms[2];
     }
 
-    async writeVideo(file: MultiPartData, title: string) {
-        const {filePathCompressed, fileUrl, filePathOriginal, uploadDir} = this.createFileURL(file.filename);
+    async writeVideo(file: File, title: string, listingId: number) {
+        console.log(listingId)
+        const {filePathCompressed, fileUrl, filePathOriginal, uploadDir} = this.createFileURL(file.name);
 
         if (!fs.existsSync(uploadDir)) {
             fs.mkdirSync(uploadDir, '0777');
         }
 
         try {
-            await writeFile(filePathOriginal, file.data);
-
+            const videoBuffer = await file.arrayBuffer();
+            await writeFile(filePathOriginal, Buffer.from(videoBuffer));
             const videoDuration = await this.getVideoDuration(filePathOriginal);
             const formatedDuration = this.formatTime(Math.round(videoDuration))
 
             const videoCodec = "libx264";
             const audioCodec = "aac";
-            const videoBitrate = "2000k";
+            const videoBitrate = "1500k";
             await new Promise((resolve, reject) => {
                 ffmpeg()
                     .input(filePathOriginal)
@@ -91,9 +92,10 @@ class VideoService {
                     .videoCodec(videoCodec)
                     .audioCodec(audioCodec)
                     .outputOptions([
-                        "-b:v", videoBitrate,
+                        "-preset", "ultrafast",
+                        // "-b:v", videoBitrate,
                         "-movflags", "faststart",
-                        "-pix_fmt", "yuv420p",
+                        // "-pix_fmt", "yuv420p",
                     ])
                     .format("mp4")
                     .output(filePathCompressed)
@@ -102,21 +104,24 @@ class VideoService {
                     .run();
             });
 
-            await unlink(filePathOriginal);
+            unlink(filePathOriginal);
 
             const createdVideo = await prisma.video.create({
                 data: {
+                    listingId,
                     title,
                     url: fileUrl,
                     duration: Math.round(videoDuration),
-                    formatedDuration
+                    formatedDuration: formatedDuration
                 }
             })
+
+            console.log(createdVideo)
 
             return {
                 title,
                 url: fileUrl,
-                formatedDuration,
+                formatedDuration: createdVideo.formatedDuration,
                 videoId: createdVideo.id
             }
         } catch (e: any) {

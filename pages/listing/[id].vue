@@ -25,6 +25,7 @@
 	import useGallery from "~/modules/Listing/composables/useGallery";
 	import useStatistics from "~/modules/Common/useStatistics";
 	import ListingVideoPlayer from "~/modules/Listing/components/ListingPage/ListingVideoPlayer.vue";
+	import VideoUploader from "~/modules/Admin/Listing/components/VideoUploader.vue";
 	const {isMobileOrTablet} = useDevice();
 	
 	const authUser = useAuthUser();
@@ -103,7 +104,8 @@
 					<BtnPrimary  width="300px" :prepend-icon="mdiImage" @click="galleyThumbsModalIsOpen = true">Показать все фото</BtnPrimary>
 				</div>
 				<client-only>
-					<ListingVideoPlayer v-if="listing.videos.length > 0"/>
+					<VideoUploader v-if="access.fullAccess || access.isListingOwner"/>
+					<ListingVideoPlayer v-else-if="listing.videos.length > 0"/>
 				</client-only>
 				<ListingBookingForm target="sidebar" v-if="isMobileOrTablet"/>
 				<ListingRooms id="rooms" />

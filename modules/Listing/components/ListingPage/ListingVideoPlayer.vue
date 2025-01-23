@@ -27,6 +27,7 @@
 					<video-player
 						aspect-ratio="16:9"
 						:src="video.url"
+						preload="auto"
 						class="player"
 						controls
 						:loop="true"

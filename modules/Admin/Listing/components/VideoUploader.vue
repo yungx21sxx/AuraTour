@@ -4,7 +4,8 @@
 	import {VideoPlayer} from "@videojs-player/vue";
 	import 'video.js/dist/video-js.css';
 	import type {H3Error} from "h3";
-	const videos = defineModel<VideoUploadResponse[]>();
+	import useListing from "~/modules/Listing/composables/useListing";
+	const {listing, initListingData} = useListing();
 	
 	const videoTitle = ref<null | string>(null);
 	const videoFile = ref<FormData | null>(null);
@@ -35,6 +36,7 @@
 		
 		formData.append('video', videoFile.value);
 		formData.append('title', videoTitle.value);
+		formData.append('listingId', listing.value.id);
 		
 		try {
 			videoLoading.value = true;
@@ -43,9 +45,7 @@
 				body: formData
 			});
 			
-			if (videos.value) {
-				videos.value.push(videoUploadResponse);
-			}
+			await initListingData(listing.value.id);
 		} catch (e: H3Error) {
 			alert(e.data.message);
 		} finally {
@@ -63,7 +63,7 @@
 			await $fetch(`/api/video/${videoId}`,{
 				method: 'DELETE'
 			});
-			videos.value = videos.value.filter(video => video.videoId !== videoId);
+			await initListingData(listing.value.id);
 		} catch (e: H3Error) {
 			alert(e.data.message);
 		} finally {
@@ -84,8 +84,8 @@
 				<BtnPrimary :loading="videoLoading" type="submit">Загрузить</BtnPrimary>
 			</v-form>
 		</v-card-item>
-		<div v-if="videos && videos.length > 0">
-			<v-card v-for="video of videos" :key="video.videoId">
+		<div v-if="listing.videos && listing.videos.length > 0">
+			<v-card v-for="video of listing.videos">
 				<v-card-title>{{video.title}}</v-card-title>
 				<v-card-text>Длина: {{video.formatedDuration}}</v-card-text>
 				<v-lazy>
@@ -100,7 +100,7 @@
 					</video-player>
 				</v-lazy>
 				<v-card-actions>
-					<v-btn @click="deleteVideo(video.videoId)" :loading="deleteLoading" color="red">Удалить</v-btn>
+					<v-btn @click="deleteVideo(video.id)" :loading="deleteLoading" color="red">Удалить</v-btn>
 				</v-card-actions>
 			</v-card>
 		</div>

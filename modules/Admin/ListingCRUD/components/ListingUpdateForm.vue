@@ -48,7 +48,7 @@ const isHotelType = computed<boolean>(() => {
 			
 			<SetLocation/>
 			<FileUploader v-model="listingFormData.photos"/>
-			<VideoUploader v-model="listingFormData.videos"/>
+<!--			<VideoUploader v-model="listingFormData.videos"/>-->
 			<v-alert type="warning" v-if="!listingFormData.typeId" class="mt-4" text="Выберите тип жилья, для того чтобы ввести параметры объекта."/>
 			<v-card v-else class="mt-4" title="Параметры объекта">
 				<v-card-item>
