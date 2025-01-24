@@ -679,7 +679,13 @@ class ListingsService {
 			const roomCreateQuery = {
 				...roomData,
 				pricePeriods: {
-					create: roomPricePeriods
+					create: roomPricePeriods.map(period => ({
+						price: period.price,
+						startDay: period.startDay,
+						endDay: period.endDay,
+						startMonth: period.startMonth,
+						endMonth: period.endMonth,
+					}))
 				},
 				amenities: {
 					create: roomAmenities.map(i => ({name: i}))
@@ -715,7 +721,13 @@ class ListingsService {
 						...roomData,
 						listingId,
 						pricePeriods: {
-							create: roomPricePeriods
+							create: roomPricePeriods.map(period => ({
+								price: period.price,
+								startDay: period.startDay,
+								endDay: period.endDay,
+								startMonth: period.startMonth,
+								endMonth: period.endMonth,
+							}))
 						},
 						photos: {
 							connect: photosWithPosition.map(photo => ({id : photo.photoId}))

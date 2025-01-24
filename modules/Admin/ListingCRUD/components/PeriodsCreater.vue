@@ -121,10 +121,10 @@
 		
 		// Создание объекта даты с текущим годом и часом
 		const date = new Date(Date.now());
-		date.setUTCFullYear(new Date().getFullYear());
-		date.setUTCMonth(month - 1);
-		date.setUTCDate(day);
-		date.setUTCHours(21, 0, 0, 0);
+		date.setFullYear(new Date().getFullYear());
+		date.setMonth(month - 1);
+		date.setDate(day);
+		// date.setHours(21, 0, 0, 0);
 		
 		// Форматирование даты с учётом текущего часового пояса устройства
 		const formatter = new Intl.DateTimeFormat("ru-RU", {
