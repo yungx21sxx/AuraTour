@@ -82,7 +82,15 @@
 			incrementStatistic('views', listing.value.id)
 		}
 	})
-
+	
+	useSeoMeta({
+		title: listing.value.title,
+		description: listing.value.description.slice(0, 150),
+		ogTitle: listing.value.title,
+		ogDescription: listing.value.description.slice(0, 150),
+		ogImage: listing.value.photos[0].urlFull,
+	})
+	
 </script>
 
 <template>
