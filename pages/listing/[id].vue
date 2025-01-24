@@ -84,10 +84,10 @@
 	})
 	
 	useSeoMeta({
-		title: listing.value.title,
-		description: listing.value.description.slice(0, 140) + '...',
-		ogTitle: listing.value.title,
-		ogDescription: listing.value.description.slice(0, 140) + '...',
+		title: 'Аура Тур: ' + listing.value.title,
+		description: 'Более 400 недорогих вариантов жилья для отдыха в Абхазии в 2025 году: квартиры, коттеджи, гостевые дома, номера в отелях и гостиницах у самого моря. Удобный выбор по цене, отзывы реальных гостей, экскурсии и трансферы для комфортного отдыха.',
+		ogTitle: 'Аура Тур: ' + listing.value.title,
+		ogDescription: 'Более 400 недорогих вариантов жилья для отдыха в Абхазии в 2025 году: квартиры, коттеджи, гостевые дома, номера в отелях и гостиницах у самого моря. Удобный выбор по цене, отзывы реальных гостей, экскурсии и трансферы для комфортного отдыха.',
 		ogImage: listing.value.photos[0].urlFull,
 	})
 	
