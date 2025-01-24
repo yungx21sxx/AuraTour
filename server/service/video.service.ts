@@ -74,25 +74,25 @@ class VideoService {
         }
 
         try {
-            console.time("01: Write original video file");
+            // console.time("01: Write original video file");
 
             const videoBuffer = await file.arrayBuffer();
             await writeFile(filePathOriginal, Buffer.from(videoBuffer));
 
-            console.timeEnd("01: Write original video file");
+            // console.timeEnd("01: Write original video file");
 
-            console.time("02: Get video duration");
+            // console.time("02: Get video duration");
 
             const videoDuration = await this.getVideoDuration(filePathOriginal);
             const formatedDuration = this.formatTime(Math.round(videoDuration));
 
-            console.timeEnd("02: Get video duration");
+            // console.timeEnd("02: Get video duration");
 
             const videoCodec = "libx264";
             const audioCodec = "aac";
             const videoBitrate = "4000k";
 
-            console.time("03: Compress video with ffmpeg");
+            // console.time("03: Compress video with ffmpeg");
 
             await new Promise((resolve, reject) => {
                 ffmpeg()
@@ -118,15 +118,15 @@ class VideoService {
                     .run();
             });
 
-            console.timeEnd("03: Compress video with ffmpeg");
+            // console.timeEnd("03: Compress video with ffmpeg");
 
-            console.time("04: Delete original file");
+            // console.time("04: Delete original file");
 
             unlink(filePathOriginal);
 
-            console.timeEnd("04: Delete original file");
+            // console.timeEnd("04: Delete original file");
 
-            console.time("05: Save video metadata to database");
+            // console.time("05: Save video metadata to database");
 
             const createdVideo = await prisma.video.create({
                 data: {
@@ -138,9 +138,9 @@ class VideoService {
                 }
             });
 
-            console.timeEnd("05: Save video metadata to database");
+            // console.timeEnd("05: Save video metadata to database");
 
-            console.log(createdVideo);
+            // console.log(createdVideo);
 
             return {
                 title,
