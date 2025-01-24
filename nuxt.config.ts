@@ -112,13 +112,7 @@ export default defineNuxtConfig({
         {charset: 'utf-16'},
         {name: 'viewport', content: 'width=device-width, initial-scale=1'},
         {name: 'format-detection', content: 'telephone=no'},
-        {
-          name: 'description',
-          content: 'Лучшие варианты жилья для отдыха в Абхазии в 2024 году: квартиры, коттеджи, гостевые дома, дома под ключ, отели у самого моря. Актуальные цены, проверенное жилье.'
-        },
-
       ],
-      title: 'Отдых в Абхазии 2024: цены на жилье у моря, отзывы. Снять жилье в Абхазии недорого.'
     },
   },
 

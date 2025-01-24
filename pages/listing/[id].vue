@@ -85,9 +85,9 @@
 	
 	useSeoMeta({
 		title: listing.value.title,
-		description: listing.value.description.slice(0, 150),
+		description: listing.value.description.slice(0, 140) + '...',
 		ogTitle: listing.value.title,
-		ogDescription: listing.value.description.slice(0, 150),
+		ogDescription: listing.value.description.slice(0, 140) + '...',
 		ogImage: listing.value.photos[0].urlFull,
 	})
 	
