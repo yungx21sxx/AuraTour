@@ -68,6 +68,22 @@ model ListingAmenity {
   @@id([listingId, amenityId])
 }
 
+model Infrastructure {
+  id       Int                     @id @default(autoincrement())
+  name     String
+  value    String
+  listings ListingInfrastructure[]
+}
+
+model ListingInfrastructure {
+  listingId        Int
+  infrastructureId Int
+  infrastructure   Infrastructure @relation(fields: [infrastructureId], references: [id], onDelete: Cascade)
+  listing          Listing        @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@id([listingId, infrastructureId])
+}
+
 model Food {
   id       Int           @id @default(autoincrement())
   name     String
@@ -102,16 +118,19 @@ model Listing {
   note         String?
   typeId       Int
 
+  foodDescription String?
+
   bookings       Booking[]
   coords         Coords?
   flatProperties FlatProperties?
-  city           City               @relation(fields: [cityId], references: [id])
+  city           City                    @relation(fields: [cityId], references: [id])
   cityId         Int
-  type           ListingType        @relation(fields: [typeId], references: [id])
-  manager        User?              @relation("ManagerRelation", fields: [managerId], references: [id])
-  owner          User?              @relation("OwnerRelation", fields: [ownerId], references: [id])
+  type           ListingType             @relation(fields: [typeId], references: [id])
+  manager        User?                   @relation("ManagerRelation", fields: [managerId], references: [id])
+  owner          User?                   @relation("OwnerRelation", fields: [ownerId], references: [id])
   amenities      ListingAmenity[]
   food           ListingFood[]
+  infrastructure ListingInfrastructure[]
   statistics     ListingStatistic[]
   photos         Photo[]
   pricePeriods   PricePeriod[]
@@ -177,18 +196,23 @@ model Photo {
 }
 
 model Room {
-  id           Int           @id @default(autoincrement())
-  listingId    Int
-  name         String
-  places       Int
-  area         Int
-  badCount     Int           @default(1)
-  minPrice     Int
-  Booking      Booking[]
-  photos       Photo[]
-  pricePeriods PricePeriod[]
-  listing      Listing       @relation(fields: [listingId], references: [id], onDelete: Cascade)
-  amenities    RoomAmenity[]
+  id        Int    @id @default(autoincrement())
+  listingId Int
+  name      String
+
+  places      Int
+  extraPlaces Int? @default(0)
+
+  area Int
+
+  includedDescription String?
+  badCount            Int           @default(1)
+  minPrice            Int
+  Booking             Booking[]
+  photos              Photo[]
+  pricePeriods        PricePeriod[]
+  listing             Listing       @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  amenities           RoomAmenity[]
 }
 
 model RoomAmenity {

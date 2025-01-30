@@ -108,9 +108,12 @@ const isHotelType = computed<boolean>(() => {
 					</div>
 					<v-select chips :items="initialData.amenities" v-model="listingFormData.amenities" item-title="name" item-value="id"
 					          label="Удобства" multiple required variant="outlined"></v-select>
+					<v-label class="mb-4">Нужно указывать для корректной фильтрации жилья в каталоге</v-label>
 					<v-select chips :items="initialData.foodOptions" v-model="listingFormData.foodOptions" item-title="name" item-value="id"
 					          label="Типы питания" multiple required variant="outlined"></v-select>
-				
+					<v-textarea v-model="listingFormData.foodDescription" variant="outlined" v-if="isHotelType" label="Описание питания"></v-textarea>
+					<v-select chips :items="initialData.infrastructure" v-model="listingFormData.infrastructure" item-title="name" item-value="id"
+					          label="Инфраструктура (необязательно)" multiple variant="outlined"></v-select>
 				</v-card-item>
 			</v-card>
 			

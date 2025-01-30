@@ -25,6 +25,7 @@
 			amenitiesId: chosenFilters.amenitiesId,
 			foodsId: chosenFilters.foodsId,
 			minRoomCount: chosenFilters.minRoomCount,
+			infrastructureId: chosenFilters.infrastructureId
 		};
 		// Опции для навигации
 		const navigateOptions = {};
@@ -132,6 +133,12 @@
 			v-if="filters"
 			:variants="filters.housingTypes"
 			v-model="chosenHousingTypes"
+		/>
+		<FilterCheckBoxes
+			title="Инфраструктура"
+			v-if="filters"
+			:variants="filters.infrastructure"
+			v-model="chosenFilters.infrastructureId"
 		/>
 		<FilterCheckBoxes
 			title="Удобства"

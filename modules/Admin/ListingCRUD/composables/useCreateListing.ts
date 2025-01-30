@@ -42,6 +42,8 @@ export default () => {
 		videos: [],
 		//Не проверяем
 		pricePeriods: [],
+		infrastructure: [],
+		foodDescription: null,
 
 		//Проверяем если если isHotelType = true
 		rooms: [],

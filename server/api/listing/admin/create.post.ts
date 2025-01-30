@@ -55,6 +55,10 @@ export default defineEventHandler(async event => {
 		}
 	}
 
+	if (listing.foodDescription) {
+		query.foodDescription = listing.foodDescription
+	}
+
 	if (!createByUser) {
 		query.manager = {
 			connect: {
@@ -97,7 +101,12 @@ export default defineEventHandler(async event => {
 		// @ts-ignore
 		query.rooms = {
 			create: listing.rooms.map(room => {
-				const {amenities, pricePeriods, photos, id, ...roomData} = room
+				const {amenities, pricePeriods, photos, id,includedDescription, ...roomData} = room
+
+				if (includedDescription) {
+					//@ts-ignore
+					roomData.includedDescription = includedDescription
+				}
 
 				return {
 					photos: {
@@ -167,6 +176,15 @@ export default defineEventHandler(async event => {
 				data: {
 					listingId: createdListing.id,
 					foodId
+				}
+			})
+		}))
+
+		await Promise.all(listing.infrastructure.map(infrastructureId => {
+			return prisma.listingInfrastructure.create({
+				data: {
+					listingId: createdListing.id,
+					infrastructureId
 				}
 			})
 		}))

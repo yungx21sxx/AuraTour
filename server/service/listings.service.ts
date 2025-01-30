@@ -347,6 +347,10 @@ class ListingsService {
 				//@ts-ignore
 				queryConditions.AND.push({ typeId: { in: sortFilters.housingTypesId } });
 			}
+			if (sortFilters.infrastructureId.length > 0) {
+				//@ts-ignore
+				queryConditions.AND.push({ infrastructure: { some: { infrastructureId: { in: sortFilters.infrastructureId } } } });
+			}
 			if (sortFilters.minRoomCount && !(sortFilters.housingTypesId.includes(2) || sortFilters.housingTypesId.includes(6) ||  sortFilters.housingTypesId.includes(8))) {
 				//@ts-ignore
 				queryConditions.badCount =  { gte: 0 }
@@ -503,7 +507,7 @@ class ListingsService {
 
 	}
 	async updateListing(listingDto: ListingCreateDTO, id: number, isHotelType: boolean, userRole: 'ADMIN' | 'MANAGER' | 'LANDLORD' | 'TOURIST') {
-		const { amenities, managerId, foodOptions, ownerId, flatProperties, photos, places, rooms, pricePeriods, coords, cityId, typeId,videos, ...rest } = listingDto;
+		const { amenities, managerId, foodOptions, ownerId, flatProperties, photos, places, rooms, pricePeriods, coords, cityId, typeId,videos, infrastructure, ...rest } = listingDto;
 
 		let photosWithPosition = []
 
@@ -614,6 +618,12 @@ class ListingsService {
 			}
 		})
 
+		await prisma.listingInfrastructure.deleteMany({
+			where: {
+				listingId: id
+			}
+		})
+
 
 		await Promise.all(amenities.map(amenityId => {
 			return prisma.listingAmenity.create({
@@ -629,6 +639,15 @@ class ListingsService {
 				data: {
 					listingId: id,
 					foodId
+				}
+			})
+		}))
+
+		await Promise.all(infrastructure.map(infrastructureId => {
+			return prisma.listingInfrastructure.create({
+				data: {
+					listingId: id,
+					infrastructureId
 				}
 			})
 		}))

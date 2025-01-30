@@ -6,7 +6,8 @@ export interface FiltersDTO {
     amenitiesId: number[],
     foodsId: number[],
     housingTypesId: number[],
-    minRoomCount: number | null
+    minRoomCount: number | null,
+    infrastructureId: number[]
 }
 
 

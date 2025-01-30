@@ -5,10 +5,15 @@ export interface RoomCreateFormData {
     name: string | null
     places: number | null
     area: number | null
+
+    //Количество комнат
     badCount: number | null
+
     minPrice: number | null
-    pricePeriods: PricePeriodCreateDTO[]
-    amenities: string[]
+    pricePeriods: PricePeriodCreateDTO[];
+    extraPlaces: number;
+    includedDescription: string | null;
+    amenities: string[];
     photos: {photoId: number, urlMin: string}[];
 }
 
@@ -46,6 +51,8 @@ export interface ListingCreateFormData {
     coords: Coords;
     amenities: number[];
     foodOptions: number[];
+    foodDescription: string | null;
+    infrastructure: number[];
     photos: {photoId: number, urlMin: string, position?: number}[];
     videos: {videoId: number; url: string; title: string; durationFormated: string}
     pricePeriods: PricePeriodCreateDTO[];

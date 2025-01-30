@@ -5,7 +5,7 @@ import type {IFiltersResponse} from "~/modules/Search/types/response.types";
 import type {LocationQuery} from "vue-router";
 
 export default () => {
-	const filters = useState<IFiltersResponse>();
+	const filters = useState<IFiltersResponse>('filters-init-data');
 	const filtersModalIsOpen = useState<boolean>(() => false);
 	function encodeFiltersToQuery(filters: FiltersDTO): string {
 		const params = new URLSearchParams();
@@ -27,6 +27,7 @@ export default () => {
 			foodsId: query.foodsId ? (Array.isArray(query.foodsId) ? query.foodsId.map(Number) : [parseInt(query.foodsId)]) : [],
 			housingTypesId: query.housingTypesId ? (Array.isArray(query.housingTypesId) ? query.housingTypesId.map(Number) : [parseInt(query.housingTypesId)]) : [],
 			minRoomCount: query.minRoomCount ? parseInt(query.minRoomCount as string) : null,
+			infrastructureId: query.infrastructureId ? (Array.isArray(query.infrastructureId) ? query.infrastructureId.map(Number) : [parseInt(query.infrastructureId)]) : [], //@ts-ignore
 		};
 	}
 

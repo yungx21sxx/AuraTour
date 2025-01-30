@@ -127,6 +127,32 @@ class FiltersService {
 
 		return counts;
 	}
+
+	async countListingsPerInfrastructureByCity(cityId: number | null) {
+		const infrastructures = await prisma.infrastructure.findMany();
+		const counts = [];
+
+		for (const infrastructure of infrastructures) {
+			// Для каждого удобства подсчитываем количество связанных объектов аренды в указанном городе
+			const count = await prisma.listingInfrastructure.count({
+				where: {
+					infrastructureId: infrastructure.id,
+					listing: cityId ? {
+						cityId: cityId,
+					} : {},
+				},
+			});
+
+			counts.push({
+				id: infrastructure.id,
+				name: infrastructure.name,
+				value: infrastructure.value,
+				count: count,
+			});
+		}
+
+		return counts;
+	}
 	async countListingsPerFoodTypeByCity(cityId: number | null) {
 		const foods = await prisma.food.findMany();
 		const counts = [];

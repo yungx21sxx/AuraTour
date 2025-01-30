@@ -136,55 +136,113 @@
 		return formatter.format(date);
 	}
 	
-
+	const tab = ref(1);
+	const jsonDateInput = ref(null);
+	
+	const createPeriodsFromJson = () => {
+		if (!jsonDateInput.value) {
+			alert('Введите данные');
+			return;
+		}
+		
+		try {
+			const parsed = JSON.parse(jsonDateInput.value);
+			if (!Array.isArray(parsed)) {
+				throw new Error('Данные не являются массивом');
+			}
+			for (const period of parsed) {
+				if (typeof period.startDay !== 'number' || typeof period.startMonth !== 'number' || typeof period.endDay !== 'number' || typeof period.endMonth !== 'number' || typeof period.price !== 'number') {
+					throw new Error('Некорректные данные');
+				}
+				if (!isValidPeriod(period)) {
+					throw new Error(`Некорректные даты, ${formatDate(period.startDay, period.startMonth)} - ${formatDate(period.endDay, period.endMonth)}`);
+				}
+				if (checkOverlappingRanges([...pricePeriods.value, period] )) {
+					throw new Error('Периоды пересекаются');
+				}
+				pricePeriods.value.push(period);
+			}
+		} catch (e) {
+			console.error(e);
+			alert(e.message);
+		}
+		
+		jsonDateInput.value = null;
+	}
 	
 </script>
 
 <template>
 	<v-card elevation="0">
 		<v-card-item>
-			<div class="date-input">
-				<div class="date-input__title">Начало</div>
-				<div class="date-input__inputs">
+			<v-tabs v-model="tab">
+				<v-tab :value="1">Ручной ввод</v-tab>
+				<v-tab :value="2">JSON</v-tab>
+			</v-tabs>
+			
+			<v-tabs-window v-model="tab">
+				<v-tabs-window-item :value="1">
+					<div class="date-input mt-4">
+						<div class="date-input__title">Начало</div>
+						<div class="date-input__inputs">
+							<v-number-input
+								label="Число"
+								v-model="currentDatesRange.startDay"
+								variant="outlined"
+							/>
+							<v-select
+								variant="outlined"
+								v-model="currentDatesRange.startMonth"
+								:items="months"
+								label="Месяц"
+								item-title="label"
+								item-value="index"
+							/>
+						</div>
+					</div>
+					<div class="date-input">
+						<div class="date-input__title">Конец</div>
+						<div class="date-input__inputs">
+							<v-number-input
+								label="Число"
+								v-model="currentDatesRange.endDay"
+								variant="outlined"
+							/>
+							<v-select
+								variant="outlined"
+								v-model="currentDatesRange.endMonth"
+								:items="months"
+								label="Месяц"
+								item-title="label"
+								item-value="index"
+							/>
+						</div>
+					</div>
 					<v-number-input
-						label="Число"
-						v-model="currentDatesRange.startDay"
+						label="Цена"
+						v-model="currentDatesRange.price"
 						variant="outlined"
 					/>
-					<v-select
-						variant="outlined"
-						v-model="currentDatesRange.startMonth"
-						:items="months"
-						label="Месяц"
-						item-title="label"
-						item-value="index"
-					/>
-				</div>
-			</div>
-			<div class="date-input">
-				<div class="date-input__title">Конец</div>
-				<div class="date-input__inputs">
-					<v-number-input
-						label="Число"
-						v-model="currentDatesRange.endDay"
-						variant="outlined"
-					/>
-					<v-select
-						variant="outlined"
-						v-model="currentDatesRange.endMonth"
-						:items="months"
-						label="Месяц"
-						item-title="label"
-						item-value="index"
-					/>
-				</div>
-			</div>
-			<v-number-input
-				label="Цена"
-				v-model="currentDatesRange.price"
-				variant="outlined"
-			/>
-			<BtnPrimary @click="createPricePeriod">Добавить период</BtnPrimary>
+					<BtnPrimary @click="createPricePeriod">Добавить период</BtnPrimary>
+				</v-tabs-window-item>
+				<v-tabs-window-item :value="2">
+					<p class="mt-4">
+						Тип данных:
+					</p>
+					<code class="mt-4 mb-4">
+						PricePeriod {
+							startDay: number,
+							endDay: number,
+							startMonth: number,
+							endMonth: number,
+							price: number
+						}
+					</code>
+					<v-textarea v-model="jsonDateInput"></v-textarea>
+					<v-btn @click="createPeriodsFromJson">Создать периоды</v-btn>
+				</v-tabs-window-item>
+			</v-tabs-window>
+		
 			
 			<div class="prices">
 				<div

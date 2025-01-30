@@ -34,13 +34,21 @@ export default defineEventHandler(async (event): Promise<InitialDataResponse> =>
 		},
 	});
 
+	const infrastructure = await prisma.infrastructure.findMany({
+		select: {
+			id: true,
+			name: true,
+			value: true,
+		},
+	});
 
-	// Формирование ответа
+	
 	const response: InitialDataResponse = {
 		cities,
 		amenities,
 		foodOptions,
-		housingTypes
+		housingTypes,
+		infrastructure
 	};
 
 	return response;

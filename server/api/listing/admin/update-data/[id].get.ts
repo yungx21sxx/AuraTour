@@ -71,11 +71,20 @@ export default defineEventHandler(async (event) => {
                     }
                 }
             },
+            infrastructure: {
+                include: {
+                    infrastructure: {
+                        select: {
+                            id: true
+                        }
+                    }
+                }
+            },
             videos: true
         }
     })
     //@ts-ignore
-    const {amenities, food, rooms, photos, ...listingData} = listing
+    const {amenities, food, rooms, photos, infrastructure, ...listingData} = listing
     return {
         ...listingData,
         photos: photos.map((i: Photo) => ({photoId: i.id, urlMin: i.urlMin, position: i.position})),
@@ -83,6 +92,8 @@ export default defineEventHandler(async (event) => {
         amenities: amenities.map(i => i.amenity.id),
         //@ts-ignore
         foodOptions: food.map(i => i.food.id),
+        //@ts-ignore
+        infrastructure: infrastructure.map(i => i.infrastructure.id),
         videos: listingData.videos.map(video => ({
             title: video.title,
             videoId: video.id,

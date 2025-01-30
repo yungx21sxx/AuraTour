@@ -18,7 +18,8 @@ export interface FiltersDTO {
 	amenitiesId: number[],
 	foodsId: number[],
 	housingTypesId: number[],
-	minRoomCount: number
+	minRoomCount: number;
+	infrastructureId: number[]
 }
 
 export interface GetAvailableListingsDTO {

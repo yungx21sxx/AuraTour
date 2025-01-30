@@ -2,7 +2,7 @@ import type {IListingPricePeriod} from "~/modules/Listing/types/response.types";
 
 export function calculatePrices(pricePeriods: IListingPricePeriod[], minPrice: number, checkIn: Date | null, checkOut: Date | null): {dailyPrice: number, totalPrice: number, daysCount: number} | null {
 
-    if (!checkOut || !checkIn || pricePeriods.length === 0) {
+    if (!checkOut || !checkIn) {
         return null;
     }
 

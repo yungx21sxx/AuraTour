@@ -13,6 +13,7 @@ export interface RoomCreateDTO {
     minPrice: number
     pricePeriods: PricePeriodCreateDTO[]
     amenities: string[]
+    includedDescription: string | null;
     photos: {photoId: number, urlMin: string}[];
 }
 
@@ -51,6 +52,9 @@ export interface ListingCreateDTO {
     coords: Coords;
     amenities: number[];
     foodOptions: number[];
+    infrastructure: number[];
+    foodDescription: string | null;
+
     photos: {photoId: number, urlMin: string}[];
     videos: {videoId: number}[];
     pricePeriods: PricePeriodCreateDTO[];

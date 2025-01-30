@@ -13,7 +13,8 @@ export interface IFiltersResponse {
     priceTo: number,
     housingTypes: IFilterProperty[],
     amenities: IFilterProperty[],
-    foods: IFilterProperty[]
+    foods: IFilterProperty[],
+    infrastructure: IFilterProperty[]
 }
 
 export interface IListingCatalogResponse {

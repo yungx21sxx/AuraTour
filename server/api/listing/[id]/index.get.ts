@@ -91,6 +91,15 @@ export default defineEventHandler(async (event) => {
 					}
 				}
 			},
+			infrastructure: {
+				include: {
+					infrastructure: {
+						select: {
+							name: true
+						}
+					}
+				}
+			},
 			food: {
 				include: {
 					food: {
@@ -103,7 +112,7 @@ export default defineEventHandler(async (event) => {
 		}
 	});
 	//@ts-ignore
-	const {amenities, food, rooms, photos, reviews, ...listingData} = listing;
+	const {amenities, food, rooms, photos, reviews, infrastructure, ...listingData} = listing;
 	return {
 		...listingData,
 		food: food.map(i => i.food.name),
@@ -117,6 +126,7 @@ export default defineEventHandler(async (event) => {
 							position: photo.position
 						})),
 		amenities: amenities.map(i => i.amenity.name),
+		infrastructure: infrastructure.map(i => i.infrastructure.name),
 		averageRating: reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviews.length,
 		reviewCount: reviews.length,
 		isHotelType: rooms.length > 0,

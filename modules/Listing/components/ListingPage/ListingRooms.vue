@@ -125,6 +125,7 @@
 								Проверить цены
 							</BtnPrimary>
 						</div>
+						<div class="room__included" v-if="room.includedDescription">{{room.includedDescription}}</div>
 					</div>
 				</div>
 				
@@ -160,7 +161,7 @@
 }
 
 .rooms__title {
-	margin-bottom: 16px;
+	margin-bottom: 8px;
 }
 
 .room {
@@ -168,6 +169,11 @@
 		display: block !important;
 	}
 	
+	&__included {
+		margin-top: 8px;
+		color: $text-gray !important;
+		font-size: 14px;
+	}
 	&__main {
 		display: grid;
 		grid-template-columns: 250px 1fr;

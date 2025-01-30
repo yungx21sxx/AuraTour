@@ -120,12 +120,14 @@ export interface IRoomResponse {
     id: number,
     name: string,
     places: number,
+    extraPlaces: number
     area: number,
     badCount: number,
     minPrice: number
     pricePeriods: IListingPricePeriod[],
     amenities: string[]
     photos: IPhoto[]
+    includedDescription: string | null
     calculatedPrices: {
         totalPrice: number,
         dailyPrice: number,
@@ -174,6 +176,8 @@ export interface IListingResponse {
     places: string,
     area: number,
     food: string[]
+    infrastructure: string[]
+    foodDescription: string
 
     manager: IListingManager,
     owner: IListingOwner | null,

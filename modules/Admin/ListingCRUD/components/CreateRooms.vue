@@ -24,6 +24,8 @@
 		area: null,
 		badCount: null,
 		minPrice: null,
+		extraPlaces: 0,
+		includedDescription: null,
 		pricePeriods: [],
 		amenities: [],
 		photos: []
@@ -146,23 +148,29 @@
 				<v-form @submit.prevent="onSubmit" ref="formRef" class="room-create-form">
 					<v-text-field :rules="formRules.name" variant="outlined" class="mt-4" v-model="roomFormData.name" label="Название номера"/>
 					<div  class="form__flex">
-						<v-text-field
+						<v-number-input
 							v-model.number="roomFormData.places"
 							label="Количество мест"
 							type="number"
 							variant="outlined"
 							:rules="formRules.places"
 						/>
-						<v-text-field
+						<v-number-input
 							v-model.number="roomFormData.badCount"
 							label="Количество комнат"
 							type="number"
 							variant="outlined"
 							:rules="formRules.badCount"
 						/>
-					
 					</div>
-					<v-text-field
+					<v-number-input
+						v-model.number="roomFormData.extraPlaces"
+						label="Количество дополнительных мест"
+						type="number"
+						variant="outlined"
+					/>
+					<v-text-field v-model="roomFormData.includedDescription" variant="outlined" label="Включено в стоимость (опционально)"></v-text-field>
+					<v-number-input
 						v-model.number="roomFormData.area"
 						label="Площадь (в кв. метрах)"
 						type="number"
@@ -243,7 +251,7 @@
 					<div class="chip">
 						<BedIcon/>
 						<span>
-							{{getWordWithProperEnding( room.places, 'место')}}
+							{{getWordWithProperEnding( room.places, 'место')}}, {{room.extraPlaces + ' дополнительных'}}
 						</span>
 					</div>
 					<div class="chip">

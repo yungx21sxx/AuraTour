@@ -3,6 +3,7 @@
 	import type {IFilterProperty} from "~/modules/Search/types/response.types";
 	
 	import useShowListingCount from "~/composables/useShowListingCount";
+	import {mdiChevronDown, mdiChevronUp} from "@mdi/js";
 	const showListingCount = useShowListingCount()
 	
 	const modelValue = defineModel<number[]>();
@@ -25,7 +26,7 @@
 		<div class="filter__title filter__title_checkbox">
 			<span>{{title}}</span>
 			<v-btn
-				:icon="showTypes ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+				:icon="showTypes ? mdiChevronUp : mdiChevronDown"
 				@click="showTypes = !showTypes"
 				variant="text"
 			></v-btn>
