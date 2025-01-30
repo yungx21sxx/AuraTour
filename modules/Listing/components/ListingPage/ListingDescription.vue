@@ -89,25 +89,23 @@
 <style scoped lang="scss">
 
 .info__chips {
-	margin: 8px 0 16px 0;
+	margin: 16px 0 24px 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
 }
 
-//.chip {
-//	//margin-right: 8px;
-//	display: flex;
-//	align-items: center;
-//	font-size: 16px;
-//	&:not(&_last)::after {
-//		align-items: center;
-//		color: $text-gray;
-//		content: "·";
-//		display: flex;
-//		height: 14px;
-//		font-size: 20px;
-//		justify-content: center;
-//		left: -14px;
-//		width: 14px;
-//	}
-//}
+
+.chip {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 16px;
+	border-radius: 999px;
+	color: $text-main;
+	background: #F1F3F9;
+	padding: 3px 12px;
+}
+
 
 </style>
