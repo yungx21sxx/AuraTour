@@ -251,7 +251,7 @@
 					<div class="chip">
 						<BedIcon/>
 						<span>
-							{{getWordWithProperEnding( room.places, 'место')}}, {{room.extraPlaces + ' дополнительных'}}
+							{{getWordWithProperEnding( room.places, 'место')}} {{room.extraPlaces > 0 ? `, ${room.extraPlaces} доп.` : ''}}
 						</span>
 					</div>
 					<div class="chip">
@@ -274,8 +274,8 @@
 							<span class="order__price_info">Цена за 1 ночь</span>
 						</div>
 					</div>
-					
 				</div>
+				<p class="mt-2">{{room.includedDescription}}</p>
 				<div class="btns mt-4">
 					<BtnPrimary
 						@click="startRoomEdit(room)"

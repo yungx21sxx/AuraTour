@@ -73,7 +73,7 @@
 							<div class="chip">
 								<BedIcon/>
 								<span>
-									{{getWordWithProperEnding( room.places, 'место')}}
+									{{getWordWithProperEnding( room.places, 'место')}} {{room.extraPlaces > 0 ? `, ${room.extraPlaces} доп.` : ''}}
 								</span>
 							</div>
 							<div class="chip">
