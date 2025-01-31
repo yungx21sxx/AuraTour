@@ -107,7 +107,6 @@ export default () => {
 		refreshListingList();
 		try {
 			const {count, listings} = await fetchCatalog();
-			console.log(listings)
 			listingsList.value.listings = listings;
 			listingsList.value.count = count;
 			currentPage.value = 2;

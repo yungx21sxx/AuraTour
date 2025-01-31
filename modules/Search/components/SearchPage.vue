@@ -117,7 +117,6 @@ const {mapCatalogIsOpen} = useMapCatalog();
 
 watch(mapCatalogIsOpen, () => {
 	mapKey.value = Date.now()
-	console.log(mapKey.value)
 })
 
 </script>

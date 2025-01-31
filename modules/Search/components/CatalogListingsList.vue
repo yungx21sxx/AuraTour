@@ -54,12 +54,14 @@ const sortSelect = computed(() => {
 	return sortSelect;
 })
 
-watch([sortBy, selectedManagerId], async () => {
-	debouncedRefreshListingList();
-});
+
 
 const { data: initialData, error: initialError } = await useAsyncData('initialCatalog', () => fetchCatalog());
 
+watch([sortBy, selectedManagerId], async () => {
+	isFiltering.value = true
+	debouncedRefreshListingList();
+});
 
 // Обработка ошибки при загрузке данных на сервере
 if (initialError.value) {
