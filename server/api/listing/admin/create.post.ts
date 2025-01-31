@@ -49,11 +49,6 @@ export default defineEventHandler(async event => {
 		minPrice: listing.minPrice
 	}
 
-	if (listing.videos.length > 0) {
-		query.videos = {
-			connect: listing.videos.map(video => ({id: video.videoId}))
-		}
-	}
 
 	if (listing.foodDescription) {
 		query.foodDescription = listing.foodDescription

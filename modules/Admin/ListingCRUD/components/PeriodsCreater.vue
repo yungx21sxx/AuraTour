@@ -111,29 +111,16 @@
 			"июля", "августа", "сентября", "октября", "ноября", "декабря"
 		];
 		
-		// Проверка корректности входных данных
 		if (month < 1 || month > 12) {
 			throw new Error("Некорректный номер месяца");
 		}
-		if (day < 1 || day > 31) {
-			throw new Error("Некорректный день");
+		
+		const daysInMonth = new Date(new Date().getFullYear(), month, 0).getDate();
+		if (day < 1 || day > daysInMonth) {
+			throw new Error(`Некорректный день: ${day} в месяце ${months[month - 1]}`);
 		}
 		
-		// Создание объекта даты с текущим годом и часом
-		const date = new Date(Date.now());
-		date.setFullYear(new Date().getFullYear());
-		date.setMonth(month - 1);
-		date.setDate(day);
-		// date.setHours(21, 0, 0, 0);
-		
-		// Форматирование даты с учётом текущего часового пояса устройства
-		const formatter = new Intl.DateTimeFormat("ru-RU", {
-			year: undefined,
-			month: "long",
-			day: "numeric",
-		});
-		
-		return formatter.format(date);
+		return `${day} ${months[month - 1]}`;
 	}
 	
 	const tab = ref(1);
