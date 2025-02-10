@@ -27,3 +27,5 @@ logs
 !.env.example
 !/server/routes/uploads/\[photo\].get.ts
 !/server/routes/uploads/
+
+nodjs.conf

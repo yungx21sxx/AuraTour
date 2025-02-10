@@ -9,7 +9,7 @@ import {beautifyDate} from "~/modules/Common/Utils/dates.utils";
 import SetManager from "~/modules/Admin/ListingCRUD/components/SetManager.vue";
 import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
 import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
-import VideoUploader from "~/modules/Admin/ListingCRUD/components/VideoUploader.vue";
+
 
 const authUser = useAuthUser();
 

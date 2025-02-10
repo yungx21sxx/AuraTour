@@ -1,6 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 
-
 const ONE_DAY = 60 * 60 * 24 * 1000;
 const ONE_WEEK = ONE_DAY * 7;
 
@@ -15,8 +14,8 @@ export default defineNuxtConfig({
   },
 
   sourcemap: {
-    server: true,
-    client: true,
+    server: process.env.NODE_ENV !== "production",
+    client: process.env.NODE_ENV !== "production",
   },
 
   runtimeConfig: {
@@ -82,6 +81,7 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    serveStatic: false,
     compressPublicAssets: {
       brotli: true, gzip: true
     },
@@ -89,7 +89,6 @@ export default defineNuxtConfig({
 
   features: {
     inlineStyles: true,
-    typescriptBundlerResolution: true
   },
 
   app: {

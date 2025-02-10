@@ -71,7 +71,6 @@
 	const chosenFilters = reactive(filtersInitValue);
 	
 	//Только типы жилья
-	
 	watch(chosenHousingTypes, async (updatedFilters) => {
 		await performNavigation()
 	}, {
