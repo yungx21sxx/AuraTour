@@ -16,7 +16,7 @@ export default defineSitemapEventHandler(async () => {
         prisma.city.findMany({
            where: {
                seoPages: {
-                   some: {}
+                   none: {} // Ищем города, у которых нет связанных seoPages
                }
            }
         })
@@ -31,15 +31,14 @@ export default defineSitemapEventHandler(async () => {
         } satisfies SitemapUrl)),
         ...listings.map(listing => ({
             loc: `/listing/${listing.id}`,
-            priority: 0.7,
+            priority: 0.6,
             lastmod: listing.createdAt,
             changefreq:  'monthly',
         } satisfies SitemapUrl)),
         ...cities.map(city => ({
-            loc: `/city/${city.id}`,
-            priority: 0.5,
-            lastmod: city.createdAt,
-            changefreq:  'monthly',
+            loc: `/search/city/${city.slug}`,
+            priority: 0.8,
+            changefreq:  'weekly',
         } satisfies SitemapUrl)),
     ]
 })
