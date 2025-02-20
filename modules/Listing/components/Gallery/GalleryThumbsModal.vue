@@ -20,18 +20,15 @@
 		<v-card color="black">
 			<GalleryToolbar @on-close="galleyThumbsModalIsOpen = false" color="black"/>
 		
-				<div class="wrapper gallery-thumbs">
-					<v-img
-						v-for="photo of listing.photos"
-						:key="photo.id"
-						:src="photo.urlMin"
-						class="gallery__img"
-						cover
-						@click="openGalleryModal(photo.id)"
-					></v-img>
-				</div>
-		
-			
+			<div class="wrapper gallery-thumbs">
+				<img
+					v-for="photo of listing.photos"
+					:key="photo.id"
+					:src="photo.urlMin"
+					class="gallery__img"
+					@click="openGalleryModal(photo.id)"
+				/>
+			</div>
 		</v-card>
 	</v-dialog>
 	
@@ -40,13 +37,20 @@
 <style scoped lang="scss">
 	.gallery-thumbs {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 		gap: 16px;
 		
 		@media screen and (max-width: 650px) {
 			grid-template-columns: repeat(2, 1fr);
 		}
 		
+	}
+	
+	.gallery__img {
+		object-fit: cover;
+		width: 100%;
+		height: 100%;
+		aspect-ratio: 1/1;
 	}
 	
 

@@ -1,7 +1,7 @@
 <template>
     <nav class="nav">
         <div class="wrapper nav__body">
-	        <NuxtLink to="/" external style=" width: fit-content; display: flex; flex-direction: column; justify-content: center ">
+	        <NuxtLink to="/" external style=" width: fit-content; display: flex; flex-direction: column; justify-content: center " aria-label="Главная страница">
 		        <MainLogo class="nav__logo" :variant="variant" />
 	        </NuxtLink>
             <div class="nav__links">
@@ -36,7 +36,7 @@
 			                        :key="type.id"
 			                        variant="outlined"
 			                        color="#333D46"
-			                        :href="`/search/?housingTypesId=${type.id}`"
+			                        :href="`/search/type/${type.slug}`"
 		                        >{{type.name}}</v-chip>
 	                        </div>
                         </v-card-item>
@@ -46,14 +46,16 @@
                     class="nav__link"
                     :color="color"
                     variant="text"
-                    href="/about"
+                    aria-label="О нас"
+                    to="/about"
                     >О нас</v-btn
                 >
                 <v-btn
                     class="nav__link"
                     :color="color"
                     variant="text"
-                    href="/help"
+                    aria-label="Помощь"
+                    to="/help"
                     >Помощь</v-btn
                 >
             </div>
@@ -63,7 +65,8 @@
 		            variant="text"
 		            :prepend-icon="mdiHeartOutline"
 		            :color="color"
-		            href="/favorites"
+		            to="/favorites"
+		            aria-label="Избранное"
 	            >
 		            Избранное
 	            </v-btn>
@@ -140,10 +143,10 @@
 	            <div :class="['divider', {
 					'divider_dark': variant === 'dark'
 	            }]"></div>
-	            <VBtn icon variant="text" target="_blank" href="https://www.instagram.com/aura_tur_abkhazia?igsh=ejVkeXV2dDV2YzB0">
+	            <VBtn icon variant="text" external aria-label="Instagram" target="_blank" href="https://www.instagram.com/aura_tur_abkhazia?igsh=ejVkeXV2dDV2YzB0">
 		            <InstMenuIcon :variant="variant"/>
 	            </VBtn>
-	            <VBtn icon variant="text" class="telega" target="_blank" href="https://t.me/laura_tour">
+	            <VBtn icon variant="text" aria-label="Telegram" external class="telega" target="_blank" href="https://t.me/laura_tour">
 		            <TelegaMenuIcon :variant="variant"/>
 	            </VBtn>
                 <BtnPrimary class="nav__btn" @click="landLordInfoModalIsOpen = true">Сдать жилье</BtnPrimary>
@@ -155,7 +158,7 @@
                 class="nav__burger"
                 @click="open"
             >
-                <BurgerIcon :variant="props.variant"/>
+                <BurgerIcon :variant="variant"/>
             </v-btn>
         </div>
     </nav>
@@ -266,18 +269,11 @@ const {openAuthModal} = useAuthModal();
 const {logout} = useAuth()
 
 const authUser = useAuthUser();
-const props = withDefaults(
-    defineProps<{
+const {variant = 'dark'} = defineProps<{
         variant?: MenuVariants;
-    }>(),
-    {
-        variant: "dark",
-    },
-);
+}>();
 
 const {searchData} = useSearch()
-const color = computed(() => (props.variant === "light" ? "#fff" : "#333D46"));
-
-
+const color = computed(() => (variant === "light" ? "#fff" : "#333D46"));
 
 </script>

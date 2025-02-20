@@ -21,7 +21,7 @@
 	                    }"
 						@swiper="getSwiperInstance"
 						:thumbs="{ swiper: thumbsSwiper }"
-						:modules="[SwiperZoom, SwiperPagination, SwiperNavigation, SwiperScrollbar, SwiperThumbs, SwiperFreeMode]"
+						:modules="[Zoom, Pagination, Navigation, Scrollbar, Thumbs, FreeMode]"
 						class="img-preview"
 						@slide-change="onSlideChange"
 					>
@@ -39,7 +39,7 @@
 					@swiper="setThumbsSwiper"
 					:spaceBetween="10"
 					:slides-per-view="'auto'"
-					:modules="[SwiperZoom, SwiperPagination, SwiperNavigation, SwiperScrollbar, SwiperThumbs, SwiperFreeMode]"
+					:modules="[Zoom, Pagination, Navigation, Scrollbar, Thumbs, FreeMode]"
 					:freeMode="true"
 					:watchSlidesProgress="true"
 					class="img-preview__thumbs"
@@ -54,10 +54,16 @@
 </template>
 <script setup lang="ts">
 
-import useListing from "~/components/pages/Listing/useListing";
 import useGallery from "~/modules/Listing/composables/useGallery";
 import {mdiChevronLeft, mdiHeartOutline, mdiShareVariant} from "@mdi/js";
 import GalleryToolbar from "~/modules/Listing/components/Gallery/GalleryToolbar.vue";
+import useListing from "~/modules/Listing/composables/useListing";
+import { Swiper, SwiperSlide  } from 'swiper/vue';
+import { Scrollbar, FreeMode, Thumbs, Pagination, Navigation, Zoom } from 'swiper/modules';
+
+
+import 'swiper/css';
+
 
 
 const {currentPhoto} = useGallery()
@@ -142,7 +148,7 @@ watch(currentPhoto, () => {
 
 
 .img-preview {
-	height: calc(100svh - 62px - 100px);
+	height: calc(100dvh - 62px - 100px);
 	width: 100%;
 	
 	&__wrapper {

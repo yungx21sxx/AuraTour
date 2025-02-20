@@ -291,13 +291,11 @@ const formData = ref({
 });
 
 function handleUserSelect(user: ListingBookingUserResponse) {
-	console.log('Выбран пользователь с ID:', user.id);
 	formData.value.userName = user.name;
 	formData.value.userSurname = user.surname;
 	formData.value.userPhone = user.phone;
 	chosenUserId.value = user.id;
 	chosenUser.value = user;
-	console.log(user)
 }
 
 // Опции статусов

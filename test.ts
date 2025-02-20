@@ -73,4 +73,6 @@ const checkIn = new Date(2024, 6, 14); // 14 июля
 const checkOut = new Date(2024, 6, 21); // 21 июля
 
 const totalPrice = calculateStayPrice(pricePeriods, minPrice, checkIn, checkOut);
-console.log(`Total price: ${totalPrice}`);
+
+
+

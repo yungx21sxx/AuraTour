@@ -46,10 +46,6 @@ async function sendRequest() {
 
 const phone = ref('')
 
-watch(phone, () => {
-	console.log(phone.value)
-})
-
 </script>
 
 <template>

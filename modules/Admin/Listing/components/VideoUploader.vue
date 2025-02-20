@@ -1,12 +1,19 @@
 <script setup lang="ts">
 import type { VideoUploadResponse } from "~/modules/Admin/ListingCRUD/types/response.types";
 import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
-import { VideoPlayer } from "@videojs-player/vue";
 import 'video.js/dist/video-js.css';
 import type { H3Error } from "h3";
 import useListing from "~/modules/Listing/composables/useListing";
 
 const { listing, initListingData } = useListing();
+
+
+const { VideoPlayer } = defineAsyncComponent(() => import('@videojs-player/vue'));
+const loaded = ref(false);
+
+onMounted(() => {
+	loaded.value = true;
+});
 
 const videoTitle = ref<string | null>(null);
 const videoFile = ref<File | null>(null);
@@ -99,7 +106,7 @@ async function deleteVideo(videoId: number) {
 </script>
 
 <template>
-	<v-card class="mt-4">
+	<v-card class="mb-4">
 		<v-card-title>Загрузка видео</v-card-title>
 		<v-card-text>
 			Видео загружать не обязательно. Введите заголовок для видео, затем загрузите сам файл. Видео добавляются по одному. Максимальный размер файла 500 МБ. Пока видео не обработалось, больше ничего не загружайте, это замедлит обработку в разы. Не спешите, когда оно обработаеться, просто само появиться на странице, можете просто ее переодически перезагружать.
@@ -137,17 +144,18 @@ async function deleteVideo(videoId: number) {
 			<v-card v-for="video of listing.videos" :key="video.id">
 				<v-card-title>{{ video.title }}</v-card-title>
 				<v-card-text>Длина: {{ video.formatedDuration }}</v-card-text>
-				<v-lazy>
-					<video-player
-						aspect-ratio="16:9"
-						:src="video.url"
-						class="player"
-						controls
-						:loop="true"
-						:volume="0.6"
-					>
-					</video-player>
-				</v-lazy>
+			
+				<video-player
+					aspect-ratio="16:9"
+					:src="video.url"
+					class="player"
+					controls
+					:loop="true"
+					:volume="0.6"
+					v-if="loaded"
+				>
+				</video-player>
+			
 				<v-card-actions>
 					<v-btn @click="deleteVideo(video.id)" :loading="deleteLoading" color="red">Удалить</v-btn>
 				</v-card-actions>

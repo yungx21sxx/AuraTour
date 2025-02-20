@@ -8,13 +8,11 @@
 	
 	const modelValue = defineModel<number[]>();
 	
-	const {show} = withDefaults(defineProps<{
+	const {show = true} = defineProps<{
 		title: string,
 		variants: IFilterProperty[] | null,
 		show?: boolean,
-	}>(), {
-		show: true
-	});
+	}>()
 	
 	const showTypes = ref(show);
 	
@@ -29,6 +27,7 @@
 				:icon="showTypes ? mdiChevronUp : mdiChevronDown"
 				@click="showTypes = !showTypes"
 				variant="text"
+				aria-label="show"
 			></v-btn>
 		</div>
 		<v-expand-transition>
@@ -40,7 +39,7 @@
 					v-model="modelValue"
 					color="#7059FF"
 					:disabled="count === 0"
-					class="checkbox"
+					class="filter__checkbox"
 				>
 					<template #label>
 						<span class="filter__label">{{name}}</span>
@@ -60,6 +59,11 @@
 		font-size: 14px;
 	}
 	
+	&__checkbox {
+		margin-left: -8px;
+		margin-bottom: -8px;
+	}
+	
 	&__title {
 		font-weight: 600;
 		display: block;
@@ -77,10 +81,7 @@
 	}
 }
 
-.checkbox {
-	margin-left: -8px;
-	margin-bottom: -8px;
-}
+
 
 
 </style>

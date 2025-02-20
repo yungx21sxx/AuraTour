@@ -28,10 +28,11 @@ const {
 	openSetDateModal,
 	beautifyDate,
 	getBookingQueryLinkParameters,
+	parseBookingRouteQuery
 } = useBooking();
 
 const { getRedirectPath, debouncedRefreshListingList , createBookingDTO} = useCatalog();
-const { parseQueryParams, filtersModalIsOpen } = useFilters();
+const { parseQueryParams, filtersModalIsOpen, refreshFilters, resetFilters, fetchBookingFilters, chosenFilters, filtersInitData } = useFilters();
 const {chosenCity} = useSearch();
 
 const route = useRoute()
@@ -67,7 +68,14 @@ watch(getBookingQueryLinkParameters, async () => {
 			...filtersQueryParameters
 		}
 	})
-	createBookingDTO(getBookingQueryLinkParameters.value, citySlug.value);
+	const query = { ...route.query };
+	const bookingParameters: IQueryBooking = parseBookingRouteQuery(query);
+	const citySlug = route.params.citySlug as string || null;
+	const typeSlug = route.params.typeSlug as string || null;
+	createBookingDTO(bookingParameters, citySlug);
+	await fetchBookingFilters(bookingParameters, chosenCity.value ? chosenCity.value.id : null);
+	const {priceFrom, priceTo} = filtersInitData.value;
+	chosenFilters.value.priceRange = [priceFrom, priceTo];
 	debouncedRefreshListingList();
 	const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog();
 	if (mapCatalogIsOpen.value || mapModalIsOpen.value) {
@@ -82,12 +90,12 @@ const scrollBottom = () => window.scrollBy(0, 140);
 </script>
 
 <template>
-	<div :class="['booking', {
+	<form aria-label="Основной поиск жилья" :class="['booking', {
 		'light': light,
 	}]">
 		<div class="booking__mobile">
 			<div class="search__bar">
-				<v-card class="booking__location" :ripple="{ class: 'ripple-color' }"  @click="openLocationModal">
+				<v-card class="booking__location" :ripple="{ class: 'ripple-color' }" aria-label="Выберите курорт"  @click="openLocationModal">
 					<v-icon :icon="mdiMagnify"></v-icon>
 					<span v-if="!chosenCity">Выберите курорт</span>
 					<div v-else>
@@ -97,15 +105,15 @@ const scrollBottom = () => window.scrollBy(0, 140);
 			</div>
 			<div class="search__chips">
 				<div style="display: flex; gap: 16px; margin: 24px 0 32px 0;">
-					<v-chip :variant="light ? 'outlined' : 'tonal'" :color="light ? '#fff' : ''" size="large" :prepend-icon="mdiCalendarMonthOutline" @click="openSetDateModal" v-if="dates.from && dates.to">
+					<v-chip aria-label="Выберите dates" :variant="light ? 'outlined' : 'tonal'" :color="light ? '#fff' : ''" size="large" :prepend-icon="mdiCalendarMonthOutline" @click="openSetDateModal" v-if="dates.from && dates.to">
 						{{beautifyDate(dates.from)}} - {{beautifyDate(dates.to)}}
 					</v-chip>
-					<v-chip :variant="light ? 'outlined' : 'tonal'" :color="light ? '#fff' : ''" size="large" :prepend-icon="mdiCalendarMonthOutline" @click="openSetDateModal" v-else>
+					<v-chip aria-label="Выберите dates" :variant="light ? 'outlined' : 'tonal'" :color="light ? '#fff' : ''" size="large" :prepend-icon="mdiCalendarMonthOutline" @click="openSetDateModal" v-else>
 						Выбрать даты
 					</v-chip>
 					<v-menu :close-on-content-click="false" v-model="guestSetMenuMobileIsOpen">
 						<template v-slot:activator="{ props }">
-							<v-chip :variant="light ? 'outlined' : 'tonal'" :color="light ? '#fff' : ''" size="large" :prepend-icon="mdiAccountOutline"  v-bind="props" >
+							<v-chip  aria-label="Выберите количесвто гостей" :variant="'outlined'" :color="light ? '#fff' : ''" size="large" :prepend-icon="mdiAccountOutline"  v-bind="props" >
 								{{ describedGroup }}
 							</v-chip>
 						</template>
@@ -146,14 +154,14 @@ const scrollBottom = () => window.scrollBy(0, 140);
 							</v-card-item>
 						</v-card>
 					</v-menu>
-					<v-chip style="background: #7059FF"  size="large" variant="flat"  :prepend-icon="mdiTuneVariant" class="search__filter-chip" @click="filtersModalIsOpen = true">Фильтры</v-chip>
+					<v-chip aria-label="filters" style="background: #7059FF"  size="large" variant="flat"  :prepend-icon="mdiTuneVariant" class="search__filter-chip" @click="filtersModalIsOpen = true">Фильтры</v-chip>
 				</div>
 				<BtnPrimary  color="#7059FF"  :prepend-icon="mdiTuneVariant" class="search__filter-btn" @click="filtersModalIsOpen = true">Фильтры жилья</BtnPrimary>
 			</div>
 		
 		</div>
 		<div class="booking__desktop">
-			<v-card class="booking__input booking__input_first booking__location" :ripple="{ class: 'ripple-color' }"  @click="openLocationModal">
+			<v-card aria-label="Выберите dates" class="booking__input booking__input_first booking__location" :ripple="{ class: 'ripple-color' }"  @click="openLocationModal">
 				<v-icon :icon="mdiMagnify"></v-icon>
 				<span v-if="!chosenCity">Выберите курорт</span>
 				<div v-else>
@@ -161,12 +169,12 @@ const scrollBottom = () => window.scrollBy(0, 140);
 				</div>
 			</v-card>
 			<div :class="['booking__date']">
-				<v-card class="booking__input" :ripple="{ class: 'ripple-color' }"  @click="openSetDateModal">
+				<v-card aria-label="Выберите dates" class="booking__input" :ripple="{ class: 'ripple-color' }"  @click="openSetDateModal">
 					<v-icon :icon="mdiCalendarMonthOutline"></v-icon>
 					<span v-if="!dates.from">Заезд</span>
 					<span v-else>{{beautifyDate(dates.from)}}</span>
 				</v-card>
-				<v-card class="booking__input" :ripple="{ class: 'ripple-color' }"  @click="openSetDateModal">
+				<v-card aria-label="Выберите dates" class="booking__input" :ripple="{ class: 'ripple-color' }"  @click="openSetDateModal">
 					<v-icon :icon="mdiCalendarMonthOutline"></v-icon>
 					<span v-if="!dates.to">Выезд</span>
 					<span v-else>{{beautifyDate(dates.to)}}</span>
@@ -174,7 +182,7 @@ const scrollBottom = () => window.scrollBy(0, 140);
 			</div>
 			<v-menu :close-on-content-click="false" v-model="guestSetMenuIsOpen">
 				<template v-slot:activator="{ props }">
-					<v-card class="booking__input booking__input_people"  v-bind="props" :ripple="{ class: 'ripple-color' }">
+					<v-card aria-label="Выберите dates" class="booking__input booking__input_people"  v-bind="props" :ripple="{ class: 'ripple-color' }">
 						<v-icon :icon="mdiAccountOutline"></v-icon>
 						<span>{{ describedGroup }}</span>
 					</v-card>
@@ -217,13 +225,13 @@ const scrollBottom = () => window.scrollBy(0, 140);
 				</v-card>
 			</v-menu>
 			<div class="booking__submit">
-				<BtnPrimary @click="scrollBottom" :append-icon="mdiArrowRightCircleOutline" width="100%" class="booking__submit_btn"  color="#7059FF"  >Найти жилье</BtnPrimary>
+				<BtnPrimary aria-label="show listings" @click="scrollBottom" :append-icon="mdiArrowRightCircleOutline" width="100%" class="booking__submit_btn"  color="#7059FF"  >Найти жилье</BtnPrimary>
 			</div>
 		</div>
 	
 		
 	
-	</div>
+	</form>
 	<BookingSearchLocation/>
 	<BookingSetDate/>
 </template>

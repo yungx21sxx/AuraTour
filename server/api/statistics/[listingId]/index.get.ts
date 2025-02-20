@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
                 date: 'asc',
             },
         });
-        console.log(statistics)
+
         return {
             statistics, occupancyCoefficient
         };

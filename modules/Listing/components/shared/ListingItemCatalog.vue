@@ -9,43 +9,77 @@
 	import RoomsIcon from "~/modules/Listing/icons/RoomsIcon.vue";
 	import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 	import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
+	import useCatalog from "~/modules/Search/composables/useCatalog";
+	import type {IQueryBooking} from "~/types/query.types";
 	const {listing, target = 'catalog'} = defineProps<{
 		listing: IListingPreviewResponse,
 		mobile?: boolean,
 		target?: 'lk' | 'catalog'
 	}>();
 	
+	const route = useRoute();
+	
+	defineOptions({ inheritAttrs: false })
+	
+	
 	const authUser = useAuthUser()
 	
-	const {getBookingQueryLinkParameters} = useBooking();
 	const {addToFavorites, removeFromFavorites, favoriteListingIDs} = useFavorites();
-	
+	const {bookingModals, peopleCount} = useBooking()
 	
 	const inFavorite = computed(() => {
 		return favoriteListingIDs.value.includes(listing.id)
 	})
-	
-	
-	
-	async function goToListing() {
-		const url = new URL(window.location.href); // Получаем текущий URL
-		const queryParams = new URLSearchParams(url.search);
-		
-		const queryString = queryParams.toString();
-		await navigateTo(`/listing/${listing.id}/?${queryString}`, {
-			open: {
-				target: '_blank'
-			}
-		})
+	interface QueryParams {
+		checkIn: string | null;
+		checkOut: string | null;
+		children: number;
+		adults: number;
 	}
+	
+	function createQueryParams(params: QueryParams): string {
+		const query = new URLSearchParams();
+		
+		if (params.checkIn) {
+			query.append('checkIn', params.checkIn);
+		}
+		
+		if (params.checkOut) {
+			query.append('checkOut', params.checkOut);
+		}
+		
+		const isDefaultGuests = params.adults === 2 && params.children === 0;
+		if (!isDefaultGuests) {
+			query.append('adults', params.adults.toString());
+			if (params.children > 0 || params.adults !== 2) {
+				query.append('children', params.children.toString());
+			}
+		}
+		
+		return query.toString();
+	}
+	
+	const listingLink = computed(() => {
+		const { from: checkIn, to: checkOut } = bookingModals.value.date;
+		const queryString = createQueryParams({
+			checkIn: checkIn ? checkIn.toISOString() : null,
+			checkOut: checkOut ? checkOut.toISOString() : null,
+			adults: peopleCount.value.adults,
+			children: peopleCount.value.children,
+		});
+		
+		// Убираем слеш перед параметрами и добавляем "?" только если есть параметры
+		return `/listing/${listing.id}${queryString ? `?${queryString}` : ''}`;
+	});
 </script>
 
 <template>
-	<div
+	<article
 		:class="['listing', {
 			'listing_mobile': mobile
 		}]"
-		:key="listing.id"
+		v-bind="$attrs"
+		itemscope
 	>
 		<v-carousel
 			class="listing__carousel"
@@ -56,6 +90,7 @@
 		>
 			<v-btn class="carousel__btn"
 			       :icon="mdiHeartOutline"
+			       aria-label="like"
 			       density="comfortable"
 			       color="rgba(255,255,255,.8)"
 			       v-if="!inFavorite"
@@ -63,73 +98,85 @@
 			></v-btn>
 			<v-btn class="carousel__btn"
 			       :icon="mdiHeart"
+			       aria-label="like"
 			       density="comfortable"
 			       color="rgba(255,255,255,.8)"
 			       v-else
 			       @click="removeFromFavorites(listing.id)"
 			></v-btn>
-			<v-carousel-item
-				v-for="photo of listing.photos"
-			>
-				<v-img @click.stop="goToListing" :src="photo" cover/>
+			<v-carousel-item v-for="photo of listing.photos">
+				<NuxtLink :to="listingLink" @click.stop target="_blank" class="carousel__link">
+					<img
+						:src="photo"
+						style="object-fit: cover"
+						:alt="listing.title"
+						class="carousel__img"
+						loading="lazy"
+						itemprop="image"
+					/>
+				</NuxtLink>
 			</v-carousel-item>
 		</v-carousel>
-		<div class="listing__info info" @click="goToListing">
+		
+		<div class="listing__info info">
 			<div v-if="target === 'lk'" class="mb-2">
 				<v-chip variant="flat" color="yellow" v-if="!listing.validated">Ожидает проверки</v-chip>
 				<v-chip variant="flat" color="blue" v-else>Объект размещен</v-chip>
 			</div>
-			<div class="info__title text-main" @click="goToListing">{{listing.title}}</div>
-			<div class="listing__address">
+			<NuxtLink :to="listingLink" target="_blank">
+				<h3 class="info__title text-main" itemprop="name">{{ listing.title }}</h3>
+			</NuxtLink>
+			
+			<div class="listing__address" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
 				<v-icon size="18px" color="#7059FF" :icon="mdiMapMarker"></v-icon>
-				<span>{{listing.address}}</span>
+				<span itemprop="streetAddress">{{ listing.address }}</span>
 			</div>
-			<p class="info__city text-main">{{listing.city}}, {{listing.seaDistance}} м до моря</p>
+			<p class="info__city text-main">
+				<span itemprop="addressLocality">{{ listing.city }}</span>,
+				{{ listing.seaDistance }} м до моря
+			</p>
+			
 			<div class="info__adv" v-if="!listing.isHotelType">
 				<div class="chip">
 					<BedIcon/>
 					<span>
-						{{getWordWithProperEnding( listing.places, 'место')}}
+						{{ getWordWithProperEnding(listing.places, 'место') }}
 					</span>
 				</div>
 				<div class="chip">
 					<FitIcon/>
-					<span>
-						{{listing.area}} м<sup>2</sup>
+					<span itemprop="floorSize">
+						{{ listing.area }} м<sup>2</sup>
 					</span>
 				</div>
 				<div class="chip">
 					<RoomsIcon/>
 					<span>
-						{{getRoomString(listing.badCount)}}
+						{{ getRoomString(listing.badCount) }}
 					</span>
 				</div>
 			</div>
+			
 			<div class="listing__amenities mt-4">
 				<span
 					v-for="(amenity, index) of listing.amenities"
 					:class="['listing__amenity', {
 						'listing__amenity_last': index === listing.amenities.length - 1
 					}]"
-				>{{amenity}}</span>
+					itemprop="amenityFeature"
+				>{{ amenity }}</span>
 			</div>
-<!--			<p class="info__reviews" v-if="listing.reviewCount === 0">Нет отзывов</p>-->
-<!--			<div class="d-flex align-center" style="gap: 16px" v-else>-->
-<!--				<v-chip prepend-icon="mdi-star" color="#7059FF" label >{{listing.averageRating}}</v-chip>-->
-<!--				<span>{{getWordWithProperEnding( listing.reviewCount, 'отзыв')}}</span>-->
-<!--			</div>-->
 		</div>
+		
 		<div class="listing__order order text-main">
 			<div class="order__info" v-if="listing.totalPrice">
-				<div class="order__price" v-if="listing.type !== 'guest-house' && listing.totalPrice">
-					<span class="price">{{listing.dailyPrice.toLocaleString('ru-RU')}} ₽</span>
+				<div class="order__price" v-if="listing.type !== 'guest-house'">
+					<span class="price" itemprop="price">{{ listing.dailyPrice.toLocaleString('ru-RU') }} ₽</span>
 					<span class="order__price_info">за сутки</span>
 				</div>
-				<div class="order__price" v-else>
-					<div class="price">от {{listing.dailyPrice.toLocaleString('ru-RU')}} ₽</div>
-					<span class="order__price_info">за сутки</span>
-				</div>
-				<p class="order__description" v-if="listing.type !== 'guest-house' && listing.totalPrice">Всего {{listing.totalPrice.toLocaleString('ru-RU')}} ₽</p>
+				<p class="order__description" v-if="listing.type !== 'guest-house'">
+					Всего <span itemprop="priceRange">{{ listing.totalPrice.toLocaleString('ru-RU') }} ₽</span>
+				</p>
 			</div>
 			<div class="order__info" v-else>
 				<div class="order__price">
@@ -137,10 +184,10 @@
 					<div class="order__price_info">за сутки</div>
 				</div>
 			</div>
-			<BtnPrimary class="order__btn" @click="goToListing">Выбрать</BtnPrimary>
+			
+			<BtnPrimary class="order__btn" :href="listingLink" target="_blank">Выбрать</BtnPrimary>
 		</div>
-	</div>
-
+	</article>
 </template>
 
 <style scoped lang="scss">
@@ -160,6 +207,17 @@
 		z-index: 2;
 		right: 8px;
 		top: 8px;
+	}
+	
+	.carousel__link {
+		display: block;
+		height: 100%;
+	}
+	.carousel__img {
+		height: 100%;
+		width: 100%;
+		object-fit: cover;
+		object-position: center;
 	}
 	
 	.chip-reviews {
@@ -216,6 +274,7 @@
 		&__title {
 			font-size: 18px;
 			margin-bottom: 8px;
+			font-weight: 500;
 		}
 		
 		&__address, &__reviews {

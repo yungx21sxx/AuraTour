@@ -7,6 +7,9 @@ import AccessIcon from "~/modules/Pages/About/icons/AccessIcon.vue";
 import ConsultIcon from "~/modules/Pages/About/icons/ConsultIcon.vue";
 import TransferIcon from "~/modules/Pages/About/icons/TransferIcon.vue";
 import {mdiInstagram, mdiMapMarkerOutline, mdiPhoneOutline} from "@mdi/js";
+import CallBackForm from "~/modules/Common/CallBackForm.vue";
+import TourBanner from "~/modules/Pages/MainPage/TourBanner.vue";
+import PassListingBanner from "~/modules/Pages/MainPage/PassListingBanner.vue";
 
 const breadcrumbs = [
 	{
@@ -22,6 +25,11 @@ const breadcrumbs = [
 ]
 
 const {searchData} = useSearch()
+
+useSeoMeta({
+	title: 'Аура Тур — ваш гид по незабываемому отдыху в Абхазии',
+	description: 'Более 400 вариантов жилья, персональный подход и полный спектр услуг для вашего идеального отпуска.'
+})
 </script>
 
 <template>
@@ -31,9 +39,8 @@ const {searchData} = useSearch()
 		<div class="wrapper header__wrapper">
 			<v-breadcrumbs :items="breadcrumbs" class="header__breadcrumbs"/>
 			<h1 class="header__title">Аура Тур — ваш гид по незабываемому отдыху в Абхазии</h1>
-			<p class="header__text">Более 300 вариантов жилья, персональный подход и полный спектр услуг
+			<p class="header__text">Более 400 вариантов жилья, персональный подход и полный спектр услуг
 				для вашего идеального отпуска.</p>
-			
 			<div class="header__types">
 				<div class="header__types">
 					Смотреть жилье
@@ -43,7 +50,7 @@ const {searchData} = useSearch()
 						v-for="type of searchData.listingTypes"
 						variant="outlined"
 						:key="type.id"
-						:href="`/search/?housingTypesId=${type.id}`"
+						:href="`/search/type/${type.slug}`"
 					>{{type.name}}</v-chip>
 				</v-chip-group>
 			</div>
@@ -68,46 +75,19 @@ const {searchData} = useSearch()
 				<p class="service__text">Бесплатные советы по всем вопросам: куда сходить, что посмотреть.</p>
 			</div>
 		</div>
+		<div class="wrapper">
+			<TourBanner/>
+		</div>
 		<div style="display: flex; justify-content: center; margin-top: 16px; flex-direction: column; align-items: center">
 			<div class="about-text">
-				<h3>Добро пожаловать в <span>Аура Тур!</span>  </h3>
-				Мы — ваш надежный партнер в организации незабываемого отдыха в Абхазии. Предлагая более 300 проверенных объектов, мы помогаем путешественникам найти идеальное жилье для отдыха. Возьмем на себя все организационные вопросы и связывая вас с лучшими предложениями региона.
+				<h2>Добро пожаловать в <span>Аура Тур!</span>  </h2>
+				<p class="mb-12">
+					Мы — ваш надежный партнер в организации незабываемого отдыха в Абхазии. Предлагая более 400 проверенных объектов, мы помогаем путешественникам найти идеальное жилье для отдыха. Возьмем на себя все организационные вопросы и связывая вас с лучшими предложениями региона.
+				</p>
 			</div>
-			<div class="contacts-page">
-			<div class="contacts">
-				<h2 class="mb-4">Контакты</h2>
-				<NuxtLink class="contact" to="tel:/+79409976702">
-					<v-icon class="contact__icon" color="#7059FF" :icon="mdiPhoneOutline"></v-icon>
-					<div class="contact__body">
-						<div class="contact__desc">Служба поддержки</div>
-						<div class="contact__text">+7 (940) 997-67-02</div>
-					</div>
-				</NuxtLink>
-				<NuxtLink class="contact">
-					<v-icon class="contact__icon" color="#7059FF" :icon="mdiMapMarkerOutline"></v-icon>
-					<div class="contact__body">
-						<div class="contact__desc">Адрес</div>
-						<div class="contact__text">г. Гудаута, Очамчирская 90</div>
-					</div>
-				</NuxtLink>
-				<NuxtLink class="contact" to="https://www.instagram.com/reel/C3-uB8sIlkW/?igsh=MXE4OTM4djBqcDZsNA==">
-					<v-icon class="contact__icon" color="#7059FF" :icon="mdiInstagram"></v-icon>
-					<div class="contact__body">
-						<div class="contact__desc">Мы в Instagram</div>
-						<div class="contact__text">aura_tur_abkhazia</div>
-					</div>
-				</NuxtLink>
-			</div>
-			<div class="map">
-				<iframe
-					class="map__frame"
-					src="https://yandex.ru/map-widget/v1/?ll=40.616670%2C43.102695&mode=search&oid=181680253232&ol=biz&sctx=ZAAAAAgBEAAaKAoSCY9WtaSjUD5AEQgB%2BRIq%2BE1AEhIJ8bkT7L%2FO9j8Rfa8hOC7j2T8iBgABAgMEBSgKOABAAkgBagJydZ0BzcxMPaABAKgBAL0BsYfa28IBBrDS8uekBYICHtCw0YPRgNCwINGC0YPRgCDQsNCx0YXQsNC30LjRj4oCAJICBTI5Mzg2mgIMZGVza3RvcC1tYXBz&sll=40.616670%2C43.102695&sspn=0.015004%2C0.006217&text=%D0%B0%D1%83%D1%80%D0%B0%20%D1%82%D1%83%D1%80%20%D0%B0%D0%B1%D1%85%D0%B0%D0%B7%D0%B8%D1%8F&z=17.57"
-					style="position:relative; width: 100%; height: 100%;"
-				></iframe>
-			</div>
+			<CallBackForm/>
 		</div>
-		</div>
-		
+		<PassListingBanner/>
 		
 	
 	</div>
@@ -228,7 +208,7 @@ const {searchData} = useSearch()
 	color: $text-main;
 }
 
-h3 {
+h2 {
 	margin-bottom: 16px;
 	margin-top: 24px;
 	span {

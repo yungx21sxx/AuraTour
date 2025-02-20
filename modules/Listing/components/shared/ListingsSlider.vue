@@ -27,24 +27,26 @@
 			<slot name="action"/>
 		</div>
 		<div class="btns" >
-			<v-btn @click="swiperController.slidePrev()" color="#7059FF" :icon="mdiArrowLeft" variant="tonal"></v-btn>
-			<v-btn @click="swiperController.slideNext()" color="#7059FF" :icon="mdiArrowRight" variant="tonal"></v-btn>
+			<v-btn @click="swiperController.slidePrev()" color="#7059FF" :icon="mdiArrowLeft" variant="tonal" aria-label="Влево"></v-btn>
+			<v-btn @click="swiperController.slideNext()" color="#7059FF" :icon="mdiArrowRight" variant="tonal" aria-label="Вправо"></v-btn>
 		</div>
 	</div>
 </template>
 <script setup lang="ts">
 // Import Swiper Vue.js components
-	
-	// Import Swiper styles
+	import {Swiper, SwiperSlide} from "swiper/vue";
+// Import Swiper styles
 	import 'swiper/css';
 	
 	import 'swiper/css/pagination';
-	import 'swiper/css/navigation'
+	import 'swiper/css/navigation';
+	import 'swiper/css/free-mode';
 	
 	// import required modules
 	import {mdiArrowLeft, mdiArrowRight} from "@mdi/js"
 	import type {IListingPreviewResponse} from "~/types/response.types";
 	import ListingItemSmall from "~/modules/Listing/components/shared/ListingItemSmall.vue";
+	import {FreeMode, Navigation, Pagination} from "swiper/modules";
 	const {isMobile} = useDevice()
 	
 	const swiperController = ref();
@@ -58,7 +60,7 @@
 		listings: IListingPreviewResponse[]
 	}>()
 	
-	const modules = [SwiperPagination, SwiperNavigation, SwiperFreeMode]
+	const modules = [Pagination, Navigation, FreeMode]
 </script>
 
 
@@ -73,10 +75,10 @@
 	
 	
 	&__slide {
-		width: fit-content;
-		display: flex;
-		justify-content: center;
-		align-items: center;
+		width: fit-content !important;
+		display: flex !important;
+		justify-content: center !important;
+		align-items: center !important;
 	}
 	
 	&__img {

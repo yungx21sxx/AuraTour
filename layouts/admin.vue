@@ -83,6 +83,6 @@
 <style scoped>
 	.admin-wrapper {
 		max-width: 1150px;
-		margin: 24px auto;
+		margin: 32px auto;
 	}
 </style>

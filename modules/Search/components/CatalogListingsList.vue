@@ -124,7 +124,7 @@ const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog()
 <template>
 	<div class="catalog__content">
 		<div class="catalog__filters">
-			<h3 id="listings">Найдено {{ listingsList.count }} вариантов жилья</h3>
+			<h2 id="listings" class="catalog__title">Найдено {{ listingsList.count }} вариантов жилья</h2>
 			<VSelect
 				hide-details
 				class="catalog__select"
@@ -158,24 +158,29 @@ const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog()
 			<v-icon :icon="mdiCloseCircle"></v-icon>
 		</div>
 		
-		<template v-if="isFiltering">
+		<div v-if="isFiltering">
 			<ListingItemSceleton v-for="n in 5" :key="n"/>
-		</template>
+		</div>
 		
-		<template v-else v-for="listing in listingsList.listings" :key="listing.id">
-			<ListingItemCatalog :listing="listing" />
-		</template>
-		
-		<div v-if="isLoading && hasMore && !isFiltering" class="loading-indicator">
+		<div v-else>
+			<ListingItemCatalog
+				itemtype="https://schema.org/LodgingBusiness"
+				v-for="listing in listingsList.listings"
+				:listing="listing"
+				:key="listing.id"
+			/>
+		</div>
+	
+		<div v-if="hasMore" class="loading-indicator">
 			<v-progress-circular
 				color="#7059FF"
 				indeterminate
 			></v-progress-circular>
 		</div>
-		
-		<!-- Элемент-наблюдатель для Intersection Observer -->
 		<div v-if="hasMore && !isFiltering" ref="observer" class="observer">
 		</div>
+		<!-- Элемент-наблюдатель для Intersection Observer -->
+	
 		<!-- Сообщение об окончании списка -->
 		<div v-else-if="!hasMore && !isFiltering">
 			<v-alert
@@ -189,6 +194,9 @@ const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog()
 
 <style scoped lang="scss">
 
+.observer {
+	height: 30px;
+}
 .map {
 	display: flex;
 	background: #F1F3F9;
@@ -231,6 +239,12 @@ const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog()
 		margin-bottom: 16px;
 		width: 100%;
 		align-items: center;
+	}
+	
+	&__title {
+		font-size: 18px;
+		font-weight: 600;
+		color: $text-gray;
 	}
 	
 	&__select {

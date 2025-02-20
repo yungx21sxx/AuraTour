@@ -3,7 +3,6 @@
 	import {ListingBookingApi} from "~/modules/Admin/Listing/api/listingBookingApi";
 	import useListing from "~/modules/Listing/composables/useListing";
 	import BookingCalendar from "~/modules/Admin/Listing/components/BookingCalendarModal.vue";
-	import TextEditor from "~/modules/Common/UI/TextEditor.vue";
 	import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 	import {mdiPencil, mdiDeleteForeverOutline, mdiPlus} from "@mdi/js"
 	import ListingStatistic from "~/modules/Admin/Listing/components/ListingStatistic.vue";
@@ -162,7 +161,7 @@
 				<BookingsAdminList v-if="data" :bookings="data.bookings"/>
 			</v-window-item>
 			<v-window-item :value="2">
-				<TextEditor class="mt-4" v-model="noteText"/>
+				<v-textarea auto-grow label="Заметка" class="mt-4" v-model="noteText"/>
 				<BtnPrimary @click="createNote">Сохранить</BtnPrimary>
 			</v-window-item>
 			<v-window-item :value="3">

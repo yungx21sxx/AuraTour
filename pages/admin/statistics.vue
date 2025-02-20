@@ -7,7 +7,6 @@
 	import { ref } from 'vue'
 	
 	async function fetchListings ({ page, itemsPerPage, sortBy }) {
-		console.log(sortBy)
 		const response = await $fetch(`/api/statistics/listings`, {
 			method: 'POST',
 			body: {
@@ -59,7 +58,7 @@
 </script>
 
 <template>
-	<h1>Статистика</h1>
+	<h1 style="text-align: center">Статистика</h1>
 	<v-data-table-server
 		class="mt-8"
 		v-model:items-per-page="itemsPerPage"

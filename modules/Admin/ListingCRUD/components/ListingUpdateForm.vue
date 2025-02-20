@@ -37,7 +37,7 @@ const isHotelType = computed<boolean>(() => {
 					<v-select variant="outlined" density="default" :items="initialData.housingTypes" v-model="listingFormData.typeId" item-title="name"
 					          item-value="id" label="Тип жилья" required></v-select>
 					<v-text-field variant="outlined" v-model="listingFormData.title" label="Заголовок" required clearable></v-text-field>
-					<TextEditor title="Введите описание" v-model="listingFormData.description"/>
+					<v-textarea auto-grow variant="outlined" label="Введите описание" v-model="listingFormData.description"/>
 					<p class="mb-2">Выберите или введите название города</p>
 					<v-autocomplete variant="outlined" :items="initialData.cities" v-model="listingFormData.cityId" item-title="name"
 					                item-value="id" label="Город" required></v-autocomplete>

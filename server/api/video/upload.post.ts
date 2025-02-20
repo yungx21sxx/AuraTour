@@ -14,7 +14,7 @@ export default defineEventHandler(async (event: H3Event) => {
     const video: File = formData.get('video') as File;
     const title: string = formData.get('title') as string;
     const listingId: string = formData.get('listingId') as string;
-    console.log(video)
+
     if (video.size > 505848766) {
         return createError({
             message: "Максимальный допустимый размер файла - 500 мб.",

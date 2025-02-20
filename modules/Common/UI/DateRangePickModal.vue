@@ -1,5 +1,5 @@
 <script setup lang="ts">
-
+	import {DatePicker} from "v-calendar";
 	import useBooking from "~/modules/Booking/composables/useBooking";
 	import {mdiArrowLeftCircleOutline} from "@mdi/js";
 	

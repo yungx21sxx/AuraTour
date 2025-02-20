@@ -2,9 +2,9 @@
 	import ListingsSlider from "~/modules/Listing/components/shared/ListingsSlider.vue";
 	import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 	
-	const housingTypes = await $fetch('/api/listings/all-types', {
-		transform: housingTypes => housingTypes.filter(type => type.totalCount > 0)
-	});
+	defineProps({
+		housingTypes: Array
+	})
 	const currentType = ref();
 
 	async function goToCategory() {

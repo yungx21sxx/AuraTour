@@ -2,10 +2,9 @@
 import {type IQueryBooking} from "~/modules/Booking/types/query.types";
 import {type BookingInfoDTO} from "~/modules/Booking/types/dto.types";
 import type  {FiltersDTO, GetAvailableListingsDTO} from "~/modules/Search/types/dto.types";
-import {type IListingItemResponse} from "~/modules/Listing/types/response.types";
 import {type IListingCatalogResponse, ISeoPage} from "~/modules/Search/types/response.types";
-import type {LocationQuery} from "vue-router";
 import {useDebounce} from "~/modules/Search/composables/useDebounce";
+import type {H3Error} from "h3";
 
 
 export default () => {
@@ -22,8 +21,8 @@ export default () => {
 	const cityListingTypeSEOPage = useState<boolean>('cityListingTypeSEOPage', () => false);
 	const seoPage = useState<ISeoPage | null>('seoPage', () => null);
 
-	async function getSeoPage(citySlug: string | null, typeSlug: string | null) {
-		const data = await $fetch('/api/listings/seo-page', {
+	async function getSeoPage(citySlug: string | null, typeSlug: string | null): Promise<ISeoPage> {
+		const data = await $fetch<{data: {seoPage: ISeoPage}}>('/api/listings/seo-page', {
 			method: 'GET',
 			query: {
 				citySlug,
@@ -31,7 +30,8 @@ export default () => {
 			}
 		})
 		//@ts-ignore
-		seoPage.value = data.seoPage
+		seoPage.value = data.seoPage;
+		return data.seoPage
 	}
 
 	function getRedirectPath(newCitySlug?: string | null) {
@@ -42,7 +42,6 @@ export default () => {
 
 		if (listingTypeSEOPage.value) {
 			// Мы находимся на SEO-странице типа жилья (/search/type/(listingTypeSlug))
-
 			if (newCitySlug) {
 				// Пользователь выбрал город
 				return `/search/city/${newCitySlug}`;
@@ -68,8 +67,10 @@ export default () => {
 			}
 		} else if (newCitySlug) {
 			return `/search/city/${newCitySlug}`;
+		} else if (!citySlug && typeSlug) {
+			return `/search/type/${typeSlug}`;
 		} else {
-			return `/search`;
+			return `/search`
 		}
 	}
 	const listingsListDefault = {
@@ -77,7 +78,7 @@ export default () => {
 		listings: []
 	}
 
-	const listingsList = useState<IListingCatalogResponse>('catalog-page', () => shallowReactive(listingsListDefault))
+	const listingsList = useState<IListingCatalogResponse>('catalog-page', () => listingsListDefault)
 
 	const sortBy = useState<'increase' | 'decrease' | 'popularity' | 'sea-distance'>('sort-by', () => 'popularity');
 
@@ -120,22 +121,17 @@ export default () => {
 
 	async function loadListings() {
 		if (isLoading.value || !hasMore.value) return;
-		isLoading.value = true;
-		console.log('Подгрузка', currentPage.value);
 		try {
-			if (listingsList.value.count < 10) {
-				hasMore.value = false;
-				return;
-			}
 			const {count, listings} = await fetchCatalog();
 			if (listings.length === 0) {
 				hasMore.value = false;
+				return;
 			} else {
 				listingsList.value.listings.push(...listings);
 				listingsList.value.count = count;
 				currentPage.value += 1;
 			}
-		} catch (error) {
+		} catch (error: H3Error) {
 			console.error('Ошибка при загрузке данных:', error);
 			loadingError.value = error.data.message;
 		} finally {

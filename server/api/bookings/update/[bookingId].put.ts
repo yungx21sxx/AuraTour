@@ -40,7 +40,6 @@ export default defineEventHandler(async (event) => {
             daysCount,
         } = bookingUpdateSchema.parse(body);
 
-        console.log(body)
 
         // Получаем текущее бронирование
         const currentBooking = await prisma.booking.findUnique({

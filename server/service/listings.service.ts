@@ -65,7 +65,7 @@ class ListingsService {
 
 	calculatePrices(pricePeriods: PricePeriod[], minPrice: number, checkIn: Date | null, checkOut: Date | null): {dailyPrice: number, totalPrice: number | null} {
 
-		if (!checkOut || !checkIn || pricePeriods.length === 0) {
+		if (!checkOut || !checkIn) {
 			return {
 				totalPrice: null,
 				dailyPrice: minPrice
@@ -236,7 +236,6 @@ class ListingsService {
 		return categories;
 	}
 
-
 	async getListing(listingId: number, bookingInfoDTO: BookingInfoDTO) {
 		const listing = await prisma.listing.findUnique({
 			where: {id: listingId},
@@ -317,195 +316,144 @@ class ListingsService {
 			daysCount: this.calculateDaysBetweenDates(new Date(bookingInfoDTO.checkIn), new Date( bookingInfoDTO.checkOut))
 		}
 	}
+	// interface BookingInfoDTO {
+	// 	citySlug: string | null;
+	// 	checkIn: Date,
+	// 	checkOut: Date,
+	// 	peoples: number
+	// }
 
-
-	async searchFilteredListings(bookingInfo: BookingInfoDTO, sortFilters: FiltersDTO, sortBy: GetAvailableListingsDTO['sortBy'] = "popularity", target: 'map' | 'list',  page: number, managerId: number | null) {
+	// interface FiltersDTO {
+	// 	priceFrom: number,
+	// 	priceTo: number,
+	// 	amenitiesId: number[],
+	// 	foodsId: number[],
+	// 	housingTypesId: number[],
+	// 	minRoomCount: number;
+	// 	infrastructureId: number[]
+	// }
+	//
+	async searchFilteredListings(bookingInfo: BookingInfoDTO, sortFilters: FiltersDTO, sortBy: GetAvailableListingsDTO['sortBy'] = "popularity", target: 'map' | 'list', page: number, managerId: number | null) {
 		const pageSize: number = 10;
 
-
-		let queryConditions = bookingInfo.citySlug ? {
-			city: {
-				slug: bookingInfo.citySlug
-			},
-			// places: { gte: bookingInfo.peoples },
-			AND: []
-		} : {
-			// places: { gte: bookingInfo.peoples },
-			AND: []
+		// Создаем базовые условия запроса
+		const baseConditions = {
+			...(bookingInfo.citySlug && { city: { slug: bookingInfo.citySlug } }),
+			AND: [] as any[],
+			validated: true,
+			...(managerId && { managerId })
 		};
 
+		// Добавляем фильтры
 		if (sortFilters) {
 			if (sortFilters.amenitiesId.length > 0) {
-				//@ts-ignore
-				queryConditions.AND.push({ amenities: { some: { amenityId: { in: sortFilters.amenitiesId } } } });
+				baseConditions.AND.push({ amenities: { some: { amenityId: { in: sortFilters.amenitiesId } } } });
 			}
 			if (sortFilters.foodsId.length > 0) {
-				//@ts-ignore
-				queryConditions.AND.push({ food: { some: { foodId: { in: sortFilters.foodsId } } } });
+				baseConditions.AND.push({ food: { some: { foodId: { in: sortFilters.foodsId } } } });
 			}
 			if (sortFilters.housingTypesId.length > 0) {
-				//@ts-ignore
-				queryConditions.AND.push({ typeId: { in: sortFilters.housingTypesId } });
+				baseConditions.AND.push({ typeId: { in: sortFilters.housingTypesId } });
 			}
 			if (sortFilters.infrastructureId.length > 0) {
-				//@ts-ignore
-				queryConditions.AND.push({ infrastructure: { some: { infrastructureId: { in: sortFilters.infrastructureId } } } });
+				baseConditions.AND.push({ infrastructure: { some: { infrastructureId: { in: sortFilters.infrastructureId } } } });
 			}
-			if (sortFilters.minRoomCount && !(sortFilters.housingTypesId.includes(2) || sortFilters.housingTypesId.includes(6) ||  sortFilters.housingTypesId.includes(8))) {
-				//@ts-ignore
-				queryConditions.badCount =  { gte: 0 }
+			if (sortFilters.minRoomCount && !(sortFilters.housingTypesId.includes(2) || sortFilters.housingTypesId.includes(6) || sortFilters.housingTypesId.includes(8))) {
+				baseConditions.badCount = { gte: 0 };
 			}
 		}
 
-		if (managerId) {
-			queryConditions.managerId = managerId
-		}
-		let listings = await prisma.listing.findMany({
-			where: {
-				...queryConditions,
-				validated: true,
-			},
-			orderBy: [
-				{
-					createdAt: sortBy === 'early' ?  'asc' : 'desc'
-				}
-			],
+		// Основной запрос с включением всех необходимых данных
+		const listings = await prisma.listing.findMany({
+			where: baseConditions,
+			orderBy: [{ createdAt: sortBy === 'early' ? 'asc' : 'desc' }],
 			include: {
 				pricePeriods: true,
 				photos: true,
-				coords: {
-					select: {
-						longitude: true,
-						width: true
-					}
-				},
-				amenities: {
-					include: {
-						amenity: true
-					}
-				},
-				food: {
-					include: {
-						food: true
-					}
-				},
-				city: {
-					include: {
-						region: true
-					}
-				},
-				_count: {
-					select: {
-						rooms: true
-					}
-				},
+				coords: { select: { longitude: true, width: true } },
+				amenities: { include: { amenity: true } },
+				food: { include: { food: true } },
+				city: { include: { region: true } },
+				_count: { select: { rooms: true } },
+				reviews: { select: { rating: true } }, // Включаем отзывы сразу
+				rooms: { include: { pricePeriods: true } }, // Включаем комнаты сразу
 			},
 		});
 
-		const reviews = await prisma.review.findMany({
-			where: {
-				listingId: {
-					in: listings.map(listing => listing.id),
-				},
-			},
-			select: {
-				listingId: true,
-				rating: true,
-			},
-		});
+		// Предварительно вычисляем данные для фильтрации
+		const calculatedListings = listings.map(listing => {
+			const reviewCount = listing.reviews.length;
+			const averageRating = listing.reviews.reduce((acc, curr) => acc + curr.rating, 0) / reviewCount || 0;
 
-		let calculatedListings = [];
+			// Используем предзагруженные комнаты
+			const pricePeriodsToUse = listing.rooms.length > 0
+				? listing.rooms[0].pricePeriods
+				: listing.pricePeriods;
 
-		for (const listing of listings) {
-			const listingReviews = reviews.filter(review => review.listingId === listing.id);
-			const reviewCount = listingReviews.length;
-			const averageRating = listingReviews.reduce((acc, curr) => acc + curr.rating, 0) / reviewCount || 0;
-			let prices: { dailyPrice: number; totalPrice: number | null };
-			const rooms = await prisma.room.findMany({
-				where: {
-					listingId: listing.id
-				},
-				include: {
-					pricePeriods: true
-				}
-			})
-			if (rooms.length > 0) {
-				prices = this.calculatePrices(rooms[0].pricePeriods, listing.minPrice, bookingInfo.checkIn, bookingInfo.checkOut)
-			} else {
-				prices = this.calculatePrices(listing.pricePeriods, listing.minPrice, bookingInfo.checkIn, bookingInfo.checkOut)
-			}
-			calculatedListings.push({
+			const prices = this.calculatePrices(
+				pricePeriodsToUse,
+				listing.minPrice,
+				bookingInfo.checkIn,
+				bookingInfo.checkOut
+			);
+
+			return {
 				...this.transformResponse(listing, 'catalog'),
 				...prices,
 				averageRating: parseFloat(averageRating.toFixed(2)),
 				reviewCount,
-			})
+				_count: listing._count,
+				rooms: listing.rooms,
+			};
+		});
+
+		// Фильтрация по цене
+		let filteredListings = calculatedListings;
+		if (sortFilters?.priceFrom && sortFilters?.priceTo) {
+			filteredListings = calculatedListings.filter(
+				listing => listing.dailyPrice >= sortFilters.priceFrom && listing.dailyPrice <= sortFilters.priceTo
+			);
 		}
 
-		if (sortFilters && (sortFilters.priceFrom && sortFilters.priceTo)) {
-			//@ts-ignore
-			calculatedListings = calculatedListings.filter(listing => listing.dailyPrice >= sortFilters.priceFrom && listing.dailyPrice <= sortFilters.priceTo)
-		}
+		// Фильтрация по количеству мест
+		const peopleFiltered = filteredListings.filter(listing => {
+			const isHotel = listing._count.rooms > 0;
+			return isHotel || listing.places >= bookingInfo.peoples;
+		});
 
-		if (target === 'list') {
-			let sortedListings = calculatedListings.sort((a, b) => {
-				switch (sortBy) {
-					case 'increase':
-						//@ts-ignore
-						return a.dailyPrice - b.dailyPrice;
-					case 'decrease':
-						//@ts-ignore
-						return b.dailyPrice - a.dailyPrice;
-					case 'popularity':
-						// Здесь может быть логика сортировки по популярности, например, на основе reviews
-						return b.reviewCount - a.reviewCount;
-					case 'sea-distance':
-						//@ts-ignore
-						return a.seaDistance - b.seaDistance;
-					default:
-						return 0;
-				}
-			}).filter(listing => {
-				const isHotel = listing._count.rooms > 0;
-				if (isHotel) {
-					return true;
-				}
-				return listing.places >= bookingInfo.peoples
-			});
-			const startIndex = (page - 1) * pageSize;
-			const endIndex = startIndex + pageSize;
-			const paginatedListings = sortedListings.slice(startIndex, endIndex);
-			return {
+		// Сортировка
+		const sortedListings = peopleFiltered.sort((a, b) => {
+			switch (sortBy) {
+				case 'increase': return a.dailyPrice - b.dailyPrice;
+				case 'decrease': return b.dailyPrice - a.dailyPrice;
+				case 'popularity': return b.reviewCount - a.reviewCount;
+				case 'sea-distance': return a.seaDistance - b.seaDistance;
+				default: return 0;
+			}
+		});
+
+		// Пагинация и формирование ответа
+		const result = target === 'list'
+			? {
 				count: sortedListings.length,
-				listings: paginatedListings.map(listing => {
-					const {typeId, validated, description, ownerId, managerId, createdAt, coords, note, _count, photos, ...listingData} = listing;
-					return {
-						...listingData,
+				listings: sortedListings
+					.slice((page - 1) * pageSize, page * pageSize)
+					.map(({ typeId, validated, description, ownerId, managerId, createdAt, coords, note, _count, photos, ...listing }) => ({
+						...listing,
 						photos: photos.slice(0, 6)
-					};
-				}),
+					}))
+			}
+			: {
+				count: sortedListings.length,
+				listings: sortedListings.map(({ address, coords, id, minPrice, totalPrice }) => ({
+					address, coords, id, minPrice, totalPrice
+				}))
 			};
-		} else {
-			const listingMapResponse = calculatedListings.filter(listing => {
-				const isHotel = listing._count.rooms > 0;
-				if (isHotel) {
-					return true;
-				}
-				return listing.places >= bookingInfo.peoples
-			});
-			return {
-				count: listingMapResponse.length,
-				listings: listingMapResponse.map(listing => {
-					const {address, coords, id, minPrice, totalPrice} = listing;
-					return {
-						address, coords, id, minPrice, totalPrice
-					};
-				}),
-			};
-		}
 
-
+		return result;
 	}
+
+
 	async updateListing(listingDto: ListingCreateDTO, id: number, isHotelType: boolean, userRole: 'ADMIN' | 'MANAGER' | 'LANDLORD' | 'TOURIST') {
 		const { amenities, managerId, foodOptions, ownerId, flatProperties, photos, places, rooms, pricePeriods, coords, cityId, typeId,videos, infrastructure, ...rest } = listingDto;
 

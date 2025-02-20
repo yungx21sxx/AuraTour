@@ -1,14 +1,11 @@
 <script setup lang="ts">
 import type { MenuVariants } from "~/modules/Menu/types/menu.types";
 
-const { variant } = withDefaults(
-    defineProps<{
-        variant?: MenuVariants;
-    }>(),
-    {
-        variant: "dark",
-    },
-);
+const { variant = 'dark' } = defineProps<{
+	variant?: MenuVariants;
+}>();
+
+
 </script>
 
 <template>

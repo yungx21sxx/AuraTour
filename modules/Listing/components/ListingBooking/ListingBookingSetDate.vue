@@ -6,7 +6,7 @@
 	const { beautifyDate, calculateDaysBetweenDates} = useBooking();
 	const {dateModal, closeSetDateModal} = useListingBooking();
 	const {isMobileOrTablet} = useDevice();
-
+	import {DatePicker} from "v-calendar";
 	
 	const range = ref({
 		start: dateModal.value.checkIn,
@@ -25,7 +25,7 @@
 	
 </script>
 <template>
-	<v-dialog v-model="dateModal.isOpen" :fullscreen="isMobileOrTablet" width="600px" min-height="600px">
+	<v-dialog v-model="dateModal.isOpen" :fullscreen="isMobileOrTablet" width="600px">
 		<v-card>
 			<v-card-item>
 				<div :class="['modal', {

@@ -8,7 +8,7 @@ dist
 uploads
 videos
 
-
+upload-info.md
 # Node dependencies
 node_modules
 
@@ -20,12 +20,6 @@ logs
 .DS_Store
 .fleet
 .idea
-
-# Local env files
-.env
-.env.*
-!.env.example
-!/server/routes/uploads/\[photo\].get.ts
-!/server/routes/uploads/
+server/routes/uploads/[photo].get.ts
 
 nodjs.conf

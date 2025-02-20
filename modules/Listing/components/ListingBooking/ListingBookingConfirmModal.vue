@@ -53,7 +53,6 @@ const chosenRoom = computed<IRoomResponse | null>(() => {
 	return room;
 })
 
-console.log(chosenRoom.value)
 
 interface IPrices {
 	daysCount: number
@@ -344,7 +343,7 @@ const goBack = () => {
 									</li>
 								</ul>
 							</div>
-							<p class="policy text-gray text-center mt-6">Отправляя заявку на бронирование, вы соглашаетесь c <NuxtLink to="/obrabotka_personalnyh_dannyh">обработкой персональных данных</NuxtLink> и <NuxtLink to="/polzovatelskoe_soglashenie">условиями пользовательских соглашений</NuxtLink></p>
+							<p class="policy text-gray text-center mt-6">Отправляя заявку на бронирование, вы соглашаетесь c <NuxtLink to="/obrabotka-personalnyh-dannyh">обработкой персональных данных</NuxtLink> и <NuxtLink to="/polzovatelskoe-soglashenie">условиями пользовательских соглашений</NuxtLink></p>
 						</v-form>
 					</div>
 				</v-window-item>

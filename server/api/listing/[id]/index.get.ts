@@ -111,6 +111,9 @@ export default defineEventHandler(async (event) => {
 			},
 		}
 	});
+	if (listing && listing.rooms.length === 0) {
+		setResponseHeader(event, 'X-Robots-Tag', 'noindex, nofollow')
+	}
 	//@ts-ignore
 	const {amenities, food, rooms, photos, reviews, infrastructure, ...listingData} = listing;
 	return {

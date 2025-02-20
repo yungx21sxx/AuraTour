@@ -1,12 +1,12 @@
 export function useDebounce() {
-    const debounceTimer = ref(null);
+    const debounceTimer = ref<number | null>(null);
 
-    function debounce(fn, delay = 500) {
-        return function (...args) {
-            if (debounceTimer.value) {
+    function debounce<T extends (...args: any[]) => void>(fn: T, delay: number = 500): (...args: Parameters<T>) => void {
+        return (...args: Parameters<T>) => {
+            if (debounceTimer.value !== null) {
                 clearTimeout(debounceTimer.value);
             }
-            debounceTimer.value = setTimeout(() => {
+            debounceTimer.value = window.setTimeout(() => {
                 fn(...args);
                 debounceTimer.value = null;
             }, delay);

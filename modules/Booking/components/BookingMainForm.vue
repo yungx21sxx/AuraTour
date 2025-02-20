@@ -108,14 +108,13 @@ async function onSubmit() {
 							<strong class="amount__output">{{ peopleCount.children }}</strong>
 							<v-btn :icon="mdiPlus" density="comfortable" variant="tonal" color="#7059FF" @click="peopleCount.children += 1"/>
 						</div>
-					
 					</div>
 					<BtnPrimary width="100%" @click="guestSetMenuIsOpen = false">Готово</BtnPrimary>
 				</v-card-item>
 			</v-card>
 		</v-menu>
 		<div class="booking__submit">
-			<v-btn :append-icon="mdiArrowRightCircleOutline" width="100%" class="booking__submit_btn"  color="#7059FF"   @click="onSubmit">Найти жилье</v-btn>
+			<v-btn :append-icon="mdiArrowRightCircleOutline" width="100%" class="booking__submit_btn"  color="#7059FF"  @click="onSubmit">Найти жилье</v-btn>
 		</div>
 		
 	</div>

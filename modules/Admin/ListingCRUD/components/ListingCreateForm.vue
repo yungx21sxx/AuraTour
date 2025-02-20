@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import TextEditor from "~/modules/Common/UI/TextEditor.vue";
 import useCreateListing from "~/modules/Admin/ListingCRUD/composables/useCreateListing";
 import SetLocation from "~/modules/Admin/ListingCRUD/components/SetLocation.vue";
 import FileUploader from "~/modules/Admin/ListingCRUD/components/FileUploader.vue";
 import PeriodsCreater from "~/modules/Admin/ListingCRUD/components/PeriodsCreater.vue";
 import CreateRooms from "~/modules/Admin/ListingCRUD/components/CreateRooms.vue";
-import {beautifyDate} from "~/modules/Common/Utils/dates.utils";
 import SetManager from "~/modules/Admin/ListingCRUD/components/SetManager.vue";
 import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
 import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
@@ -65,7 +63,7 @@ onMounted(() => {
 						<v-select variant="outlined" density="default" :items="initialData.housingTypes" v-model="listingFormData.typeId" item-title="name"
 						          item-value="id" label="Тип жилья" required></v-select>
 						<v-text-field variant="outlined" v-model="listingFormData.title" label="Заголовок" required clearable></v-text-field>
-						<TextEditor title="Введите описание" v-model="listingFormData.description"/>
+						<v-textarea auto-grow label="Введите описание" v-model="listingFormData.description"/>
 						<p class="mb-2">Выберите или введите название города</p>
 						<v-autocomplete variant="outlined" :items="initialData.cities" v-model="listingFormData.cityId" item-title="name"
 						                item-value="id" label="Город" required></v-autocomplete>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const {fill = 'white'} = defineProps<{
-	fill: string
+	fill?: string
 }>()
 </script>
 

@@ -6,79 +6,24 @@
 	import useBooking from "~/modules/Booking/composables/useBooking";
 	import type {FiltersDTO} from "~/modules/Search/types/dto.types";
 	import useMapCatalog from "~/modules/Search/composables/useMapCatalog";
+	import useSearch from "~/modules/Booking/composables/useSearch";
+	import {mdiChevronDown, mdiChevronUp} from "@mdi/js";
 	
-	const {filters} = useFilters();
-	const {setFiltersDTO, isFiltering, debouncedRefreshListingList, filtersDTO, getRedirectPath, listingTypeSEOPage, cityListingTypeSEOPage} = useCatalog();
-	const {getBookingQueryLinkParameters} = useBooking();
+	const {target = 'catalog'} = defineProps<{
+		target?: 'modal' | 'catalog'
+	}>();
 	
-	//На основной странице котолога парситься query параметры для фильров,
-	// если какието из них отсутствуют то поля становяться null
-	const {priceFrom, priceTo, minRoomCount,  ...queryParams} = filtersDTO.value;
 	
-	const chosenHousingTypes = ref([...queryParams.housingTypesId]);
+	const {
+		chosenFilters,
+		filtersInitData,
+		performNavigation
+	} = useFilters();
 	
-	async function performNavigation() {
-		const filtersDTO: FiltersDTO = {
-			priceFrom: chosenFilters.priceRange[0],
-			priceTo: chosenFilters.priceRange[1],
-			housingTypesId: chosenHousingTypes.value,
-			amenitiesId: chosenFilters.amenitiesId,
-			foodsId: chosenFilters.foodsId,
-			minRoomCount: chosenFilters.minRoomCount,
-			infrastructureId: chosenFilters.infrastructureId
-		};
-		// Опции для навигации
-		const navigateOptions = {};
-		
-		const seoPage = listingTypeSEOPage.value || cityListingTypeSEOPage.value;
-		
-		if (seoPage) {
-			//@ts-ignore
-			navigateOptions.external = true;
-		} else {
-			isFiltering.value = true;
+	watch(chosenFilters, async () => {
+		if (target === 'catalog') {
+			await performNavigation()
 		}
-		
-		await navigateTo(
-			{
-				path: getRedirectPath(),
-				query: {
-					...getBookingQueryLinkParameters.value,
-					...filtersDTO,
-				},
-			},
-			navigateOptions
-		);
-		
-		if (!seoPage) {
-			setFiltersDTO(filtersDTO);
-			debouncedRefreshListingList();
-			const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog()
-			if (mapCatalogIsOpen.value || mapModalIsOpen.value) {
-				await refreshNuxtData('map-listings-list')
-			}
-		}
-	}
-	
-	//Либо берем фильры из query параметров либо начальные данные с сервера
-	const filtersInitValue = {
-		priceRange: [priceFrom || filters.value.priceFrom, priceTo || filters.value.priceTo],
-		...queryParams,
-		minRoomCount: minRoomCount || 1,
-	}
-	
-	//Тут все что выбервет пользователь, кроме типов жилья
-	const chosenFilters = reactive(filtersInitValue);
-	
-	//Только типы жилья
-	watch(chosenHousingTypes, async (updatedFilters) => {
-		await performNavigation()
-	}, {
-		deep: true
-	})
-	
-	watch(chosenFilters, async (updatedFilters) => {
-		await performNavigation()
 	}, {
 		deep: true
 	})
@@ -87,13 +32,13 @@
 	
 	const disabledHousingTypes = [2, 6, 8];
 	const roomFiltersDisable = computed(() =>
-		chosenFilters.housingTypesId.some(id => disabledHousingTypes.includes(id))
+		chosenFilters.value.housingTypesId.some(id => disabledHousingTypes.includes(id))
 	);
 	
 </script>
 
 <template>
-	<div class="filters" >
+	<form class="filters" aria-label="Фильтры" >
 		<div class="filters__price filter">
 			<span class="filter__title">Цена за ночь, руб</span>
 			<div class="filter__range">
@@ -103,6 +48,7 @@
 					single-line
 					type="number"
 					density="compact"
+					aria-label="sdfsdf"
 					:elevation="0"
 				></v-text-field>
 				<v-text-field
@@ -111,16 +57,17 @@
 					single-line
 					type="number"
 					density="compact"
-					
+					aria-label="sdfsdf"
 					:eletation="0"
 				></v-text-field>
 			</div>
 			<v-range-slider
 				v-model="chosenFilters.priceRange"
-				:max="filters?.priceTo"
-				:min="filters?.priceFrom"
+				:max="filtersInitData.priceTo"
+				:min="filtersInitData.priceFrom"
 				:step="1"
 				hide-details
+				aria-label="price range"
 				class="align-center"
 				color="#7059FF"
 				density="compact"
@@ -129,39 +76,40 @@
 		</div>
 		<FilterCheckBoxes
 			title="Типы жилья"
-			v-if="filters"
-			:variants="filters.housingTypes"
-			v-model="chosenHousingTypes"
+			v-if="filtersInitData"
+			:variants="filtersInitData.housingTypes"
+			v-model="chosenFilters.housingTypesId"
 		/>
 		<FilterCheckBoxes
 			title="Инфраструктура"
-			v-if="filters"
-			:variants="filters.infrastructure"
+			v-if="filtersInitData"
+			:variants="filtersInitData.infrastructure"
 			v-model="chosenFilters.infrastructureId"
 		/>
 		<FilterCheckBoxes
 			title="Удобства"
-			v-if="filters"
-			:variants="filters.amenities"
+			v-if="filtersInitData"
+			:variants="filtersInitData.amenities"
 			v-model="chosenFilters.amenitiesId"
 		/>
 		<FilterCheckBoxes
 			title="Питание"
-			v-if="filters"
-			:variants="filters.foods"
+			v-if="filtersInitData"
+			:variants="filtersInitData.foods"
 			v-model="chosenFilters.foodsId"
 		/>
 		<div class="filters__title">
 			<span>Количество комнат</span>
 			<v-btn
-				:icon="showRoomCountFilters ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+				:icon="showRoomCountFilters ? mdiChevronUp : mdiChevronDown"
 				@click="showRoomCountFilters = !showRoomCountFilters"
 				variant="text"
+				aria-label="show"
 			></v-btn>
 		</div>
 		<v-expand-transition>
 			<div v-show="showRoomCountFilters">
-				<v-radio-group v-model="chosenFilters.minRoomCount" class="filter__radio" :disabled="roomFiltersDisable">
+				<v-radio-group v-model="chosenFilters.minRoomCount" aria-label="sdfdsfdsfdsf" class="filter__radio" :disabled="roomFiltersDisable">
 					<v-radio :value="1">
 						<template #label>
 							<strong>Неважно</strong>
@@ -186,7 +134,7 @@
 			</div>
 		</v-expand-transition>
 		
-	</div>
+	</form>
 </template>
 
 <style scoped lang="scss">

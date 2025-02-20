@@ -10,19 +10,25 @@
 		</div>
 		<div v-if="isLoading">Загрузка данных...</div>
 		<div v-else-if="error">Ошибка загрузки данных: {{ error }}</div>
-		<client-only v-else>
-			<ApexCharts class="mt-4" type="line" :options="chartOptions" :series="series" />
-		</client-only>
+		<div v-else>
+			<ApexCharts v-if="loaded" class="mt-4" type="line" :options="chartOptions" :series="series" />
+		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
-import ApexCharts from 'vue3-apexcharts';
 import type { ApexOptions } from 'apexcharts';
 import useListing from "~/modules/Listing/composables/useListing";
 import {mdiCalendarMonthOutline} from "@mdi/js";
 import DateRangePickModal from "~/modules/Common/UI/DateRangePickModal.vue";
+
+const ApexCharts = defineAsyncComponent(() => import('vue3-apexcharts'));
+const loaded = ref(false);
+
+onMounted(() => {
+	loaded.value = true;
+});
 
 interface StatisticItem {
 	id: number;

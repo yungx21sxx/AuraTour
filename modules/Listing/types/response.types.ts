@@ -79,11 +79,7 @@ export interface IListingPreviewResponse {
     isHotelType: boolean
 }
 
-export interface IListingManager {
-    name: string,
-    phone: string,
-    avatar: string
-}
+
 
 export interface IListingOwner {
     name: string,
@@ -116,6 +112,15 @@ export interface IReviewResponse {
     createdAt: Date;
 }
 
+
+export interface IVideoResponse {
+    title: string;
+    formatedDuration: string;
+    url: string;
+    id: number;
+}
+
+
 export interface IRoomResponse {
     id: number,
     name: string,
@@ -135,11 +140,10 @@ export interface IRoomResponse {
     } | null;
 }
 
-export interface IVideoResponse {
-    title: string;
-    formatedDuration: string;
-    url: string;
-    id: number;
+export interface IListingManager {
+    name: string,
+    phone: string,
+    avatar: string
 }
 
 export interface IListingResponse {
@@ -199,5 +203,4 @@ export interface IListingResponse {
 
     reviewCount: number,
     averageRating: number,
-
 }

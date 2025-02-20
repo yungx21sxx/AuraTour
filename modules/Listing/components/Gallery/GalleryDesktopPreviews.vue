@@ -18,12 +18,12 @@
 
 <template>
 	<div class="gallery">
-		<img class="gallery__photo gallery__photo-big" :src="listing.photos[0].urlFull" cover  @click="openGalleryModal(listing.photos[0].id)"/>
+		<img class="gallery__photo gallery__photo-big" :src="listing.photos[0].urlFull" :alt="listing.title"   @click="openGalleryModal(listing.photos[0].id)"/>
 		<div class="gallery__thumbs">
-			<img class="gallery__photo" :src="listing.photos[1].urlFull" cover  @click="openGalleryModal(listing.photos[1].id)"/>
-			<img class="gallery__photo" :src="listing.photos[2].urlFull" cover @click="openGalleryModal(listing.photos[2].id)"/>
-			<img class="gallery__photo" :src="listing.photos[3].urlFull" cover @click="openGalleryModal(listing.photos[3].id)"/>
-			<img class="gallery__photo" :src="listing.photos[4].urlFull" cover @click="openGalleryModal(listing.photos[4].id)"/>
+			<img class="gallery__photo" :src="listing.photos[1].urlFull" :alt="listing.title"  @click="openGalleryModal(listing.photos[1].id)"/>
+			<img class="gallery__photo" :src="listing.photos[2].urlFull" :alt="listing.title" @click="openGalleryModal(listing.photos[2].id)"/>
+			<img class="gallery__photo" :src="listing.photos[3].urlFull" :alt="listing.title" @click="openGalleryModal(listing.photos[3].id)"/>
+			<img class="gallery__photo" :src="listing.photos[4].urlFull" :alt="listing.title" @click="openGalleryModal(listing.photos[4].id)"/>
 		</div>
 		<BtnPrimary class="gallery__btn" :prepend-icon="mdiImage" @click="galleyThumbsModalIsOpen = true">Показать все фото</BtnPrimary>
 	</div>

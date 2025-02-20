@@ -54,7 +54,7 @@ export default defineEventHandler(async (event: H3Event) => {
     // Извлекаем токен из cookies
     const cookies = parseCookies(event);
     const token = cookies['auth_token'];
-    console.log(token)
+
     let user = null;
 
     if (token) {

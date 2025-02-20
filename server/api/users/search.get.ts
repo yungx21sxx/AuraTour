@@ -6,7 +6,6 @@ export default defineEventHandler(async (event) => {
     const query = getQuery(event);
     const { search, phone, email, isTemporary } = query;
 
-    console.log({ search, phone, email, isTemporary })
 
     // Получаем всех пользователей из базы данных
     const users = await prisma.user.findMany();

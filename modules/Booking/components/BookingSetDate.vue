@@ -1,11 +1,10 @@
 <script setup lang="ts">
 	import useBooking from "~/modules/Booking/composables/useBooking";
 	import {mdiArrowLeftCircleOutline} from "@mdi/js";
+	import {DatePicker} from "v-calendar";
 	
 	const {bookingModals, closeSetDateModal, beautifyDate, calculateDaysBetweenDates} = useBooking();
 	const {isMobileOrTablet} = useDevice();
-	
-
 	
 	const range = ref({
 		start: bookingModals.value.date.from,
@@ -25,7 +24,7 @@
 </script>
 
 <template>
-	<v-dialog v-model="bookingModals.date.isOpen" :fullscreen="isMobileOrTablet" width="600px" min-height="600px">
+	<v-dialog v-model="bookingModals.date.isOpen" :fullscreen="isMobileOrTablet" width="600px">
 		<v-card>
 			<v-card-item>
 				<div :class="['modal', {

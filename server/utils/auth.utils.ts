@@ -4,7 +4,6 @@ import {prisma} from "~/server/service/prisma.service";
 export const getUserFromToken = async (token: string) => {
     try {
         const decoded = jwt.verify(token, 'gjc8aKwxK3dWgg00XiGqgaWXCuixVb7v') as { userId: number };
-        console.log(decoded)
         const user = await prisma.user.findUnique({
             where: { id: decoded.userId },
             select: {

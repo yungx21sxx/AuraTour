@@ -13,7 +13,7 @@ import {
 	mdiCalendarEditOutline, mdiCashCheck, mdiInformationVariant
 } from "@mdi/js"
 import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
-import { parsePhoneNumber } from 'libphonenumber-js';
+import {parsePhone} from "~/modules/Common/Utils/phone.utils";
 import BtnSecondary from "~/modules/Common/UI/BtnSecondary.vue";
 import useBonus from "~/modules/Listing/composables/useBonus";
 import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
@@ -51,6 +51,9 @@ const isAdmin = computed(() => {
 	return authUser.value && ['ADMIN', 'MANAGER'].includes(authUser.value.role);
 })
 
+const ownerPhone = listing.value.owner?.phone ? await parsePhone(listing.value.owner.phone) : null;
+const managerPhone = await parsePhone(listing.value.manager.phone)
+
 
 </script>
 
@@ -58,7 +61,7 @@ const isAdmin = computed(() => {
 	<div class="booking listing-block contacts" v-if="isAdmin && listing.owner">
 		<div class="id">Владелец объекта</div>
 		<div class="name">{{listing.owner.name}}</div>
-		<div class="phone">{{parsePhoneNumber(listing.owner.phone).formatNational()}}</div>
+		<div class="phone">{{ownerPhone}}</div>
 		<div class="contacts__messengers">
 			<v-btn class="contacts__btn" variant="tonal"  :href="`whatsapp://send?phone=${listing.owner.phone}`" :prepend-icon="mdiWhatsapp" color="#2F9E45">
 				WhatsApp
@@ -71,7 +74,7 @@ const isAdmin = computed(() => {
 		</v-avatar>
 		<v-avatar v-else color="#7059FF" size="60">{{listing.manager.name[0]}}</v-avatar>
 		<div class="name">{{listing.manager.name}}</div>
-		<div class="phone">{{parsePhoneNumber(listing.manager.phone).formatNational()}}</div>
+		<div class="phone">{{managerPhone}}</div>
 		<div class="id">Номер объявления: №{{listing.id}}</div>
 		<div class="contacts__messengers">
 			<v-btn class="contacts__btn" variant="tonal"  :href="whatsLink" :prepend-icon="mdiWhatsapp" color="#2F9E45">

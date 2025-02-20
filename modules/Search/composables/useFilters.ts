@@ -1,11 +1,20 @@
 import type {IQueryBooking} from "~/modules/Booking/types/query.types";
-import type {FiltersDTO} from "~/modules/Search/types/dto.types";
+import type {
+	FiltersDTO,
+	FiltersRefreshBookingInfoDTO,
+	GetRefreshedFiltersDTO,
+	IFiltersInput
+} from "~/modules/Search/types/dto.types";
 import type {BookingInfoDTO} from "~/modules/Booking/types/dto.types";
 import type {IFiltersResponse} from "~/modules/Search/types/response.types";
 import type {LocationQuery} from "vue-router";
+import useMapCatalog from "~/modules/Search/composables/useMapCatalog";
+import useCatalog from "~/modules/Search/composables/useCatalog";
+import useBooking from "~/modules/Booking/composables/useBooking";
 
 export default () => {
-	const filters = useState<IFiltersResponse>('filters-init-data');
+	const filtersInitData = useState<IFiltersResponse>('filters-init-data');
+	const chosenFilters = useState<IFiltersInput>('chosen-filters');
 	const filtersModalIsOpen = useState<boolean>(() => false);
 	function encodeFiltersToQuery(filters: FiltersDTO): string {
 		const params = new URLSearchParams();
@@ -31,18 +40,7 @@ export default () => {
 		};
 	}
 
-	async function refreshBookingFilters(dto: BookingInfoDTO) {
-		const data = await $fetch('/api/filters/filters-first-load', {
-			method: 'POST',
-			body: dto
-		});
-
-		if (data) {
-			//@ts-ignore
-			filters.value = data;
-		}
-	}
-	async function fetchBookingFilters(query: IQueryBooking, cityId?: number | null) {
+	async function fetchBookingFilters(query: IQueryBooking, cityId: number | null) {
 		const dto =  {
 			cityId: cityId || null,
 			checkIn: query.checkIn,
@@ -56,15 +54,92 @@ export default () => {
 		});
 
 		if (data) {
-			filters.value = data;
+			filtersInitData.value = data;
+		}
+	}
+
+	function setFiltersFromQuery(filtersFromQuery: FiltersDTO) {
+		const {priceFrom, priceTo, minRoomCount,  ...queryParams} = filtersFromQuery;
+		chosenFilters.value = {
+			priceRange: [priceFrom || filtersInitData.value.priceFrom, priceTo || filtersInitData.value.priceTo],
+			...queryParams,
+			minRoomCount: minRoomCount || 1,
+		}
+	}
+	async function performNavigation() {
+		const {
+			setFiltersDTO,
+			listingTypeSEOPage,
+			cityListingTypeSEOPage,
+			isFiltering,
+			getRedirectPath,
+			filtersDTO,
+			debouncedRefreshListingList
+		} = useCatalog();
+		const {
+			getBookingQueryLinkParameters
+		} = useBooking()
+
+		setFiltersDTO({
+			priceFrom: chosenFilters.value.priceRange[0],
+			priceTo: chosenFilters.value.priceRange[1],
+			housingTypesId: chosenFilters.value.housingTypesId,
+			amenitiesId: chosenFilters.value.amenitiesId,
+			foodsId: chosenFilters.value.foodsId,
+			minRoomCount: chosenFilters.value.minRoomCount,
+			infrastructureId: chosenFilters.value.infrastructureId
+		})
+		// Опции для навигации
+		const navigateOptions = {};
+
+		const seoPage = listingTypeSEOPage.value || cityListingTypeSEOPage.value;
+
+		if (seoPage) {
+			//@ts-ignore
+			navigateOptions.external = true;
+		} else {
+			isFiltering.value = true;
+		}
+
+
+		await navigateTo(
+			{
+				path: getRedirectPath(),
+				query: {
+					...getBookingQueryLinkParameters.value,
+					...filtersDTO.value,
+				},
+			},
+			navigateOptions
+		);
+
+		if (!seoPage) {
+			debouncedRefreshListingList();
+			const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog()
+			if (mapCatalogIsOpen.value || mapModalIsOpen.value) {
+				await refreshNuxtData('map-listings-list')
+			}
+		}
+	}
+
+	function resetFilters() {
+		const {priceFrom, priceTo, ...filtersData} = filtersInitData.value;
+
+		chosenFilters.value = {
+			amenitiesId: [], foodsId: [], housingTypesId: [], infrastructureId: [],
+			priceRange: [priceFrom, priceTo],
+			minRoomCount: 1
 		}
 	}
 	return {
 		fetchBookingFilters,
-		filters,
+		filtersInitData,
+		chosenFilters,
+		setFiltersFromQuery,
+		performNavigation,
+		resetFilters,
 		encodeFiltersToQuery,
 		parseQueryParams,
 		filtersModalIsOpen,
-		refreshBookingFilters
 	}
 }

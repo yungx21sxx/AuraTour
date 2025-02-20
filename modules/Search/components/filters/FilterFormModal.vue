@@ -4,9 +4,13 @@ import FilterForm from "~/modules/Search/components/filters/FilterForm.vue";
 import useFilters from "~/modules/Search/composables/useFilters";
 import useCatalog from "~/modules/Search/composables/useCatalog";
 import {mdiClose} from "@mdi/js";
-const {filtersModalIsOpen} = useFilters();
-const {listingsList} = useCatalog()
+const {filtersModalIsOpen, resetFilters, performNavigation} = useFilters();
 const {isMobile} = useDevice();
+
+const onFiltersSave = async () => {
+	filtersModalIsOpen.value = false;
+	await performNavigation();
+}
 </script>
 
 <template>
@@ -26,18 +30,16 @@ const {isMobile} = useDevice();
 					<v-btn
 						text="Сбросить"
 						variant="text"
-						@click="filtersModalIsOpen = false"
+						@click="resetFilters"
 					></v-btn>
 				</v-toolbar-items>
 			</v-toolbar>
 			<v-card-item class="filters-modal">
-				<FilterForm class="mb-12"/>
+				<FilterForm class="mb-12" target="modal"/>
 			</v-card-item>
 			<div class="fixed-btn">
-				<v-btn width="100%"  color="#7059FF" @click="filtersModalIsOpen = false">Показать {{listingsList.count}} вариантов</v-btn>
+				<v-btn width="100%"  color="#7059FF" @click="onFiltersSave">Сохранить</v-btn>
 			</div>
-			
-			
 		</v-card>
 	</v-dialog>
 </template>

@@ -1,6 +1,7 @@
 <template>
-	<h1>Бронирования</h1>
+	
 	<v-container>
+		<h1 class="mb-4">Бронирования</h1>
 		<!-- Фильтры -->
 		<v-row>
 			<v-col cols="12" md="3">
@@ -55,7 +56,7 @@
 		</v-row>
 		
 		<!-- Список бронирований -->
-		<div class="booking-list mt-4">
+		<div class="booking-list mt-8">
 			<v-expansion-panels>
 				<FullBookingItemAdmin
 					v-for="booking of bookings"

@@ -26,14 +26,10 @@ import CatalogListingsMapModal from "~/modules/Search/components/CatalogListings
 
 
 
-const props = withDefaults(
-	defineProps<{
-		searchType: TSearchType
-	}>(),
-	{
-		searchType: 'ALL'
-	}
-)
+const {searchType = 'ALL'} = defineProps<{
+	searchType: TSearchType
+}>()
+
 const route = useRoute();
 const router = useRouter();
 
@@ -57,7 +53,9 @@ const {
 	seoPage
 } = useCatalog();
 
-const { fetchBookingFilters, parseQueryParams } = useFilters();
+const {searchData} = useSearch();
+
+const { fetchBookingFilters, parseQueryParams, setFiltersFromQuery, refreshFilters } = useFilters();
 const { loadSearchData, setChosenCityBySlug, chosenCity, getChosenTypeBySlug } = useSearch();
 
 
@@ -92,25 +90,25 @@ if (typeSlug || citySlug) {
 	await getSeoPage(citySlug, typeSlug);
 }
 
+
+
 if (typeSlug && !citySlug) {
 	listingTypeSEOPage.value = true;
 } else if (typeSlug && citySlug) {
 	cityListingTypeSEOPage.value = true;
 }
 
+setFiltersDTO(parsedFilterParams);
+await fetchBookingFilters(bookingParameters, chosenCity.value ? chosenCity.value.id : null)
 if (typeSlug) {
 	const searchedType = getChosenTypeBySlug(typeSlug);
 	if (searchedType) {
 		parsedFilterParams.housingTypesId = [searchedType.id];
 	}
 }
-
-// Создаем тело запроса на сервер
-setFiltersDTO(parsedFilterParams);
+setFiltersFromQuery(parsedFilterParams)
 
 
-// Загружаем параметры фильтрации и инициализируем списки
-await fetchBookingFilters(bookingParameters, chosenCity.value ? chosenCity.value.id : null)
 
 const mapKey = ref(Date.now())
 const {mapCatalogIsOpen} = useMapCatalog();
@@ -119,24 +117,37 @@ watch(mapCatalogIsOpen, () => {
 	mapKey.value = Date.now()
 })
 
+const cityName = searchData.value.cities.find(city => city.slug === citySlug)?.cityName;
+
+if (!seoPage.value) {
+	if (searchType === 'ALL') {
+		useSeoMeta({
+			title: 'Поиск жилья в Абхазии — все объекты для отдыха у моря',
+			description: 'Ищете жилье в Абхазии? Мы предлагаем широкий выбор квартир, домов, гостевых домов и отелей. Удобный поиск по цене, локации и удобствам. Бронируйте с гарантией лучшей цены!'
+		})
+	} else if (searchType === 'CITY-ONLY') {
+		useSeoMeta({
+			title: `${cityName} 2025 | Жилье посуточно у моря`,
+			description: `${cityName} 2025, жилье посуточно. Квартиры посуточно, гостиницы, гостевые дома. Персональный подбор жилья, трансферы и экскурсии. Цены от 1 000₽/сутки!`
+		})
+	}
+}
+
 </script>
 <template>
 	<!-- Меню для изменения информации о бронировании -->
 	<HeaderSEO v-if="seoPage"/>
 	<HeaderDesktop v-else />
-	<div class="catalog wrapper">
-		<div class="catalog__sidebar">
+	<main class="catalog wrapper">
+		<aside class="catalog__sidebar">
 			<!-- Сайдбар с фильтрами -->
 			<FilterForm />
-		</div>
-		<div class="catalog__content">
+		</aside>
+		<section class="catalog__content">
 			<CatalogListingsMap v-if="mapCatalogIsOpen"/>
 			<CatalogListingsList v-else/>
-		</div>
-		
-		
-		
-	</div>
+		</section>
+	</main>
 	<!-- Модальное окно с фильтрами -->
 	<FilterFormModal />
 	<CatalogListingsMapModal/>

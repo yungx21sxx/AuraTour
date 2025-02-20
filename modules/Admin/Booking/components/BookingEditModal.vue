@@ -214,7 +214,7 @@ const calculatedPrices = computed(() => {
 	if (!dateRange.value.start || !dateRange.value.end) {
 		return null;
 	}
-	console.log('Пересчитываем цены');
+
 	
 	const withBonus = bonusApplied.value && chosenUser.value && chosenUser.value?.bonusPoints > 0;
 	
@@ -263,13 +263,11 @@ const formData = ref({
 });
 
 function handleUserSelect(user: ListingBookingUserResponse) {
-	console.log('Выбран пользователь с ID:', user.id);
 	formData.value.userName = user.name;
 	formData.value.userSurname = user.surname;
 	formData.value.userPhone = user.phone;
 	chosenUserId.value = user.id;
 	chosenUser.value = user;
-	console.log(user)
 }
 
 // Опции статусов
@@ -307,7 +305,7 @@ const rules = {
 
 // Инициализация формы
 function initializeForm() {
-	console.log(bookingToUpdate)
+
 		formData.value = {
 			userName: bookingToUpdate.value.userName || '',
 			userSurname: bookingToUpdate.value.userSurname || '',
@@ -334,7 +332,6 @@ const pending = ref(false)
 const serverErrors = ref([])
 // Отправка формы
 async function onSubmit() {
-	console.log('dsfsdf')
 	if (formRef.value) {
 		const { valid } = await formRef.value.validate();
 		if (!valid) {

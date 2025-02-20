@@ -26,14 +26,14 @@ const bonusProgramInfo = ref(false);
 					посуточно
 				</h1>
 				<div class="share">
-					<h3 class="share__title">Новости и лучшие предложения</h3>
+					<p class="share__title">Новости и лучшие предложения</p>
 					<div class="share__links">
-						<NuxtLink target="_blank" external to="https://www.instagram.com/aura_tur_abkhazia?igsh=ejVkeXV2dDV2YzB0" class="share__link">
+						<NuxtLink target="_blank" rel="noopener noreferrer" external to="https://www.instagram.com/aura_tur_abkhazia?igsh=ejVkeXV2dDV2YzB0" class="share__link">
 							<InstIcon/>
 							<span>Instagram</span>
 						</NuxtLink>
 						<div class="divider"></div>
-						<NuxtLink target="_blank" external to="https://t.me/laura_tour" class="share__link">
+						<NuxtLink target="_blank" rel="noopener noreferrer" external to="https://t.me/laura_tour" class="share__link">
 							<TelegaIcon/>
 							<span>Telegram</span>
 						</NuxtLink>
@@ -55,21 +55,22 @@ const bonusProgramInfo = ref(false);
 							v-for="city of searchData.cities.slice(0,6)"
 							variant="outlined"
 							:key="city.id"
-							:href="`/search/city/${city.slug}`"
+							:aria-label="`Искать жильё в ${city.cityName}`"
+							:to="`/search/city/${city.slug}`"
 						>{{city.cityName}}</v-chip>
 					</v-chip-group>
 				</div>
 			</div>
 		</div>
 	</header>
-	<BonusProgramModal v-model="bonusProgramInfo"/>
+<!--	<BonusProgramModal v-model="bonusProgramInfo"/>-->
 </template>
 
 <style lang="scss" scoped>
 .banner {
 	height: 650px;
 	background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1)),
-	url("/main-page/banner.jpg");
+	url("/main-page/banner.webp");
 	background-size: cover;
 	background-position: center;
 	&__menu {
@@ -83,6 +84,7 @@ const bonusProgramInfo = ref(false);
 		color: rgba(white, .9);
 		margin-bottom: 16px;
 		font-weight: 500;
+		font-size: 18px;
 	}
 	
 	.share__link {

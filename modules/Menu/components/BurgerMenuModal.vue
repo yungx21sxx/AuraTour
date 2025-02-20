@@ -119,6 +119,18 @@
 								>{{city.cityName}}</NuxtLink>
 							</div>
 						</div>
+						<div class="nav__cities">
+							<div class="nav__title">Типы жилья</div>
+							<div class="nav__chips">
+								<NuxtLink
+									class="nav__chip"
+									v-for="type of searchData.listingTypes"
+									:key="type.id"
+									external
+									:to="`/search/type/${type.slug}`"
+								>{{type.name}}</NuxtLink>
+							</div>
+						</div>
 					</v-window-item>
 					<v-window-item :value="2">
 						<div style="padding: 20px 16px">

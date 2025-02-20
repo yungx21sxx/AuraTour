@@ -13,6 +13,8 @@ export default defineNuxtConfig({
     }
   },
 
+
+
   sourcemap: {
     server: process.env.NODE_ENV !== "production",
     client: process.env.NODE_ENV !== "production",
@@ -22,24 +24,59 @@ export default defineNuxtConfig({
     jwtSecret: process.env.JWT_SECRET,
   },
 
-  modules: ['vuetify-nuxt-module', '@nuxtjs/device', // 'nuxt-simple-sitemap',
-  'nuxt-icons', // 'nuxt-simple-robots',
-  '@nuxt/devtools', // 'nuxt-vite-legacy',
-  'vue-yandex-maps/nuxt', 'nuxt-swiper', 'yandex-metrika-module-nuxt3', '@nuxtjs/google-fonts', '@nuxt/image'],
+  modules: [
+    'vuetify-nuxt-module',
+    '@nuxtjs/device',
+    'nuxt-icons',
+    '@nuxt/devtools',
+    'vue-yandex-maps/nuxt',
+    // 'yandex-metrika-module-nuxt3',
+    '@nuxtjs/google-fonts',
+    '@nuxt/image',
+    '@nuxtjs/seo',
+  ],
   googleFonts: {
     families: {
       Rubik: true,
     }
   },
-  // legacy: {
-  //   targets: ["chrome 69"],
-  //   modernPolyfills: ['es.global-this', 'es.object.from-entries', 'es.array.flat-map', 'es.array.flat', 'es.array.at']
-  // },
+  sitemap: {
+    xsl: false,
+    cacheMaxAgeSeconds: 3600,
+    sources: [
+      '/api/__sitemap__/urls',
+    ],
+  },
   yandexMaps: {
     apikey: '3f9c10df-563a-4f31-9dc7-32dab70c1e14',
   },
 
   vite: {
+
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('vuetify')) return 'vuetify'
+              // if (id.includes('video.js')) return 'videojs'
+              // if (id.includes('@videojs-player/vue')) return 'videojs-player-vue'
+              // if (id.includes('apexcharts')) return 'apexcharts'
+              // if (id.includes('vue3-apexcharts')) return 'vue3-apexcharts'
+              if (id.includes('v-calendar') || id.includes('@popperjs/core')) return 'calendar'
+              if (id.includes('libphonenumber-js')) return 'phone-utils'
+              // if (id.includes('@popperjs/core')) return 'popperjs-core'
+              if (id.includes('vue-draggable-next')) return 'vue-draggable-next'
+              if (id.includes('swiper')) return 'swiper'
+              // if (id.includes('vue-yandex-maps')) return 'vue-yandex-maps'
+            }
+          }
+        }
+      }
+    },
+    // optimizeDeps: {
+    //   include: ['vuetify', 'libphonenumber-js', '@videojs-player/vue', 'apexcharts', 'vue3-apexcharts', 'v-calendar', 'video.js', 'zod', '@popperjs/core', 'vue-draggable-next', 'vue-yandex-maps']
+    // },
     css: {
       preprocessorOptions: {
         scss: {
@@ -48,25 +85,82 @@ export default defineNuxtConfig({
       }
     },
   },
-  yandexMetrika: {
-    id: '96929944',
-    clickmap:true,
-    trackLinks:true,
-    accurateTrackBounce:true,
-    webvisor:true,
-    consoleLog: false,
-    defer: true,
-  },
+  // yandexMetrika: {
+  //   id: '96929944',
+  //   clickmap:true,
+  //   trackLinks:true,
+  //   accurateTrackBounce:true,
+  //   webvisor:true,
+  //   consoleLog: false,
+  //   defer: true,
+  // },
   site: {
     url: 'https://aura-tour-abkhazia.ru/',
   },
+  vue: {
+    propsDestructure: true
+  },
   routeRules: {
     '/api/**': {cors: true},
-    '/': {prerender: true},
-    // '/search/city/gagra': {prerender: true},
+    '/': {
+      sitemap: {
+        priority: 1,
+        changefreq: 'monthly',
+        lastmod: new Date().toISOString(),
+      },
+      prerender: true
+    },
+    '/admin/**': {sitemap: false, robots: false},
+    '/search': {
+      sitemap: {
+        priority: 0.5,
+        changefreq: 'monthly',
+        lastmod: new Date().toISOString(),
+      },
+    },
+    '/lk/**': {sitemap: false, robots: false},
+    '/obrabotka-personalnyh-dannyh':{
+      sitemap: {
+        priority: 0.1,
+        changefreq: 'yearly',
+        lastmod: new Date().toISOString(),
+      },
+      prerender: true
+    },
+    '/polzovatelskoe-soglashenie': {
+      sitemap: {
+        priority: 0.1,
+        changefreq: 'yearly',
+        lastmod: new Date().toISOString(),
+      },
+      prerender: true
+    },
+    '/favorites': {sitemap: false, robots: false},
+    '/about': {
+      sitemap: {
+        priority: 0.2,
+        changefreq: 'yearly',
+        lastmod: new Date().toISOString(),
+      },
+      prerender: true
+    },
+    '/contacts': {
+      sitemap: {
+        priority: 0.2,
+        changefreq: 'never',
+        lastmod: new Date().toISOString(),
+      },
+      prerender: true
+    },
+    '/help': {
+      sitemap: {
+        priority: 0.1,
+        changefreq: 'yearly',
+        lastmod: new Date().toISOString(),
+      },
+      prerender: true
+    },
   },
-
-
   vuetify: {
     vuetifyOptions: {
       icons: {
@@ -74,13 +168,15 @@ export default defineNuxtConfig({
       },
       labComponents: true,
       directives: true,
-      locale: {
-        locale: 'ru',
-      },
+    },
+    moduleOptions: {
+      importComposables: false,
+      styles: { configFile: '/assets/scss/settings.scss' }
     }
   },
 
   nitro: {
+    minify: true,
     serveStatic: false,
     compressPublicAssets: {
       brotli: true, gzip: true
@@ -88,7 +184,10 @@ export default defineNuxtConfig({
   },
 
   features: {
-    inlineStyles: true,
+    inlineStyles: false,
+  },
+  schemaOrg: {
+    defaults: false
   },
 
   app: {
@@ -96,14 +195,14 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: 'ru'
       },
+      titleTemplate: '%s',
       link: [
         {rel: 'apple-touch-icon', sizes: "180x180", href: '/apple-touch-icon.png'},
         {rel: 'icon', sizes: "32x32", type: 'image/png', href: '/favicon-32x32.png'},
         {rel: 'icon', sizes: "16x16", type: 'image/png', href: '/favicon-16x16.png'},
         {rel: 'icon',  type: 'image/x-icon', href: '/favicon.ico'},
-        {rel: 'manifest', href: '/site.webmanifest'},
         {rel: 'mask-icon', color: "#ffffff", href: '/safari-pinned-tab.svg'},
-
+        {rel: 'manifest', href: '/site.webmanifest'},
       ],
       meta: [
         {name: "msapplication-TileColor", content: "#ffffff"},
@@ -114,22 +213,5 @@ export default defineNuxtConfig({
       ],
     },
   },
-
-  // webpack: {
-  //   extractCSS: true,
-  //   optimization: {
-  //     splitChunks: {
-  //       cacheGroups: {
-  //         styles: {
-  //           name: 'styles',
-  //           test: /\.(css|vue)$/,
-  //           chunks: 'all',
-  //           enforce: true
-  //         }
-  //       }
-  //     }
-  //   }
-  // },
-
   compatibilityDate: '2024-09-19',
 })

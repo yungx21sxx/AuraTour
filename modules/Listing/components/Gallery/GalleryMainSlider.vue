@@ -37,7 +37,7 @@
 // Import Swiper Vue.js components
 	import { Swiper, SwiperSlide  } from 'swiper/vue';
 	import { Scrollbar, FreeMode, Thumbs, Pagination, Navigation } from 'swiper/modules';
-	import useListing from "~/components/pages/Listing/useListing";
+
 	import {mdiFullscreen} from "@mdi/js";
 
 	import 'swiper/css';
@@ -46,6 +46,7 @@
 	import 'swiper/css/navigation';
 	import 'swiper/css/thumbs';
 	import useGallery from "~/modules/Listing/composables/useGallery";
+	import useListing from "~/modules/Listing/composables/useListing";
 	
 	const {currentPhoto} = useGallery()
 	

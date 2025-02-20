@@ -107,7 +107,6 @@
 		v-model="authModalIsOpen"
 		:fullscreen="isMobile"
 		max-width="500px"
-		min-height="600px"
 	>
 		<v-card class="modal">
 			<v-card-item>
@@ -143,7 +142,7 @@
 					</v-window-item>
 				</v-window>
 				
-				<p class="policy text-gray">Совершая авторизацию, вы соглашаетесь c <NuxtLink to="/obrabotka_personalnyh_dannyh">обработкой персональных данных</NuxtLink> и <NuxtLink to="/polzovatelskoe_soglashenie">условиями пользовательских соглашений</NuxtLink></p>
+				<p class="policy text-gray">Совершая авторизацию, вы соглашаетесь c <NuxtLink to="/obrabotka-personalnyh-dannyh">обработкой персональных данных</NuxtLink> и <NuxtLink to="/polzovatelskoe-soglashenie">условиями пользовательских соглашений</NuxtLink></p>
 			</v-card-item>
 	
 		</v-card>

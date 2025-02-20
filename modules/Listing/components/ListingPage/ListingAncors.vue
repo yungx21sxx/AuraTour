@@ -73,7 +73,7 @@ const checkIsMobile = () => {
 
 const scrollToSection = (id: string) => {
 	const element: HTMLElement | null = document.getElementById(id)
-	console.log(element)
+
 	if (element) {
 		const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
 		window.scrollTo({

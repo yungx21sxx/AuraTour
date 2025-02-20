@@ -26,7 +26,6 @@ export const useAuth = () => {
         try {
             const data = await AuthAPI.fetchProfile();
             if (data) {
-                console.log(data)
                 setAuthUser(data);
             }
         } catch (error) {

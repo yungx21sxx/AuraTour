@@ -25,18 +25,18 @@ const gotToLK = async () => {
 	<div class="footer footer_desktop">
 		<div class="wrapper footer__body">
 			<div class="footer__left">
-				<NuxtLink to="/" class="footer__logo">
+				<NuxtLink to="/" class="footer__logo" aria-label="Главная страница">
 					<MainLogo variant="light"/>
 				</NuxtLink>
 				<div class="share mt-12">
 					<h3 class="share__title">Новости и лучшие предложения</h3>
 					<div class="share__links">
-						<NuxtLink target="_blank" to="https://www.instagram.com/aura_tur_abkhazia?igsh=ejVkeXV2dDV2YzB0" class="share__link">
+						<NuxtLink target="_blank" external to="https://www.instagram.com/aura_tur_abkhazia?igsh=ejVkeXV2dDV2YzB0" class="share__link">
 							<InstIcon/>
 							<span>Instagram</span>
 						</NuxtLink>
 						<div class="divider"></div>
-						<NuxtLink target="_blank" to="https://t.me/laura_tour" class="share__link">
+						<NuxtLink target="_blank" external to="https://t.me/laura_tour" class="share__link">
 							<TelegaIcon/>
 							<span>Telegram</span>
 						</NuxtLink>
@@ -52,7 +52,7 @@ const gotToLK = async () => {
 					<NuxtLink to="/favorites" class="footer__link">Избранное</NuxtLink>
 					<NuxtLink to="/help" class="footer__link">Помощь</NuxtLink>
 					<NuxtLink to="/contacts" class="footer__link">Контакты и реквизиты</NuxtLink>
-					<NuxtLink @click="gotToLK" class="footer__link">Личный кабинет</NuxtLink>
+					<p @click="gotToLK" class="footer__link">Личный кабинет</p>
 				</div>
 				
 			</div>
@@ -64,13 +64,13 @@ const gotToLK = async () => {
 						<div class="contact__text">+7 (940) 997-67-02</div>
 					</div>
 				</NuxtLink>
-				<NuxtLink class="contact">
+				<div class="contact">
 					<v-icon class="contact__icon" color="#7059FF" :icon="mdiMapMarkerOutline"></v-icon>
 					<div class="contact__body">
 						<div class="contact__desc">Адрес</div>
 						<div class="contact__text">г. Гудаута, Очамчирская 90</div>
 					</div>
-				</NuxtLink>
+				</div>
 				<NuxtLink class="contact" to="mailto:lana.2015lana@mail.ru">
 					<v-icon class="contact__icon" color="#7059FF" :icon="mdiEmailOutline"></v-icon>
 					<div class="contact__body">
@@ -86,11 +86,11 @@ const gotToLK = async () => {
 			<v-divider class="mt-4"/>
 			<div class="rules mt-4 d-flex">
 				<p class="footer__copyright">
-					2024 © Аура Тур
+					© 2022-2025 Аура Тур
 				</p>
 				<div class="links ml-auto">
-					<NuxtLink to="/obrabotka_personalnyh_dannyh" class="footer__link">Обработка персональных данных</NuxtLink>
-					<NuxtLink to="/polzovatelskoe_soglashenie" class="footer__link">Пользовательское соглашение</NuxtLink>
+					<NuxtLink to="/obrabotka-personalnyh-dannyh" class="footer__link">Обработка персональных данных</NuxtLink>
+					<NuxtLink to="/polzovatelskoe-soglashenie" class="footer__link">Пользовательское соглашение</NuxtLink>
 				</div>
 			</div>
 		</div>
@@ -98,18 +98,18 @@ const gotToLK = async () => {
 	<div class="footer footer_mobile">
 		<div class="wrapper footer__body">
 			
-			<NuxtLink to="/" class="footer__logo">
+			<NuxtLink to="/" class="footer__logo" aria-label="Главная страница">
 				<NuxtIcon name="nav/text-logo-blue" class="footer__logo-text" filled/>
 			</NuxtLink>
 			<div class="share mt-4">
 				<h3 class="share__title">Новости и лучшие предложения</h3>
 				<div class="share__links">
-					<NuxtLink target="_blank" to="https://www.instagram.com/aura_tur_abkhazia?igsh=ejVkeXV2dDV2YzB0" class="share__link">
+					<NuxtLink target="_blank" external to="https://www.instagram.com/aura_tur_abkhazia?igsh=ejVkeXV2dDV2YzB0" class="share__link">
 						<InstIcon/>
 						<span>Instagram</span>
 					</NuxtLink>
 					<div class="divider"></div>
-					<NuxtLink target="_blank" to="https://t.me/laura_tour" class="share__link">
+					<NuxtLink target="_blank" external to="https://t.me/laura_tour" class="share__link">
 						<TelegaIcon/>
 						<span>Telegram</span>
 					</NuxtLink>
@@ -124,13 +124,13 @@ const gotToLK = async () => {
 						<div class="contact__text">+7 (940) 997-67-02</div>
 					</div>
 				</NuxtLink>
-				<NuxtLink class="contact">
+				<div class="contact">
 					<v-icon class="contact__icon" color="#7059FF" :icon="mdiMapMarkerOutline"></v-icon>
 					<div class="contact__body">
 						<div class="contact__desc">Адрес</div>
 						<div class="contact__text">г. Гудаута, Очамчирская 90</div>
 					</div>
-				</NuxtLink>
+				</div>
 				<NuxtLink class="contact" to="mailto:lana.2015lana@mail.ru">
 					<v-icon class="contact__icon" color="#7059FF" :icon="mdiEmailOutline"></v-icon>
 					<div class="contact__body">
@@ -148,7 +148,7 @@ const gotToLK = async () => {
 					<NuxtLink to="/favorites" class="footer__link">Избранное</NuxtLink>
 					<NuxtLink to="/help" class="footer__link">Помощь</NuxtLink>
 					<NuxtLink to="/contacts" class="footer__link">Контакты и реквизиты</NuxtLink>
-					<NuxtLink  @click="gotToLK" class="footer__link">Личный кабинет</NuxtLink>
+					<p  @click="gotToLK" class="footer__link">Личный кабинет</p>
 				</div>
 			
 			</div>
@@ -156,11 +156,11 @@ const gotToLK = async () => {
 			<v-divider class="mt-4"/>
 			<div class="rules mt-4">
 				<p class="footer__copyright">
-					2024 © Аура Тур
+					© 2022-2025 Аура Тур
 				</p>
 				<div class="links mt-4">
-					<NuxtLink to="/obrabotka_personalnyh_dannyh" class="footer__link d-block">Обработка персональных данных</NuxtLink>
-					<NuxtLink to="/polzovatelskoe_soglashenie" class="footer__link d-block">Пользовательское соглашение</NuxtLink>
+					<NuxtLink to="/obrabotka-personalnyh-dannyh" class="footer__link d-block">Обработка персональных данных</NuxtLink>
+					<NuxtLink to="/polzovatelskoe-soglashenie" class="footer__link d-block">Пользовательское соглашение</NuxtLink>
 				</div>
 			</div>
 			

@@ -39,14 +39,14 @@
 						Этаж: {{listing.flatProperties.floor}} из {{listing.flatProperties.maxFloor}}
 					</span>
 				</div>
-				<div class="chip"v-if="listing.flatProperties.elevator">
+				<div class="chip" v-if="listing.flatProperties.elevator">
 					<span>
 						Есть лифт
 					</span>
 				</div>
 			</template>
 		</div>
-		<div class="info__text mb-6" v-html="listing.description"></div>
+		<p class="info__text mb-6 mt-4" style="white-space: pre-wrap;">{{listing.description}}</p>
 		<div class="info__amenities mt-4">
 			<h3 class="info__subtitle">Какие удобства вас ждут</h3>
 			<div class="info__chips listing-chips">

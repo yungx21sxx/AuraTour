@@ -1,5 +1,5 @@
 import type {BookingCreateDTO} from "~/modules/Listing/types/dto.types";
-import {parsePhoneNumber} from "libphonenumber-js";
+import {parsePhone} from "~/modules/Common/Utils/phone.utils";
 import useBooking from "~/modules/Booking/composables/useBooking";
 
 export default () => {
@@ -12,7 +12,8 @@ export default () => {
 		beautifyDate,
 	} = useBooking();
 
-	function formatBookingMessageForTelegramLink(bookingData: BookingCreateDTO, listingLink: string, roomName: string | null, managerName: string) {
+	async function formatBookingMessageForTelegramLink(bookingData: BookingCreateDTO, listingLink: string, roomName: string | null, managerName: string) {
+		const parsedPhone = await parsePhone(bookingData.userPhone);
 		const messageParts = [
 			`Новое бронирование:`,
 			`**Дата заезда:** ${beautifyDate( bookingData.checkIn)}`,
@@ -22,7 +23,7 @@ export default () => {
 			`Фамилия: ${bookingData.userSurname}`,
 			`Имя: ${bookingData.userName}`,
 			`Комментарий: ${bookingData.comment}`,
-			`Телефон: ${parsePhoneNumber(bookingData.userPhone).formatNational()}`,
+			`Телефон: ${parsedPhone}`,
 			`Трансфер: ${bookingData.transfer ? 'Да' : 'Нет'}`,
 			bookingData.transferComment ? `Комментарий к трансферу: ${bookingData.transferComment}` : '',
 			`Ссылка на объект: ${listingLink}  `,
@@ -38,7 +39,7 @@ export default () => {
 
 	// @ts-ignore
 	const sendBookingInfo = async (bookingData: BookingCreateDTO, listingLink: string, roomName: string | null, managerName: string) => {
-		const text = formatBookingMessageForTelegramLink(bookingData, listingLink, roomName, managerName);
+		const text = await formatBookingMessageForTelegramLink(bookingData, listingLink, roomName, managerName);
 		const url = getUrl(text, bookingBotToken, bookingBotChatID);
 		return useFetch(url)
 	}

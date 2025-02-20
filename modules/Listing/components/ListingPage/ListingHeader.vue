@@ -44,7 +44,7 @@
 </script>
 
 <template>
-	<div class="header listing-block">
+	<header class="header listing-block">
 		<div class="header__top mb-2">
 			<v-breadcrumbs :items="breadcrumbs"  style="margin-left: -2px;"></v-breadcrumbs>
 			<span v-if="!isMobile">Объект №{{listing.id}}</span>
@@ -77,7 +77,7 @@
 			
 		</div>
 		<AncorsMenu class="header__nav mt-2"/>
-	</div>
+	</header>
 
 </template>
 

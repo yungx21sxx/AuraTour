@@ -1,5 +1,6 @@
 <script setup lang="ts">
 	import useSearch from "~/modules/Booking/composables/useSearch";
+	import {mdiArrowRight} from "@mdi/js";
 	
 	const {popularCitiesWithPhoto} = useSearch();
 	
@@ -39,7 +40,7 @@
 					<div class="text-white city__content">
 						<div class="city__info">
 							<div class="city__title">{{city.cityName}}</div>
-							<v-chip variant="tonal" color="#FAAC37"  append-icon="mdi-arrow-right">Смотреть</v-chip>
+							<v-chip variant="tonal" color="#FAAC37"  :append-icon="mdiArrowRight">Смотреть</v-chip>
 						</div>
 					</div>
 					
