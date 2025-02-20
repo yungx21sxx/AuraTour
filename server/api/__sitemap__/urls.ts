@@ -16,7 +16,10 @@ export default defineSitemapEventHandler(async () => {
         prisma.city.findMany({
            where: {
                seoPages: {
-                   none: {} // Ищем города, у которых нет связанных seoPages
+                   none: {},
+               },
+               listings: {
+                   some: {}
                }
            }
         })

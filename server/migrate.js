@@ -54,7 +54,7 @@ async function processDescriptions() {
 					where: { id: listing.id },
 					data: {
 						description: convertTipTapToPlainText(listing.description),
-						note: convertTipTapToPlainText(listing.note)
+						// note: convertTipTapToPlainText(listing.note)
 					},
 				})
 			)
@@ -416,8 +416,8 @@ async function saveSeoPages(seoPages) {
 
 async function main() {
 	await processDescriptions()
-	await prisma.seoPage.deleteMany();
-	await saveSeoPages(seoPages);
+	// await prisma.seoPage.deleteMany();
+	// await saveSeoPages(seoPages);
 }
 
 main()

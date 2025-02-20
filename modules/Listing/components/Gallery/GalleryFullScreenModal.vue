@@ -63,7 +63,10 @@ import { Scrollbar, FreeMode, Thumbs, Pagination, Navigation, Zoom } from 'swipe
 
 
 import 'swiper/css';
-
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import 'swiper/css/thumbs';
+import 'swiper/css/zoom';
 
 
 const {currentPhoto} = useGallery()
