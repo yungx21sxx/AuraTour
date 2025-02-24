@@ -135,7 +135,7 @@ watch(currentPhoto, () => {
 	setTimeout(() => {
 		const currentPhotoIndex = currentPhoto.value.room ? currentPhoto.value.room.photoIndex : currentPhoto.value.index;
 		swiperController.value.slideTo(currentPhotoIndex, 0)
-	}, 100)
+	},0)
 }, {
 	deep: true
 })

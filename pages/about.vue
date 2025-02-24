@@ -81,7 +81,7 @@ useSeoMeta({
 		<div style="display: flex; justify-content: center; margin-top: 16px; flex-direction: column; align-items: center">
 			<div class="about-text">
 				<h2>Добро пожаловать в <span>Аура Тур!</span>  </h2>
-				<p class="mb-12">
+				<p style="margin-bottom: 45px">
 					Мы — ваш надежный партнер в организации незабываемого отдыха в Абхазии. Предлагая более 400 проверенных объектов, мы помогаем путешественникам найти идеальное жилье для отдыха. Возьмем на себя все организационные вопросы и связывая вас с лучшими предложениями региона.
 				</p>
 			</div>

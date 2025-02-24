@@ -21,11 +21,10 @@
 				class="swiper-multiply__slide"
 				@click="openGalleryModal(photo.id)"
 			>
-				<v-card>
-					<v-img cover :alt="listing.title"  class="swiper-multiply__img" :src="photo.urlFull" >
-						<v-btn color="#FFFF" @click="openGalleryModal(photo.id)" variant="flat"  class="gallery__btn1" :icon="mdiFullscreen"></v-btn>
-					</v-img>
-				</v-card>
+				<div style="position: relative">
+					<v-btn color="#FFFF" @click="openGalleryModal(photo.id)" variant="flat"  class="gallery__btn1" :icon="mdiFullscreen"></v-btn>
+					<img loading="lazy" style="object-fit: cover" :alt="listing.title"  class="swiper-multiply__img" :src="photo.urlFull" >
+				</div>
 			</swiper-slide>
 		</swiper>
 	</div>
@@ -126,8 +125,10 @@
 
 		&__img {
 			width: 100%;
-			height: 450px;
+			height: 100%;
 			border-radius: 10px;
+			object-fit: cover;
+			object-position: center;
 			@media screen  and (max-width: 630px){
 				border-radius: 0;
 			}

@@ -190,8 +190,8 @@ const goBack = () => {
 </script>
 
 <template>
-	<v-dialog v-model="listingBookingConfirmModal" :fullscreen="isMobileOrTablet" max-width="750px">
-		<v-card >
+	<v-dialog v-model="listingBookingConfirmModal" :fullscreen="isMobileOrTablet" max-width="750px" scrollable>
+		<v-card>
 			<v-toolbar color="#F0F3F7">
 				<v-btn
 					:icon="mdiClose"
@@ -199,9 +199,9 @@ const goBack = () => {
 				></v-btn>
 				<v-toolbar-title>Заявка на бронирование</v-toolbar-title>
 			</v-toolbar>
-			<v-window v-model="step">
-				<v-window-item :value="1">
-					<div class="booking">
+			<v-window v-model="step" style="overflow-y: scroll">
+				<v-window-item :value="1" style="overflow-y: scroll">
+					<div class="booking" style="overflow-y: scroll">
 						<h3 class="mb-4">Информация о бронирование</h3>
 						<div class="booking__date">
 							<v-card class="booking__input" :ripple="{ class: 'ripple-color' }" @click="openSetDateModal">
@@ -352,7 +352,7 @@ const goBack = () => {
 						max-width="600"
 						rounded="lg"
 						width="100%"
-						class="pa-4 text-center mx-auto"
+						style="padding: 16px; text-align: center; margin: 0 auto;"
 					>
 						<v-icon
 							class="mb-5"

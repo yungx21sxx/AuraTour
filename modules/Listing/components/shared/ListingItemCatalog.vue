@@ -105,7 +105,7 @@
 			       @click="removeFromFavorites(listing.id)"
 			></v-btn>
 			<v-carousel-item v-for="photo of listing.photos">
-				<NuxtLink :to="listingLink" @click.stop target="_blank" class="carousel__link">
+				<NuxtLink :to="listingLink" @click.stop target="_blank" class="carousel__link" :rel="!listing.isHotelType ? 'nofollow' : null">
 					<img
 						:src="photo"
 						style="object-fit: cover"
@@ -123,7 +123,7 @@
 				<v-chip variant="flat" color="yellow" v-if="!listing.validated">Ожидает проверки</v-chip>
 				<v-chip variant="flat" color="blue" v-else>Объект размещен</v-chip>
 			</div>
-			<NuxtLink :to="listingLink" target="_blank">
+			<NuxtLink :to="listingLink" target="_blank" :rel="!listing.isHotelType ? 'nofollow' : null">
 				<h3 class="info__title text-main" itemprop="name">{{ listing.title }}</h3>
 			</NuxtLink>
 			
@@ -170,11 +170,11 @@
 		
 		<div class="listing__order order text-main">
 			<div class="order__info" v-if="listing.totalPrice">
-				<div class="order__price" v-if="listing.type !== 'guest-house'">
+				<div class="order__price">
 					<span class="price" itemprop="price">{{ listing.dailyPrice.toLocaleString('ru-RU') }} ₽</span>
 					<span class="order__price_info">за сутки</span>
 				</div>
-				<p class="order__description" v-if="listing.type !== 'guest-house'">
+				<p class="order__description">
 					Всего <span itemprop="priceRange">{{ listing.totalPrice.toLocaleString('ru-RU') }} ₽</span>
 				</p>
 			</div>
@@ -184,8 +184,7 @@
 					<div class="order__price_info">за сутки</div>
 				</div>
 			</div>
-			
-			<BtnPrimary class="order__btn" :href="listingLink" target="_blank">Выбрать</BtnPrimary>
+			<BtnPrimary :rel="!listing.isHotelType ? 'nofollow' : null" class="order__btn" :href="listingLink" target="_blank">Выбрать</BtnPrimary>
 		</div>
 	</article>
 </template>

@@ -112,7 +112,7 @@
 	>
 		<MenuMain variant="light" class="header__menu"/>
 		<div class="wrapper">
-			<v-breadcrumbs :items="breadcrumbs" class="header__breadcrumbs"/>
+			<v-breadcrumbs :items="breadcrumbs" class="header__breadcrumbs mb-4"/>
 			<h1 class="header__title">{{seoPage.smallTitle}}</h1>
 			<FilterFormBookingInfo class="header__form" light/>
 			<div class="header__types">
@@ -149,6 +149,7 @@
 		background-repeat: no-repeat;
 		background-size: cover;
 		
+		
 		&__types {
 			color: white;
 			margin-top: 24px;
@@ -172,7 +173,7 @@
 		}
 		
 		@media screen and (max-width: 950px) {
-			height: 500px;
+			height: 600px;
 			
 			&__title {
 				font-size: 32px;
@@ -180,7 +181,7 @@
 		}
 		
 		@media screen and (max-width: 440px) {
-			height: 500px;
+			height: 600px;
 			
 			&__title {
 				font-size: 28px;

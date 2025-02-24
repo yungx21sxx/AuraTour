@@ -153,10 +153,10 @@ const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog()
 				</h3>
 				<p class="mb-4">Смотрите на карте цены на соседние объекты, близость к пляжам и выбирайте лучшее предложение</p>
 				<BtnPrimary class="btn-desktop" @click="mapCatalogIsOpen = true">Показать на карте</BtnPrimary>
-				<BtnPrimary @click="mapModalIsOpen = true" :prepend-icon="mdiMapOutline" class="btn-mobile">Показать на карте</BtnPrimary>
 			</div>
 			<v-icon :icon="mdiCloseCircle"></v-icon>
 		</div>
+		<BtnPrimary @click="mapModalIsOpen = true" block :prepend-icon="mdiMapOutline" class="map__btn-mobile mb-8">Показать на карте</BtnPrimary>
 		
 		<div v-if="isFiltering">
 			<ListingItemSceleton v-for="n in 5" :key="n"/>
@@ -197,6 +197,8 @@ const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog()
 .observer {
 	height: 30px;
 }
+
+
 .map {
 	display: flex;
 	background: #F1F3F9;
@@ -208,15 +210,16 @@ const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog()
 		height: 125px;
 		width: auto;
 	}
-	.btn-mobile {
+	
+	&__btn-mobile {
 		display: none;
+		max-width: 400px;
 	}
-	@media screen and (max-width: 600px){
+	
+	@media screen and (max-width: 500px){
 		padding: 16px;
-		img, .btn-desktop {
-			display: none;
-		}
-		.btn-mobile {
+		display: none;
+		&__btn-mobile {
 			display: flex;
 		}
 		p {

@@ -56,6 +56,12 @@
 	
 	watch(dates, async ({checkIn, checkOut}) => {
 		updateListingPrices(checkIn, checkOut);
+		await navigateTo({
+			path: `/listing/${listing.value.id}`,
+			query: {
+			
+			}
+		})
 	})
 	
 	const access = computed(() => {
@@ -104,7 +110,7 @@
 			"@type": "PostalAddress",
 			"streetAddress": listing.value.address,
 			"addressLocality": listing.value.city.name,
-			"addressCountry": "Российская Федерация",
+			"addressCountry": "Абхазия",
 			"addressRegion": "Абхазия",
 		},
 		"geo": {
@@ -177,19 +183,13 @@
 				{
 					"@type": "ListItem",
 					"position": 2,
-					"name": listing.value.type.name,
-					"item": `https://aura-tour-abkhazia.ru/type/${listing.value.type.value}`
-				},
-				{
-					"@type": "ListItem",
-					"position": 3,
 					"name": listing.value.city.name,
 					"item": `https://aura-tour-abkhazia.ru/${listing.value.city.slug}`
 				},
 				{
 					"@type": "ListItem",
-					"position": 4,
-					"name": listing.value.title,
+					"position": 3,
+					"name": listing.value.id,
 					"item": `https://aura-tour-abkhazia.ru/${listing.value.id}`
 				}
 			]
