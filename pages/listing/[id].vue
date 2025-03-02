@@ -23,11 +23,11 @@
 	import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 	import useGallery from "~/modules/Listing/composables/useGallery";
 	import useStatistics from "~/modules/Common/useStatistics";
-	import ListingVideoPlayer from "~/modules/Listing/components/ListingPage/ListingVideoPlayer.vue";
-	import VideoUploader from "~/modules/Admin/Listing/components/VideoUploader.vue";
 	import {generateSeoDescription} from "~/modules/Listing/utils/description";
+
+	const VideoUploader = defineAsyncComponent(() => import('~/modules/Admin/Listing/components/VideoUploader.vue'));
+	const ListingVideoPlayer = defineAsyncComponent(() => import('~/modules/Listing/components/ListingPage/ListingVideoPlayer.vue'));
 	const {isMobileOrTablet} = useDevice();
-	
 	const authUser = useAuthUser();
 	
 	const {galleyThumbsModalIsOpen} = useGallery()
@@ -99,103 +99,108 @@
 		? Math.min(...listing.value.rooms.map(r => r.minPrice))
 		: listing.value.minPrice;
 	
-	const schemaOrg = computed(() => ({
-		"@context": "https://schema.org",
-		"@type": hasRooms ? "Hotel" : "LodgingBusiness",
-		"name": listing.value.title,
-		"description": generateSeoDescription(listing.value),
-		"url": `https://aura-tour-abkhazia.ru/listing/${listing.value.id}`,
-		"image": 'https://aura-tour-abkhazia.ru' + listing.value.photos[0].urlFull,
-		"address": {
-			"@type": "PostalAddress",
-			"streetAddress": listing.value.address,
-			"addressLocality": listing.value.city.name,
-			"addressCountry": "Абхазия",
-			"addressRegion": "Абхазия",
-		},
-		"geo": {
-			"@type": "GeoCoordinates",
-			"latitude": listing.value.coords.width,
-			"longitude": listing.value.coords.longitude
-		},
-		"priceSpecification": {
-			"@type": "PriceSpecification",
-			"price": minPrice,
-			"priceCurrency": "RUB",
-			"priceValidUntil": "2025-12-31"
-		},
-		"makesOffer": {
-			"@type": "Offer",
-			"price": minPrice,
-			"priceCurrency": "RUB",
-			"availability": "https://schema.org/InStock",
-			"validFrom": new Date().toISOString(),
-			"url": `https://aura-tour-abkhazia.ru/listing/${listing.value.id}`
-		},
-		"offers": {
-			"@type": "AggregateOffer",
-			"lowPrice": listing.value.rooms.length > 0 ? Math.min(...listing.value.rooms.map(room => room.minPrice)) : listing.value.minPrice,
-			"highPrice": listing.value.rooms.length > 0 ? Math.max(...listing.value.rooms.map(room => room.minPrice)) : listing.value.minPrice,
-			"priceCurrency": "RUB",
-			"offers": listing.value.rooms.map(room => ({
-				"@type": "Offer",
-				"name": room.name,
-				"price": room.minPrice,
-				"priceCurrency": "RUB",
-				"itemOffered": {
-					"@type": "HotelRoom",
-					"name": room.name,
-					"numberOfRooms": 1,
-					"occupancy": {
-						"@type": "QuantitativeValue",
-						"minValue": 1,
-						"maxValue": room.places
-					},
-					"amenityFeature": room.amenities.map(amenity => ({
-						"@type": "LocationFeatureSpecification",
-						"name": amenity,
-						"value": true
+	const schemaOrg = computed(() => {
+		if (listing.value.manager) {
+			return {
+				"@context": "https://schema.org",
+				"@type": hasRooms ? "Hotel" : "LodgingBusiness",
+				"name": listing.value.title,
+				"description": generateSeoDescription(listing.value),
+				"url": `https://aura-tour-abkhazia.ru/listing/${listing.value.id}`,
+				"image": 'https://aura-tour-abkhazia.ru' + listing.value.photos[0].urlFull,
+				"address": {
+					"@type": "PostalAddress",
+					"streetAddress": listing.value?.address,
+					"addressLocality": listing.value.city?.name,
+					"addressCountry": "Абхазия",
+					"addressRegion": "Абхазия",
+				},
+				"geo": {
+					"@type": "GeoCoordinates",
+					"latitude": listing.value.coords.width,
+					"longitude": listing.value.coords.longitude
+				},
+				"priceSpecification": {
+					"@type": "PriceSpecification",
+					"price": minPrice,
+					"priceCurrency": "RUB",
+					"priceValidUntil": "2025-12-31"
+				},
+				"makesOffer": {
+					"@type": "Offer",
+					"price": minPrice,
+					"priceCurrency": "RUB",
+					"availability": "https://schema.org/InStock",
+					"validFrom": new Date().toISOString(),
+					"url": `https://aura-tour-abkhazia.ru/listing/${listing.value.id}`
+				},
+				"offers": {
+					"@type": "AggregateOffer",
+					"lowPrice": listing.value.rooms.length > 0 ? Math.min(...listing.value.rooms.map(room => room.minPrice)) : listing.value.minPrice,
+					"highPrice": listing.value.rooms.length > 0 ? Math.max(...listing.value.rooms.map(room => room.minPrice)) : listing.value.minPrice,
+					"priceCurrency": "RUB",
+					"offers": listing.value.rooms.map(room => ({
+						"@type": "Offer",
+						"name": room?.name,
+						"price": room.minPrice,
+						"priceCurrency": "RUB",
+						"itemOffered": {
+							"@type": "HotelRoom",
+							"name": room?.name,
+							"numberOfRooms": 1,
+							"occupancy": {
+								"@type": "QuantitativeValue",
+								"minValue": 1,
+								"maxValue": room.places
+							},
+							"amenityFeature": room.amenities.map(amenity => ({
+								"@type": "LocationFeatureSpecification",
+								"name": amenity,
+								"value": true
+							}))
+						}
 					}))
-				}
-			}))
-		},
-		"contactPoint": {
-			"@type": "ContactPoint",
-			"name": listing.value.manager.name,
-			"telephone": listing.value.manager.phone,
-			"contactType": "customer service"
-		},
-		"telephone": listing.value.manager.phone,
-		"amenityFeature": listing.value.amenities.map(amenity => ({
-			"@type": "LocationFeatureSpecification",
-			"name": amenity,
-			"value": true
-		})),
-		"breadcrumb": {
-			"@type": "BreadcrumbList",
-			"itemListElement": [
-				{
-					"@type": "ListItem",
-					"position": 1,
-					"name": "Главная",
-					"item": "https://aura-tour-abkhazia.ru"
 				},
-				{
-					"@type": "ListItem",
-					"position": 2,
-					"name": listing.value.city.name,
-					"item": `https://aura-tour-abkhazia.ru/${listing.value.city.slug}`
+				"contactPoint": {
+					"@type": "ContactPoint",
+					"name": listing.value?.manager?.name,
+					"telephone": listing.value?.manager?.phone,
+					"contactType": "customer service"
 				},
-				{
-					"@type": "ListItem",
-					"position": 3,
-					"name": listing.value.id,
-					"item": `https://aura-tour-abkhazia.ru/${listing.value.id}`
-				}
-			]
-		},
-		"openingHours": "Mo-Su 00:00-24:00",
-	}));
+				"telephone": listing.value.manager.phone,
+				"amenityFeature": listing.value.amenities.map(amenity => ({
+					"@type": "LocationFeatureSpecification",
+					"name": amenity,
+					"value": true
+				})),
+				"breadcrumb": {
+					"@type": "BreadcrumbList",
+					"itemListElement": [
+						{
+							"@type": "ListItem",
+							"position": 1,
+							"name": "Главная",
+							"item": "https://aura-tour-abkhazia.ru"
+						},
+						{
+							"@type": "ListItem",
+							"position": 2,
+							"name": listing.value.city?.name,
+							"item": `https://aura-tour-abkhazia.ru/${listing.value.city.slug}`
+						},
+						{
+							"@type": "ListItem",
+							"position": 3,
+							"name": listing.value.id,
+							"item": `https://aura-tour-abkhazia.ru/${listing.value.id}`
+						}
+					]
+				},
+				"openingHours": "Mo-Su 00:00-24:00",
+			}
+		}
+		return {}
+	});
 	
 	useHead({
 		script: [
@@ -237,6 +242,7 @@
 				<ListingDescription id="about"/>
 				<ListingRules id="rules"/>
 				<ListingYMap id="map"/>
+			
 				<ListingReviews id="reviews"/>
 			</div>
 			<div class="listing__sidebar booking" v-if="!isMobileOrTablet">
@@ -313,9 +319,6 @@
 		display: grid;
 		grid-template-columns: 1fr 340px;
 		gap: 24px;
-		
-		
-		
 	}
 	
 

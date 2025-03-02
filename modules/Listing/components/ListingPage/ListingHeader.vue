@@ -4,7 +4,6 @@
 	import useListing from "~/modules/Listing/composables/useListing";
 	import useListingBooking from "~/modules/Listing/composables/useListingBooking";
 	import {mdiHeartOutline, mdiHeart, mdiMapMarkerOutline, mdiWaves, mdiShareVariant} from "@mdi/js"
-	import ListingAncors from "~/modules/Listing/components/ListingPage/ListingAncors.vue";
 	import AncorsMenu from "~/modules/Listing/components/ListingPage/Menu/AncorsMenu.vue";
 	
 	const {listing} = useListing();

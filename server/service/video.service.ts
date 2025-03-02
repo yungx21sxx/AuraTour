@@ -98,17 +98,17 @@ class VideoService {
                 ffmpeg()
                     .input(filePathOriginal)
                     .videoFilters(
-                        "scale=1280:720:force_original_aspect_ratio=decrease"
+                        "scale=1280:720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2"
                     )
                     .videoCodec(videoCodec)
                     .audioCodec(audioCodec)
                     .outputOptions([
                         "-preset", "ultrafast",
                         "-b:v", videoBitrate,
-                        "-c:a", "copy",
+                        "-c:a", "aac",  // Явное указание кодека
+                        "-b:a", "128k", // Битрейт аудио
                         "-crf", "28",
                         "-movflags", "faststart",
-                        "-threads", "2",
                         "-pix_fmt", "yuv420p",
                     ])
                     .format("mp4")

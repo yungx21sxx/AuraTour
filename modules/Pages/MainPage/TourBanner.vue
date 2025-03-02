@@ -5,11 +5,14 @@ import TelegramIcon from "~/modules/Listing/icons/TelegramIcon.vue";
 </script>
 
 <template>
-	<div class="pass">
+	<div class="pass" itemscope itemtype="https://schema.org/Service">
 		<div class="pass-content">
-			<h2>Авторские туры по Абхазии</h2>
-			<p>Полностью организуем ваш отдых: от встречи в аэропорту до проживания и экскурсий. Подпишитесь на наш Телеграм-канал, чтобы первыми узнавать о новых турах и предложениях.</p>
-			<v-btn elevation="0" href="https://t.me/laura_tour" target="_blank">
+			<h2 itemprop="name">Авторские туры по Абхазии</h2>
+			<p itemprop="description">
+				Полностью организуем ваш отдых: от встречи в аэропорту до проживания и экскурсий.
+				Подпишитесь на наш Телеграм-канал, чтобы первыми узнавать о новых турах и предложениях.
+			</p>
+			<v-btn elevation="0" href="https://t.me/laura_tour" target="_blank" itemprop="url">
 				<template #prepend>
 					<TelegramIcon/>
 				</template>

@@ -36,7 +36,10 @@ const {
 
 
 const {peopleCount, openSetDateModal, dateModal, listingBookingConfirmModal, describeGroup} = useListingBooking();
-const whatsLink = computed(() => `whatsapp://send?phone=${listing.value.manager.phone}&text=Здравствуйте! Расскажите подробнее про: ${listing.value.title}. https://aura-tour-abkhazia.ru/listing/${route.params.id}`)
+const whatsLink = computed(() => {
+	if (listing.value.manager) return  ''
+	return `whatsapp://send?phone=${listing.value.manager.phone}&text=Здравствуйте! Расскажите подробнее про: ${listing.value.title}. https://aura-tour-abkhazia.ru/listing/${route.params.id}`
+})
 
 const route = useRoute();
 
@@ -51,8 +54,9 @@ const isAdmin = computed(() => {
 	return authUser.value && ['ADMIN', 'MANAGER'].includes(authUser.value.role);
 })
 
-const ownerPhone = listing.value.owner?.phone ? await parsePhone(listing.value.owner.phone) : null;
-const managerPhone = await parsePhone(listing.value.manager.phone)
+const ownerPhone = listing.value?.owner?.phone ? await parsePhone(listing.value.owner.phone) : null;
+
+const managerPhone = await parsePhone(listing.value?.manager?.phone)
 
 
 </script>

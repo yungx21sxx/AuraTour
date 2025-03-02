@@ -28,7 +28,7 @@
 			</v-tabs>
 			<v-window v-model="currentType" :touch="false" disabled>
 				<v-window-item :eager="true"  v-for="housingType of housingTypes" :value="housingType.id">
-					<div class="types__list" style="height: 425px; margin-top: 16px;">
+					<div itemscope itemtype="https://schema.org/CollectionPage" class="types__list" style="height: 425px; margin-top: 16px;">
 						<ListingsSlider :listings="housingType.listings" :key="housingType.id">
 							<template #action>
 								<BtnPrimary @click="goToCategory" class="types__btn" color="#7059FF" elevation="0">Смотреть {{numberToVariantsString(housingType.totalCount)}}</BtnPrimary>

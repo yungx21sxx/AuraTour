@@ -11,6 +11,7 @@
 	import BedIcon from "~/modules/Listing/icons/BedIcon.vue";
 	import useBonus from "~/modules/Listing/composables/useBonus";
 	import {useAuthUser} from "~/modules/Auth/composables/useAuthUser";
+	import PriceTable from "~/modules/Listing/components/ListingPage/PriceTable.vue";
 	
 	const {listing} = useListing();
 	const {openSetDateModal, chosenRoomId, listingBookingConfirmModal} = useListingBooking()
@@ -36,8 +37,7 @@
 		<div
 			class="rooms__wrapper"
 		>
-			<v-card
-				elevation="0"
+			<div
 				v-for="room of listing.rooms"
 				:class="['room mt-8', {
 					'no-photos': room.photos.length === 0
@@ -130,10 +130,15 @@
 				</div>
 				
 				
-			</v-card>
+			</div>
 		</div>
+<!--		<div style="max-width: 750px">-->
+<!--			<h2 class="rooms__title mt-8">Таблица цен</h2>-->
+<!--			<PriceTable :rooms="listing.rooms"/>-->
+<!--		</div>-->
 		
 	</div>
+	
 </template>
 
 <style scoped lang="scss">

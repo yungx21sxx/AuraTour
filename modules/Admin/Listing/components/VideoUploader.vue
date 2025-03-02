@@ -4,11 +4,10 @@ import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
 import 'video.js/dist/video-js.css';
 import type { H3Error } from "h3";
 import useListing from "~/modules/Listing/composables/useListing";
+import {VideoPlayer} from "@videojs-player/vue";
 
 const { listing, initListingData } = useListing();
 
-
-const { VideoPlayer } = defineAsyncComponent(() => import('@videojs-player/vue'));
 const loaded = ref(false);
 
 onMounted(() => {

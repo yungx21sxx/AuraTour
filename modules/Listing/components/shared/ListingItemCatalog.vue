@@ -295,7 +295,7 @@
 	.order {
 		display: flex;
 		flex-direction: column;
-		border-left: 1px solid $light-gray;
+		border-left: 1px solid #ececec;
 		padding-left: 16px;
 		
 		&__btn {
@@ -389,9 +389,9 @@
 			flex-direction: row !important;
 			justify-content: space-between;
 			align-items: center !important;
-			margin-left: 20px !important;
-			margin-right: 20px !important;
-			margin-bottom: 16px !important;
+			margin-left: 16px !important;
+			margin-right: 16px !important;
+			padding-bottom: 6px !important;
 			&__btn {
 				width: fit-content !important;
 				margin-bottom: 0 !important;

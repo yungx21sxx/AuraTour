@@ -8,11 +8,15 @@ const landLordModal = useLandLordModal()
 </script>
 
 <template>
-	<div class="pass">
+	<div class="pass" itemscope itemtype="https://schema.org/Service">
 		<div class="pass-content">
-			<h2>Сдать жилье на АураТур</h2>
-			<p>Мы возьмем на себя полное обслуживание, поиск гостей и гарантируем высокую заполняемость.</p>
-			<BtnSecondary @click="landLordModal = true">Подробнее</BtnSecondary>
+			<h2 itemprop="name">Сдать жилье на АураТур</h2>
+			<p itemprop="description">
+				Мы возьмем на себя полное обслуживание, поиск гостей и гарантируем высокую заполняемость.
+			</p>
+			<BtnSecondary @click="landLordModal = true" itemprop="provider">
+				Подробнее
+			</BtnSecondary>
 		</div>
 	</div>
 </template>

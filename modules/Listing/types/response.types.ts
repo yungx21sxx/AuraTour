@@ -89,14 +89,7 @@ export interface IListingOwner {
 }
 
 
-export interface IListingPricePeriod {
-    price: number,
-    startDay: number,
-    endDay: number,
 
-    startMonth: number,
-    endMonth: number
-}
 export interface IReviewResponse {
     id: number;
     rating: number;
@@ -120,6 +113,14 @@ export interface IVideoResponse {
     id: number;
 }
 
+export interface IListingPricePeriod {
+    price: number,
+    startDay: number,
+    endDay: number,
+
+    startMonth: number,
+    endMonth: number
+}
 
 export interface IRoomResponse {
     id: number,

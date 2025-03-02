@@ -67,9 +67,9 @@ class PhotoService {
 			}
 
 			if (resizeOptions) {
-				await image.resize(resizeOptions).webp({ quality: 85 }).toFile(filePathFull);
+				await image.resize(resizeOptions).webp({ quality: 80 }).toFile(filePathFull);
 			} else {
-				await image.webp({ quality: 85 }).toFile(filePathFull);
+				await image.webp({ quality: 80 }).toFile(filePathFull);
 			}
 			await image.resize({ width: 500, height: 500, fit: 'cover' }).webp({ quality: 75 }).toFile(filePathMin);
 

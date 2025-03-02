@@ -123,7 +123,7 @@
 <template>
 	<div class="listing-block">
 		
-		<div class="mb-5" v-if="access.fullAccess && !listing.validated">
+		<div class="mb-6" v-if="access.fullAccess && !listing.validated">
 			<h3 class="mb-4">Модерация объекта</h3>
 			<v-select
 				v-if="!listing.manager"
@@ -137,12 +137,12 @@
 			<v-alert v-else type="info" class="mb-4" text="Был запрос на редактирование объекта, опубликовать его?"></v-alert>
 			<BtnPrimary @click="validateListing">Опубликовать объект</BtnPrimary>
 		</div>
-		<div class="mb-5 menu" v-if="access.fullAccess">
+		<div class="mb-6 menu" v-if="access.fullAccess">
 			<v-btn color="green" :href="`/admin/edit-listing/${listing.id}`" :prepend-icon="mdiPencil">Редактировать объект</v-btn>
 			<v-btn color="blue" href="/admin/create-listing" :prepend-icon="mdiPlus" v-if="access.fullAccess">Создать объект</v-btn>
 			<v-btn color="red" @click="listingDeleteSnackBar = true"  :prepend-icon="mdiDeleteForeverOutline">Удалить объект</v-btn>
 		</div>
-		<div class="mb-5 menu" v-else>
+		<div class="mb-6 menu" v-else>
 			<v-btn color="green" :href="`/lk/edit-listing/${listing.id}`" :prepend-icon="mdiPencil">Редактировать объект</v-btn>
 			<v-btn color="red" @click="listingDeleteSnackBar = true"  :prepend-icon="mdiDeleteForeverOutline">Удалить объект</v-btn>
 		</div>
@@ -156,18 +156,18 @@
 				:value="tab.value"
 			>{{tab.name}}</v-tab>
 		</v-tabs>
-		<v-window v-model="currentTab">
-			<v-window-item :value="1">
+		<v-tabs-window v-model="currentTab">
+			<v-tabs-window-item :value="1">
 				<BookingsAdminList v-if="data" :bookings="data.bookings"/>
-			</v-window-item>
-			<v-window-item :value="2">
+			</v-tabs-window-item>
+			<v-tabs-window-item :value="2">
 				<v-textarea auto-grow label="Заметка" class="mt-4" v-model="noteText"/>
 				<BtnPrimary @click="createNote">Сохранить</BtnPrimary>
-			</v-window-item>
-			<v-window-item :value="3">
+			</v-tabs-window-item>
+			<v-tabs-window-item :value="3">
 				<ListingStatistic/>
-			</v-window-item>
-		</v-window>
+			</v-tabs-window-item>
+		</v-tabs-window>
 	
 	</div>
 	<v-snackbar

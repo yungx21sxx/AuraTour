@@ -11,27 +11,39 @@ const {listing} = defineProps<{
 </script>
 
 <template>
-	<NuxtLink class="listing" elevation="0" :href="`/listing/${listing.id}`">
-		<v-img class="listing__photo" cover :src="listing.photos[0]"/>
+	<NuxtLink class="listing" elevation="0" :href="`/listing/${listing.id}`"
+	          itemscope itemtype="https://schema.org/RealEstateListing">
+		
+		<!-- Фото -->
+		<v-img class="listing__photo" cover :src="listing.photos[0]" itemprop="image"/>
+		
 		<div class="listing__info">
-			<div class="listing__title">{{listing.title}}</div>
-			<v-chip variant="text" :prepend-icon="mdiMapMarker" class="listing__city" color="#818487">{{listing.city}}, {{listing.seaDistance}} м до моря</v-chip>
-<!--			<div class="listing__advs" v-if="!listing.isHotelType">-->
-<!--				<span class="listing__adv">{{getWordWithProperEnding( listing.places, 'место')}}</span>-->
-<!--				<span class="listing__adv">{{listing.area}} м<sup>2</sup></span>-->
-<!--				<span class="listing__adv listing__adv_last">{{getRoomString(listing.badCount)}}</span>-->
-<!--			</div>-->
+			<!-- Название объекта -->
+			<div class="listing__title" itemprop="name">{{ listing.title }}</div>
+			
+			<!-- Город и расстояние до моря -->
+			<v-chip
+				variant="text"
+				:prepend-icon="mdiMapMarker"
+				class="listing__city"
+				color="#818487"
+				itemprop="address"
+				itemscope itemtype="https://schema.org/PostalAddress">
+				<span itemprop="addressLocality">{{ listing.city }}</span>,
+				<span>{{ listing.seaDistance }} м до моря</span>
+			</v-chip>
+			
+			<!-- Цена -->
 			<div class="listing__price price">
-				<span class="price__value">
-					от {{listing.minPrice.toLocaleString('ru-RU')}} ₽
-				</span>
+            <span class="price__value" itemprop="price">
+                от {{ listing.minPrice.toLocaleString('ru-RU') }} ₽
+            </span>
+				<meta itemprop="priceCurrency" content="RUB"/>
 				<v-icon :icon="mdiCircleSmall" color="#818487"/>
-				<span class="price__desc">
-					в сутки
-				</span>
+				<span class="price__desc">в сутки</span>
 			</div>
 		</div>
-		
+	
 	</NuxtLink>
 </template>
 
@@ -91,7 +103,6 @@ const {listing} = defineProps<{
 	.price {
 		&__value {
 			font-weight: 600;
-			
 		}
 		
 		&__desc {
@@ -100,8 +111,6 @@ const {listing} = defineProps<{
 			line-height: 24px;
 			display: flex;
 			align-items: center;
-			
-			
 		}
 	}
 	

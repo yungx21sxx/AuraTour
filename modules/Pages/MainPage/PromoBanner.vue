@@ -13,21 +13,24 @@ const consultModal = ref(false)
 </script>
 
 <template>
-	<div class="wrapper promo-wrapper">
-		<section class="promo">
+	<div class="wrapper promo-wrapper" itemscope itemtype="https://schema.org/ItemList">
+		<meta itemprop="name" content="Акции и спецпредложения"/>
+		
+		<section class="promo" itemscope itemtype="https://schema.org/Offer">
 			<ConsultingIcon/>
-			<h3>Персональный подбор жилья</h3>
-			<p>Расскажем о всех доступных предложених и подберем самое лучшее.</p>
+			<h3 itemprop="name">Персональный подбор жилья</h3>
+			<p itemprop="description">Расскажем о всех доступных предложениях и подберем самое лучшее.</p>
 			<button @click="consultModal = true">
 				<span>Оставить заявку</span>
 				<v-icon :icon="mdiChevronRight"/>
 			</button>
 		</section>
-		<section class="promo">
+		
+		<section class="promo" itemscope itemtype="https://schema.org/Offer">
 			<TransferIcon/>
-			<h3>Бесплатная экскурсия</h3>
-			<p>При бронирование жилья на срок от 10 дней, экскурсия в подарок</p>
-			<NuxtLink style="color: white" to="/search" external>
+			<h3 itemprop="name">Бесплатная экскурсия</h3>
+			<p itemprop="description">При бронировании жилья на срок от 10 дней, экскурсия в подарок.</p>
+			<NuxtLink itemprop="url" style="color: white" to="/search" external>
 				<span>Смотреть жилье</span>
 				<v-icon :icon="mdiChevronRight"/>
 			</NuxtLink>

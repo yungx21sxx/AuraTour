@@ -30,7 +30,7 @@ export default defineNuxtConfig({
     'nuxt-icons',
     '@nuxt/devtools',
     'vue-yandex-maps/nuxt',
-    'yandex-metrika-module-nuxt3',
+    // 'yandex-metrika-module-nuxt3',
     '@nuxtjs/google-fonts',
     '@nuxt/image',
     '@nuxtjs/seo',
@@ -59,24 +59,20 @@ export default defineNuxtConfig({
           manualChunks(id) {
             if (id.includes('node_modules')) {
               if (id.includes('vuetify')) return 'vuetify'
-              // if (id.includes('video.js')) return 'videojs'
-              // if (id.includes('@videojs-player/vue')) return 'videojs-player-vue'
-              // if (id.includes('apexcharts')) return 'apexcharts'
-              // if (id.includes('vue3-apexcharts')) return 'vue3-apexcharts'
+              if (id.includes('@videojs-player/vue') || id.includes('video.js')) return 'video'
               if (id.includes('v-calendar') || id.includes('@popperjs/core')) return 'calendar'
               if (id.includes('libphonenumber-js')) return 'phone-utils'
-              // if (id.includes('@popperjs/core')) return 'popperjs-core'
               if (id.includes('vue-draggable-next')) return 'vue-draggable-next'
               if (id.includes('swiper')) return 'swiper'
-              // if (id.includes('vue-yandex-maps')) return 'vue-yandex-maps'
+              if (id.includes('@vue')) return 'vue'
             }
           }
         }
       }
     },
-    // optimizeDeps: {
-    //   include: ['vuetify', 'libphonenumber-js', '@videojs-player/vue', 'apexcharts', 'vue3-apexcharts', 'v-calendar', 'video.js', 'zod', '@popperjs/core', 'vue-draggable-next', 'vue-yandex-maps']
-    // },
+    optimizeDeps: {
+      include: ['vuetify', 'libphonenumber-js', '@videojs-player/vue', 'apexcharts', 'vue3-apexcharts', 'v-calendar', 'video.js', '@popperjs/core', 'vue-draggable-next', 'vue-yandex-maps']
+    },
     css: {
       preprocessorOptions: {
         scss: {
@@ -85,15 +81,16 @@ export default defineNuxtConfig({
       }
     },
   },
-  yandexMetrika: {
-    id: '96929944',
-    clickmap:true,
-    trackLinks:true,
-    accurateTrackBounce:true,
-    webvisor:true,
-    consoleLog: false,
-    defer: true,
-  },
+  // yandexMetrika: {
+  //   id: '96929944',
+  //   clickmap:true,
+  //   trackLinks:true,
+  //   accurateTrackBounce:true,
+  //   webvisor:true,
+  //   consoleLog: false,
+  //   defer: true,
+  //   async: true
+  // },
   site: {
     url: 'https://aura-tour-abkhazia.ru/',
   },
@@ -166,8 +163,8 @@ export default defineNuxtConfig({
       icons: {
         defaultSet: 'mdi-svg'
       },
-      labComponents: true,
-      directives: true,
+      labComponents: ['VNumberInput', 'VDateInput'],
+      directives: ['Ripple'],
     },
     moduleOptions: {
       importComposables: false,

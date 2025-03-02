@@ -2,10 +2,9 @@
 
 	import 'video.js/dist/video-js.css';
 	import useListing from "~/modules/Listing/composables/useListing";
+	import {VideoPlayer} from "@videojs-player/vue";
 	
 	const {listing} = useListing();
-	
-	const { VideoPlayer } = defineAsyncComponent(() => import('@videojs-player/vue'));
 	const loaded = ref(false);
 	
 	onMounted(() => {
@@ -33,7 +32,6 @@
 					<video-player
 						aspect-ratio="16:9"
 						:src="video.url"
-						v-if="loaded"
 						preload="auto"
 						class="player"
 						controls

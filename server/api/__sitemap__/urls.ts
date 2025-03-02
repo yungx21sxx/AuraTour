@@ -34,7 +34,7 @@ export default defineSitemapEventHandler(async () => {
         } satisfies SitemapUrl)),
         ...listings.map(listing => ({
             loc: `/listing/${listing.id}`,
-            priority: 0.6,
+            priority: 0.5,
             lastmod: listing.createdAt,
             changefreq:  'monthly',
         } satisfies SitemapUrl)),

@@ -50,7 +50,7 @@ useHead({
 			children: JSON.stringify({
 				"@context": "https://schema.org",
 				"@type": "WebSite",
-				"name": "Аура Тур",
+				"name": "Аура Тур Абхазия",
 				"url": "https://aura-tour-abkhazia.ru",
 				"potentialAction": {
 					"@type": "SearchAction",

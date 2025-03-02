@@ -22,47 +22,53 @@
 </script>
 
 <template>
-	<div class="popular wrapper">
-		<h1 class="popular__title">Популярные направления</h1>
+	<div class="popular wrapper" itemscope itemtype="https://schema.org/ItemList">
+		<h2 class="popular__title" itemprop="name">Популярные направления</h2>
+		
 		<div class="popular__cities_desktop">
 			<v-card
 				v-for="city of popularCitiesWithPhoto"
 				class="city"
 				:href="`/search/city/${city.slug}`"
+				itemscope
+				itemtype="https://schema.org/City"
 			>
+				<meta itemprop="name" :content="city.cityName" />
+				<meta itemprop="url" :content="`/search/city/${city.slug}`" />
 				<v-img
 					:src="city.photo"
 					cover
 					gradient="to bottom, rgba(0,0,0,0), rgba(0,0,0,.5)"
 					height="200px"
 				>
-					<v-chip color="#7059FF" variant="flat"  class="city__count">от {{city.minPrice}} ₽</v-chip>
+					<v-chip color="#7059FF" variant="flat" class="city__count">
+						<span itemprop="price">от {{ city.minPrice }} ₽</span>
+					</v-chip>
 					<div class="text-white city__content">
 						<div class="city__info">
-							<div class="city__title">{{city.cityName}}</div>
-							<v-chip variant="tonal" color="#FAAC37"  :append-icon="mdiArrowRight">Смотреть</v-chip>
+							<div class="city__title">{{ city.cityName }}</div>
+							<v-chip variant="tonal" color="#FAAC37" :append-icon="mdiArrowRight">
+								Смотреть
+							</v-chip>
 						</div>
 					</div>
-					
 				</v-img>
 			</v-card>
 		</div>
 		
 		<div class="popular__cities_mobile">
-			<div
-				v-for="city of popularCitiesWithPhoto"
-				class="city"
-			>
+			<div v-for="city of popularCitiesWithPhoto" class="city">
 				<v-card :href="`/search/city/${city.slug}`" class="city-mobile-image">
 					<v-img aspect-ratio="1" class="city__img" cover :src="city.photo">
-						<v-chip color="#7059FF" variant="flat"  class="city__count">от {{city.minPrice}} ₽</v-chip>
+						<v-chip color="#7059FF" variant="flat" class="city__count">
+							<span itemprop="price">от {{ city.minPrice }} ₽</span>
+						</v-chip>
 					</v-img>
 				</v-card>
 				
-				<h4 class="city__title">{{city.cityName}}</h4>
+				<h4 class="city__title">{{ city.cityName }}</h4>
 			</div>
 		</div>
-		
 	</div>
 </template>
 
