@@ -8,6 +8,32 @@
 	
 	const {listing} = useListing()
 	
+	const months = [
+		"января", "февраля", "марта", "апреля", "мая", "июня",
+		"июля", "августа", "сентября", "октября", "ноября", "декабря"
+	];
+	
+	const formattedPricePeriods = computed(() => {
+		if (listing.value.isHotelType && listing?.pricePeriods?.length === 0)
+			return []
+		
+		const { pricePeriods } = listing.value;
+		return pricePeriods
+			.map(({ price, startDay, endDay, startMonth, endMonth }) => {
+				const start = `${startDay} ${months[startMonth - 1]}`;
+				const end = `${endDay} ${months[endMonth - 1]}`;
+				const range = startMonth === endMonth ? `${start} - ${end}` : `${start} - ${end}`;
+				return { price, range };
+			})
+			.sort((a, b) => {
+				// Сортируем сначала по стартовому месяцу, затем по стартовому дню
+				const aStartMonth = pricePeriods.find(p => p.price === a.price)?.startMonth || 0;
+				const bStartMonth = pricePeriods.find(p => p.price === b.price)?.startMonth || 0;
+				const aStartDay = pricePeriods.find(p => p.price === a.price)?.startDay || 0;
+				const bStartDay = pricePeriods.find(p => p.price === b.price)?.startDay || 0;
+				return aStartMonth - bStartMonth || aStartDay - bStartDay;
+			});
+	});
 
 </script>
 
@@ -79,6 +105,29 @@
 						<p style="white-space: pre-wrap;">{{listing.foodDescription}}</p>
 					</template>
 				</v-alert>
+			</div>
+			<div class="mt-4" v-if="!listing.isHotelType && listing?.pricePeriods?.length > 0">
+				<h3 class="info__subtitle">Все цены</h3>
+				<v-table>
+					<thead>
+					<tr>
+						<th class="text-left">
+							Дата
+						</th>
+						<th class="text-left">
+							Цена
+						</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr
+						v-for="period of formattedPricePeriods"
+					>
+						<td>{{ period.range }}</td>
+						<td>{{ period.price.toLocaleString('ru-RU') }} ₽</td>
+					</tr>
+					</tbody>
+				</v-table>
 			</div>
 		</div>
 	

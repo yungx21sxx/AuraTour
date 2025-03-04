@@ -224,15 +224,11 @@
 				<ListingAdminPanel v-if="shouldLoadAdminPanel"/>
 			</client-only>
 			<ListingHeader/>
-			<GalleryDesktopPreviews v-if="!isMobileOrTablet && listing.photos.length > 3"/>
+			<GalleryMainSlider v-if="listing.photos.length > 0" id="gallery" />
 		</div>
 		
 		<main class="listing wrapper">
 			<div class="listing__content">
-				<GalleryMainSlider id="gallery" v-if="isMobileOrTablet || listing.photos.length < 3"/>
-				<div v-if="isMobileOrTablet" style="text-align: center; margin-bottom: 24px;">
-					<BtnPrimary  width="300px" :prepend-icon="mdiImage" @click="galleyThumbsModalIsOpen = true">Показать все фото</BtnPrimary>
-				</div>
 				<client-only>
 					<VideoUploader v-if="access.fullAccess || access.isListingOwner"/>
 					<ListingVideoPlayer v-else-if="listing.videos.length > 0"/>

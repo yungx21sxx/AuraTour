@@ -32,7 +32,7 @@ const {
 } = useBooking();
 
 const { getRedirectPath, debouncedRefreshListingList , createBookingDTO} = useCatalog();
-const { parseQueryParams, filtersModalIsOpen, refreshFilters, resetFilters, fetchBookingFilters, chosenFilters, filtersInitData } = useFilters();
+const { parseQueryParams, filtersModalIsOpen, fetchBookingFilters, chosenFilters, filtersInitData } = useFilters();
 const {chosenCity} = useSearch();
 
 const route = useRoute()

@@ -218,7 +218,8 @@
 	<v-card
 		elevation="0"
 		v-for="room of listingFormData.rooms"
-		:class="['room mt-8 ml-4 mr-4', {
+		style="margin-left: 16px; margin-right: 16px;"
+		:class="['room mt-8 ml-4', {
 			'no-photos': room.photos.length === 0
 		}]"
 		max-width="900px"

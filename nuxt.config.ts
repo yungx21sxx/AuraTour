@@ -160,6 +160,15 @@ export default defineNuxtConfig({
   },
   vuetify: {
     vuetifyOptions: {
+      defaults: {
+        VCard: {
+          elevation: 0,
+          variant: 'flat'
+        },
+        VBtn: {
+          elevation: 0,
+        }
+      },
       icons: {
         defaultSet: 'mdi-svg'
       },

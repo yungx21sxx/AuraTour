@@ -2,6 +2,7 @@
 	<v-dialog
 		fullscreen
 		v-model="currentPhoto.modal"
+		@close="closeModal"
 	>
 		
 		<v-card  border="0" style="height: 80svh;" color="black">
@@ -19,11 +20,11 @@
 						:pagination="{
 	                        type: 'fraction',
 	                    }"
+						:lazy="true"
 						@swiper="getSwiperInstance"
 						:thumbs="{ swiper: thumbsSwiper }"
 						:modules="[Zoom, Pagination, Navigation, Scrollbar, Thumbs, FreeMode]"
 						class="img-preview"
-						@slide-change="onSlideChange"
 					>
 						<swiper-slide
 							v-for="photo of photos"
@@ -31,6 +32,7 @@
 						>
 							<div class="swiper-zoom-container">
 								<img loading="lazy" :alt="listing.title"  class="img-preview__img" :src="photo.urlFull" />
+								<div class="swiper-lazy-preloader"></div>
 							</div>
 						</swiper-slide>
 					</swiper>
@@ -74,52 +76,25 @@ const {currentPhoto} = useGallery()
 const {listing} = useListing();
 
 
-const swiperController = ref();
-const thumbsSwiper = ref();
-//@ts-ignore
-const getSwiperInstance = (swiper) => {
+
+const swiperController = ref<Swiper>();
+const thumbsSwiper = ref<Swiper>();
+
+const getSwiperInstance = (swiper: Swiper) => {
 	swiperController.value = swiper;
 }
-//
-// onMounted(() => {
-// 	const swiper = useSwiper();
-// 	//@ts-ignore
-// 	swiper.on('zoomChange', (_,scale) => {
-// 		if (scale > 1) {
-// 			swiper.allowSlideNext = false;
-// 			swiper.allowSlidePrev = false;
-// 		} else {
-// 			swiper.allowSlideNext = true;
-// 			swiper.allowSlidePrev = true;
-// 		}
-// 	})
-// })
-
-const onZoomChange =  (swiper, scale) => {
-	if (scale > 1) {
-		swiper.allowSlideNext = false;
-		swiper.allowSlidePrev = false;
-	} else {
-		swiper.allowSlideNext = true;
-		swiper.allowSlidePrev = true;
-	}
-}
 
 
-//@ts-ignore
-const setThumbsSwiper = (swiper) => {
+const setThumbsSwiper = (swiper: Swiper) => {
 	thumbsSwiper.value = swiper;
 };
 
 const closeModal = () => {
+	if (!currentPhoto.value.room) {
+		currentPhoto.value.index = swiperController.value.activeIndex
+	}
 	currentPhoto.value.room = null;
 	currentPhoto.value.modal = false;
-}
-
-//@ts-ignore
-const onSlideChange = (swiper) => {
-	if (!currentPhoto.value.room)
-		currentPhoto.value.index = swiper.activeIndex
 }
 
 
@@ -133,8 +108,10 @@ const photos = computed(() => {
 //Срабаьывает в момент открытия и закрытия модального окна
 watch(currentPhoto, () => {
 	setTimeout(() => {
-		const currentPhotoIndex = currentPhoto.value.room ? currentPhoto.value.room.photoIndex : currentPhoto.value.index;
-		swiperController.value.slideTo(currentPhotoIndex, 0)
+		if (swiperController.value) {
+			const currentPhotoIndex = currentPhoto.value.room ? currentPhoto.value.room.photoIndex : currentPhoto.value.index;
+			swiperController.value.slideTo(currentPhotoIndex, 0)
+		}
 	},0)
 }, {
 	deep: true
@@ -189,12 +166,12 @@ watch(currentPhoto, () => {
 	width: 90px;
 	height: 65px;
 }
-.img-preview__thumbs__img {
+.thumbs__img {
 	border-radius: 10px;
 	border: 2px solid rgba(0,0,0,0);
-	width: 85px;
-	height: 60px;
-	//object-fit: cover;
+	width: 90px;
+	height: 62px;
+	object-fit: cover;
 }
 
 

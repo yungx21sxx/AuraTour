@@ -68,6 +68,7 @@ if (initialError.value) {
 	console.error('Ошибка при загрузке данных на сервере:', initialError.value);
 }
 
+
 // Инициализируем данные
 if (initialData.value) {
 	listingsList.value.listings = initialData.value.listings;
@@ -170,14 +171,13 @@ const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog()
 				:key="listing.id"
 			/>
 		</div>
-	
-		<div v-if="hasMore" class="loading-indicator">
+		<div v-if="hasMore && !isFiltering" class="loading-indicator">
 			<v-progress-circular
 				color="#7059FF"
 				indeterminate
 			></v-progress-circular>
 		</div>
-		<div v-if="hasMore && !isFiltering" ref="observer" class="observer">
+		<div v-if="hasMore && !isFiltering && !isLoading" ref="observer" class="observer">
 		</div>
 		<!-- Элемент-наблюдатель для Intersection Observer -->
 	

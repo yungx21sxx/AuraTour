@@ -94,13 +94,13 @@ export default () => {
 
 		const seoPage = listingTypeSEOPage.value || cityListingTypeSEOPage.value;
 
-		if (seoPage) {
-			//@ts-ignore
-			navigateOptions.external = true;
-		} else {
-			isFiltering.value = true;
-		}
-
+		// if (seoPage) {
+		// 	//@ts-ignore
+		// 	navigateOptions.external = true;
+		// } else {
+		// 	isFiltering.value = true;
+		// }
+		isFiltering.value = true;
 
 		await navigateTo(
 			{
@@ -113,13 +113,13 @@ export default () => {
 			navigateOptions
 		);
 
-		if (!seoPage) {
-			debouncedRefreshListingList();
-			const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog()
-			if (mapCatalogIsOpen.value || mapModalIsOpen.value) {
-				await refreshNuxtData('map-listings-list')
-			}
+
+		debouncedRefreshListingList();
+		const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog()
+		if (mapCatalogIsOpen.value || mapModalIsOpen.value) {
+			await refreshNuxtData('map-listings-list')
 		}
+
 	}
 
 	function resetFilters() {
