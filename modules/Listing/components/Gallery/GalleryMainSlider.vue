@@ -1,6 +1,6 @@
 <template>
 	<swiper
-		:slidesPerView="'auto'"
+		slidesPerView="auto"
 		:navigation="true"
 		:scrollbar="{
 	        enabled: true,
@@ -8,7 +8,10 @@
 	        draggable: true,
 	        dragSize: isMobile ? 40 : 'auto'
 	    }"
-		:free-mode="true"
+		:mousewheel="{ forceToAxis: true }"
+		:free-mode="{
+			enabled: !isMobile
+		}"
 		:modules="modules"
 		@swiper="getSwiperInstance"
 		class="swiper-multiply"
@@ -107,6 +110,12 @@
 	}
 }
 
+.swiper-multiply__img {
+	will-change: transform;
+}
+.swiper-container {
+	transform: none !important;
+}
 
 .swiper-horizontal > .swiper-scrollbar, .swiper-scrollbar.swiper-scrollbar-horizontal {
 	height: 10px !important;
@@ -160,10 +169,10 @@
 	
 	@media screen and (max-width: 500px) {
 		height: 320px;
-		max-width: calc(100vw - 32px);
+		width: calc(100vw - 32px);
 		&__img {
 			//height: 300px !important;
-			max-width: calc(100vw - 32px);
+			width: calc(100vw - 32px);
 			object-fit: cover !important;
 		}
 	}
