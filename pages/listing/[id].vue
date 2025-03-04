@@ -224,7 +224,9 @@
 				<ListingAdminPanel v-if="shouldLoadAdminPanel"/>
 			</client-only>
 			<ListingHeader/>
-			<GalleryMainSlider v-if="listing.photos.length > 0" id="gallery" />
+			<GalleryDesktopPreviews v-if="!isMobileOrTablet && listing.photos.length > 0" id="gallery"/>
+			<GalleryMainSlider v-else-if="listing.photos.length > 0 && isMobileOrTablet" id="gallery" />
+			
 		</div>
 		
 		<main class="listing wrapper">
