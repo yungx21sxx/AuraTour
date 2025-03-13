@@ -39,6 +39,7 @@
     "vue-yandex-maps": "^2.1.6",
     "vue3-apexcharts": "^1.8.0",
     "vuetify-nuxt-module": "0.17.0",
+    "yandex-metrika-module-nuxt3": "^1.5.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {

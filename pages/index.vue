@@ -161,7 +161,6 @@ useHead({
 	</div>
 	<div class="wrapper">
 		<h2 class="types__title">Лучшие предложения</h2>
-		
 		<HousingTypes :housing-types="housingTypes" v-if="loaded"/>
 		<HousingTypesLoader v-else/>
 		

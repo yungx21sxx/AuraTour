@@ -79,7 +79,7 @@ const onSaveHandler = async () => {
 			<template #text>
 				<div class="details">
 					<div class="details__item" v-if="!booking.user">
-						<strong>Пользователь:</strong> {{ booking.userName }} {{ booking.userName }}
+						<strong>Пользователь:</strong> {{ booking.userName }} {{ booking?.userSurname }}
 					</div>
 					<div class="details__item">
 						<strong>Телефон:</strong> {{ booking.userPhone }}

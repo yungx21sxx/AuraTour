@@ -26,7 +26,7 @@
 				class="swiper-multiply__img swiper-multiply__img--fixed"
 				:src="photo.urlFull"
 				:lazy-src="photo.urlMin"
-				alt="All Star Detailing"
+				:alt="listing.title + '| Аура Тур'"
 			>
 				<template v-slot:placeholder>
 					<div style="display: flex; align-items: center; justify-content: center; height: 100%;">
@@ -127,7 +127,7 @@ watch(currentPhoto, () => {
 }
 .swiper-multiply {
 	height: 450px;
-	
+	border-radius: 10px;
 	.swiper-scrollbar-drag {
 		background: rgba(white, .9) !important;
 		height: 10px !important;
@@ -151,7 +151,7 @@ watch(currentPhoto, () => {
 		}
 		
 		&:not(nth-last-child) {
-			margin-right: 20px;
+			margin-right: 16px;
 		}
 	}
 	

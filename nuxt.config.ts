@@ -30,7 +30,7 @@ export default defineNuxtConfig({
     'nuxt-icons',
     '@nuxt/devtools',
     'vue-yandex-maps/nuxt',
-    // 'yandex-metrika-module-nuxt3',
+    'yandex-metrika-module-nuxt3',
     '@nuxtjs/google-fonts',
     '@nuxt/image',
     '@nuxtjs/seo',
@@ -52,7 +52,14 @@ export default defineNuxtConfig({
   },
 
   vite: {
-
+    server: {
+      watch: {
+        usePolling: true, // Следит за изменениями даже если вкладка не активна
+      },
+      hmr: {
+        overlay: false, // Чтобы не показывал ошибки поверх страницы
+      },
+    },
     build: {
       rollupOptions: {
         output: {
@@ -81,16 +88,16 @@ export default defineNuxtConfig({
       }
     },
   },
-  // yandexMetrika: {
-  //   id: '96929944',
-  //   clickmap:true,
-  //   trackLinks:true,
-  //   accurateTrackBounce:true,
-  //   webvisor:true,
-  //   consoleLog: false,
-  //   defer: true,
-  //   async: true
-  // },
+  yandexMetrika: {
+    id: '96929944',
+    clickmap:true,
+    trackLinks:true,
+    accurateTrackBounce:true,
+    webvisor:true,
+    consoleLog: false,
+    defer: true,
+    async: true
+  },
   site: {
     url: 'https://aura-tour-abkhazia.ru/',
   },

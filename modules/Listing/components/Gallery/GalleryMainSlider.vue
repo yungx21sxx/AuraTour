@@ -13,7 +13,7 @@
                  type: 'fraction',
              }"
 			@swiper="getSwiperInstance"
-			:modules="[Pagination, Navigation, Scrollbar, Thumbs, FreeMode]"
+			:modules="[Pagination, Navigation, Scrollbar, Thumbs]"
 			class="main-slider"
 			:lazy="true"
 		>
@@ -22,7 +22,14 @@
 				class="main-slider__slide"
 				@click="openGalleryModal(photo.id)"
 			>
-				<img loading="lazy" style="object-fit: cover" :alt="listing.title"  class="main-slider__img" :src="photo.urlFull" >
+				<img
+					loading="lazy"
+					style="object-fit: cover"
+					:alt="listing.title + ' | Аура Тур'"
+					class="main-slider__img"
+					:src="photo.urlFull"
+					@load="(e) => e.target.classList.add('loaded')"
+				>
 				<div class="swiper-lazy-preloader"></div>
 			</swiper-slide>
 		</swiper>
@@ -114,13 +121,7 @@ watch(currentPhoto, () => {
 .main-slider {
 	width: 100%;
 	height: 450px;
-	@media screen and (max-width: 500px) {
-		height: 300px;
-		
-		&__img {
-			height: 300px !important;
-		}
-	}
+	
 	
 	&__slide {
 		width: 100%;
@@ -133,8 +134,22 @@ watch(currentPhoto, () => {
 		border-radius: 10px;
 		object-fit: cover;
 		object-position: center;
+		//opacity: 0;
+		transition: opacity 0.5s ease-in-out;
+		
+		&.loaded {
+			opacity: 1;
+		}
 		@media screen  and (max-width: 630px){
 			border-radius: 0;
+		}
+	}
+	
+	@media screen and (max-width: 500px) {
+		height: 300px;
+		
+		&__img {
+			height: 300px !important;
 		}
 	}
 	

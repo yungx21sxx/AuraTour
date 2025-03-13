@@ -23,7 +23,7 @@
 						:lazy="true"
 						@swiper="getSwiperInstance"
 						:thumbs="{ swiper: thumbsSwiper }"
-						:modules="[Zoom, Pagination, Navigation, Scrollbar, Thumbs, FreeMode]"
+						:modules="[Zoom, Pagination, Navigation, Scrollbar, Thumbs]"
 						class="img-preview"
 					>
 						<swiper-slide
@@ -31,7 +31,13 @@
 							class="img-preview__slide"
 						>
 							<div class="swiper-zoom-container">
-								<img loading="lazy" :alt="listing.title"  class="img-preview__img" :src="photo.urlFull" />
+								<img
+									loading="lazy"
+									:alt="listing.title"
+									class="img-preview__img"
+									:src="photo.urlFull"
+									@load="(e) => e.target.classList.add('loaded')"
+								/>
 								<div class="swiper-lazy-preloader"></div>
 							</div>
 						</swiper-slide>
@@ -146,6 +152,15 @@ watch(currentPhoto, () => {
 	}
 	
 	
+}
+
+.img-preview__img {
+	opacity: 0;
+	transition: opacity 0.5s ease-in-out;
+}
+
+.img-preview__img.loaded {
+	opacity: 1;
 }
 .swiper-slide-thumb-active .thumbs__img {
 	border: 2px solid $accent-blue;

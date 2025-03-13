@@ -10,7 +10,7 @@ import {ref} from "vue";
 import {parsePhone} from "~/modules/Common/Utils/phone.utils";
 import useTelegram from "~/composables/UseTelegram";
 const snackbar = ref(false)
-const formData = reactive({
+const formData = ref({
 	name: null,
 	phone: null,
 	question: null
@@ -34,12 +34,12 @@ const submit = async () => {
 	isLoading.value = true;
 	
 	try {
-		const parsedPhone = await parsePhone(formData.phone);
+		const parsedPhone = await parsePhone(formData.value.phone);
 		const {fetchForCallData} = useTelegram()
 		
 		if (!parsedPhone) return;
-		
-		await fetchForCallData(parsedPhone, formData.name, formData.question);
+
+		await fetchForCallData(parsedPhone, formData.value.name, formData.value.question);
 		snackbar.value = true;
 	} catch (e) {
 		alert('Произошла ошибка при отправке!');
