@@ -71,7 +71,7 @@ class PhotoService {
 			} else {
 				await image.webp({ quality: 80 }).toFile(filePathFull);
 			}
-			await image.resize({ width: 500, height: 500, fit: 'cover' }).webp({ quality: 75 }).toFile(filePathMin);
+			await image.resize({ width: 500, height: 500, fit: 'cover' }).webp({ quality: 70 }).toFile(filePathMin);
 
 			const photo = await prisma.photo.create({
 				data: {

@@ -74,7 +74,11 @@ export default () => {
 			isFiltering,
 			getRedirectPath,
 			filtersDTO,
-			debouncedRefreshListingList
+			debouncedRefreshListingList,
+			fetchCatalog,
+			refreshListingList,
+			listingsList,
+			currentPage
 		} = useCatalog();
 		const {
 			getBookingQueryLinkParameters
@@ -100,7 +104,7 @@ export default () => {
 		// } else {
 		// 	isFiltering.value = true;
 		// }
-		isFiltering.value = true;
+
 
 		await navigateTo(
 			{
@@ -113,8 +117,17 @@ export default () => {
 			navigateOptions
 		);
 
-
-		debouncedRefreshListingList();
+		refreshListingList();
+		try {
+			const {count, listings} = await fetchCatalog();
+			listingsList.value.listings = listings;
+			listingsList.value.count = count;
+			currentPage.value = 2;
+		} catch (error) {
+			console.error('Ошибка при загрузке данных:', error);
+		} finally {
+			isFiltering.value = false;
+		}
 		const {mapCatalogIsOpen, mapModalIsOpen} = useMapCatalog()
 		if (mapCatalogIsOpen.value || mapModalIsOpen.value) {
 			await refreshNuxtData('map-listings-list')

@@ -34,12 +34,8 @@ const submit = async () => {
 	isLoading.value = true;
 	
 	try {
-		const parsedPhone = await parsePhone(formData.value.phone);
 		const {fetchForCallData} = useTelegram()
-		
-		if (!parsedPhone) return;
-
-		await fetchForCallData(parsedPhone, formData.value.name, formData.value.question);
+		await fetchForCallData(formData.value.phone, formData.value.name, formData.value.question);
 		snackbar.value = true;
 	} catch (e) {
 		alert('Произошла ошибка при отправке!');
@@ -68,62 +64,65 @@ const submit = async () => {
 			</v-btn>
 		</template>
 	</v-snackbar>
+
 	<div class="grid wrapper">
-		<div class="contacts">
-			<h2>Служба бронирования</h2>
-			<p>Расскажем о всех доступных предложених и подберем самое лучшее.</p>
-			<div class="contacts__item">
-				<PhoneIcon class="contacts__icon"/>
-				<div class="contacts__info">
-					<div class="contacts__title">
-						Телефон
-					</div>
-					<NuxtLink external target="_blank" to="tel://+79409976702" class="contacts__text">
-						+7 (940) 997-67-02
-					</NuxtLink>
-					<div class="contacts__chips">
-						<NuxtLink class="contact__link" target="_blank" to="https://wa.me/79409976702" external>
-							<WhatsIcon/>
-							<span>WhatsApp</span>
+			<div class="contacts">
+				<h2>Служба бронирования</h2>
+				<p>Расскажем о всех доступных предложених и подберем самое лучшее.</p>
+				<div class="contacts__item">
+					<PhoneIcon class="contacts__icon"/>
+					<div class="contacts__info">
+						<div class="contacts__title">
+							Телефон
+						</div>
+						<NuxtLink external target="_blank" to="tel://+79409976702" class="contacts__text">
+							+7 (940) 997-67-02
 						</NuxtLink>
-						<NuxtLink class="contact__link" target="_blank" to="https://t.me/Laura555auratur" external>
-							<TelegaIcon/>
-							<span>Telegram</span>
+						<div class="contacts__chips">
+							<NuxtLink class="contact__link" target="_blank" to="https://wa.me/79409976702" external>
+								<WhatsIcon/>
+								<span>WhatsApp</span>
+							</NuxtLink>
+							<NuxtLink class="contact__link" target="_blank" to="https://t.me/Laura555auratur" external>
+								<TelegaIcon/>
+								<span>Telegram</span>
+							</NuxtLink>
+						</div>
+					</div>
+				</div>
+				<div class="contacts__item">
+					<AddressIcon class="contacts__icon"/>
+					<div class="contacts__info">
+						<div class="contacts__title">
+							Адрес
+						</div>
+						<div class="contacts__text">
+							г. Гудаута, Очамчирская 89
+						</div>
+					</div>
+				</div>
+				<div class="contacts__item">
+					<MailIcon class="contacts__icon"/>
+					<div class="contacts__info">
+						<div class="contacts__title">
+							Почта
+						</div>
+						<NuxtLink to="mailto:lana.2015lana@mail.ru" external target="_blank" class="contacts__text">
+							lana.2015lana@mail.ru
 						</NuxtLink>
 					</div>
 				</div>
 			</div>
-			<div class="contacts__item">
-				<AddressIcon class="contacts__icon"/>
-				<div class="contacts__info">
-					<div class="contacts__title">
-						Адрес
-					</div>
-					<div class="contacts__text">
-						г. Гудаута, Очамчирская 89
-					</div>
-				</div>
-			</div>
-			<div class="contacts__item">
-				<MailIcon class="contacts__icon"/>
-				<div class="contacts__info">
-					<div class="contacts__title">
-						Почта
-					</div>
-					<NuxtLink to="mailto:lana.2015lana@mail.ru" external target="_blank" class="contacts__text">
-						lana.2015lana@mail.ru
-					</NuxtLink>
-				</div>
-			</div>
+			<v-form class="form" ref="formRef" @submit.prevent="submit" >
+				<h3>Оставить заявку</h3>
+				<v-text-field :rules="rule" variant="outlined" label="Ваше имя" v-model="formData.name"/>
+				<v-text-field label="Номер телефона" :rules="rule" variant="outlined" v-model="formData.phone"/>
+				<v-textarea label="Пожелания (необязательно)" v-model="formData.question" variant="outlined"/>
+				<BtnPrimary :loading="isLoading" type="submit" block>Отправить заявку</BtnPrimary>
+			</v-form>
 		</div>
-		<v-form class="form" ref="formRef" @submit.prevent="submit" >
-			<h3>Оставить заявку</h3>
-			<v-text-field :rules="rule" variant="outlined" label="Ваше имя" v-model="formData.name"/>
-			<PhoneInput :rules="rule" variant="outlined" v-model="formData.phone"/>
-			<v-textarea label="Пожелания (необязательно)" v-model="formData.question" variant="outlined"/>
-			<BtnPrimary :loading="isLoading" type="submit" block>Отправить заявку</BtnPrimary>
-		</v-form>
-	</div>
+	
+	
 </template>
 
 <style scoped lang="scss">
@@ -133,6 +132,8 @@ const submit = async () => {
 		grid-template-columns: 1fr 1fr;
 		gap: 40px;
 		padding-bottom: 42px;
+		padding-top: 42px;
+		margin-bottom: 42px;
 		
 		@media screen and (max-width: 600px) {
 			grid-template-columns: 1fr;

@@ -46,7 +46,7 @@
 	<header class="header listing-block">
 		<div class="header__top mb-2">
 			<v-breadcrumbs :items="breadcrumbs"  style="margin-left: -2px;"></v-breadcrumbs>
-			<span v-if="!isMobile">Объект №{{listing.id}}</span>
+			<span v-show="!isMobile">Объект №{{listing.id}}</span>
 		</div>
 		
 		<h1 class="header__title mb-4">{{listing.title}}</h1>

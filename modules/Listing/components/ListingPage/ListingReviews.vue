@@ -241,6 +241,7 @@
 		&__rating {
 			display: flex;
 			flex-direction: column;
+			flex-wrap: wrap;
 			gap: 8px;
 			span {
 				font-size: 14px;
@@ -286,6 +287,8 @@
 		.rating, .header {
 			display: flex;
 			justify-content: space-between;
+			flex-wrap: wrap;
+			gap: 10px;
 			align-items: center;
 		}
 		.reviews-info {

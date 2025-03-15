@@ -104,11 +104,11 @@ const scrollBottom = () => window.scrollBy(0, 140);
 				</v-card>
 			</div>
 			<div class="search__chips">
-				<div style="display: flex; gap: 16px; margin: 24px 0 32px 0;">
-					<v-chip aria-label="Выберите dates" :variant="light ? 'outlined' : 'tonal'" :color="light ? '#fff' : ''" size="large" :prepend-icon="mdiCalendarMonthOutline" @click="openSetDateModal" v-if="dates.from && dates.to">
+				<div class="search__chips-wrapper">
+					<v-chip aria-label="Выберите dates" :variant="'outlined'" :color="light ? '#fff' : ''" size="large" :prepend-icon="mdiCalendarMonthOutline" @click="openSetDateModal" v-if="dates.from && dates.to">
 						{{beautifyDate(dates.from)}} - {{beautifyDate(dates.to)}}
 					</v-chip>
-					<v-chip aria-label="Выберите dates" :variant="light ? 'outlined' : 'tonal'" :color="light ? '#fff' : ''" size="large" :prepend-icon="mdiCalendarMonthOutline" @click="openSetDateModal" v-else>
+					<v-chip aria-label="Выберите dates" :variant="'outlined'" :color="light ? '#fff' : ''" size="large" :prepend-icon="mdiCalendarMonthOutline" @click="openSetDateModal" v-else>
 						Выбрать даты
 					</v-chip>
 					<v-menu :close-on-content-click="false" v-model="guestSetMenuMobileIsOpen">
@@ -229,7 +229,7 @@ const scrollBottom = () => window.scrollBy(0, 140);
 			</div>
 		</div>
 	
-		
+	
 	
 	</form>
 	<BookingSearchLocation/>
@@ -238,6 +238,13 @@ const scrollBottom = () => window.scrollBy(0, 140);
 
 <style scoped lang="scss">
 
+.search__chips-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-top: 24px;
+	margin-bottom: 40px;
+}
 
 @media screen and (max-width: 950px)  {
 	.booking__desktop {
@@ -341,10 +348,10 @@ const scrollBottom = () => window.scrollBy(0, 140);
 
 .booking {
 	
-
+	
 	width: 100%;
 	
-
+	
 	
 	&__date {
 		display: flex;

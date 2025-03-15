@@ -79,6 +79,7 @@
 		
 		&__title {
 			text-align: center;
+			font-size: 32px;
 		}
 		.city {
 			border-radius: 16px;

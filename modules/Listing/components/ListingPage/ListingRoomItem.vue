@@ -35,6 +35,15 @@
 	}>();
 	
 	const showPrices = ref(false);
+	const priceContainer = ref(null);
+	watch(showPrices, async (newValue) => {
+		await nextTick(); // Ждём обновления DOM
+		if (newValue) {
+			priceContainer.value.style.maxHeight = priceContainer.value.scrollHeight + "px";
+		} else {
+			priceContainer.value.style.maxHeight = "0px";
+		}
+	});
 	
 	const togglePrices = () => showPrices.value = !showPrices.value;
 	
@@ -163,24 +172,27 @@
 					style="margin-left: -12px; margin-top: 4px;"
 					@click="togglePrices"
 					v-if="room.pricePeriods.length > 0"
-				>{{showPrices ? 'Скрыть цены' : 'См. все цены'}}</v-btn>
+				>
+					<v-fade-transition mode="out-in">
+						<span :key="showPrices">{{ showPrices ? 'Скрыть цены' : 'См. все цены' }}</span>
+					</v-fade-transition>
+				</v-btn>
+				
 				<v-scroll-y-transition>
-					<div v-if="showPrices">
+					<div
+						ref="priceContainer"
+						:class="{ expanded: showPrices }"
+						style="overflow: hidden; max-height: 0; transition: max-height 0.3s ease-in-out"
+					>
 						<v-table>
 							<thead>
 							<tr>
-								<th class="text-left">
-									Дата
-								</th>
-								<th class="text-left">
-									Цена
-								</th>
+								<th class="text-left">Дата</th>
+								<th class="text-left">Цена</th>
 							</tr>
 							</thead>
 							<tbody>
-							<tr
-								v-for="period of formattedPricePeriods"
-							>
+							<tr v-for="period of formattedPricePeriods" :key="period.range">
 								<td>{{ period.range }}</td>
 								<td>{{ period.price.toLocaleString('ru-RU') }} ₽</td>
 							</tr>
@@ -275,6 +287,8 @@
 .order {
 	display: flex;
 	margin-top: 16px;
+	flex-wrap: wrap;
+	gap: 16px;
 	justify-content: space-between;
 	align-items: center;
 	.price {

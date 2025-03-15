@@ -12,31 +12,24 @@
 		:free-mode="{
 			enabled: !isMobile
 		}"
+		:lazy="true"
 		:modules="modules"
 		@swiper="getSwiperInstance"
 		class="swiper-multiply"
 	>
 		<swiper-slide
-			v-for="photo of listing.photos"
+			v-for="(photo, index) in listing.photos"
+			:key="photo.id"
 			class="swiper-multiply__slide"
 			@click="openGalleryModal(photo.id)"
+			:virtualIndex="index"
 		>
-			<v-img
-				cover
+			<img
 				class="swiper-multiply__img swiper-multiply__img--fixed"
 				:src="photo.urlFull"
-				:lazy-src="photo.urlMin"
+				loading="lazy"
 				:alt="listing.title + '| Аура Тур'"
 			>
-				<template v-slot:placeholder>
-					<div style="display: flex; align-items: center; justify-content: center; height: 100%;">
-						<v-progress-circular
-							color="grey-lighten-4"
-							indeterminate
-						></v-progress-circular>
-					</div>
-				</template>
-			</v-img>
 		</swiper-slide>
 	
 	</swiper>
@@ -56,7 +49,7 @@
 <script setup lang="ts">
 // Import Swiper Vue.js components
 import { Swiper, SwiperSlide  } from 'swiper/vue';
-import { Scrollbar, FreeMode, Thumbs, Pagination, Navigation } from 'swiper/modules';
+import {Scrollbar, FreeMode, Thumbs, Pagination, Navigation, Virtual} from 'swiper/modules';
 
 import {mdiArrowLeft, mdiArrowRight, mdiFullscreen, mdiImage, mdiViewGallery} from "@mdi/js";
 
@@ -91,11 +84,11 @@ const getSwiperInstance = (swiper) => {
 	swiperController.value = swiper;
 }
 
-watch(currentPhoto, () => {
-	swiperController.value.slideTo(currentPhoto.value.index, 0)
-}, {
-	deep: true
-})
+watch(() => currentPhoto.value.index, (newIndex) => {
+	if (swiperController.value && newIndex !== null) {
+		swiperController.value.slideTo(newIndex);
+	}
+});
 
 
 
@@ -136,23 +129,25 @@ watch(currentPhoto, () => {
 	&__slide {
 		width: fit-content !important;
 		display: flex !important;
+		aspect-ratio: 1/1 !important;
 		justify-content: center !important;
 		align-items: center !important;
+		&:not(:last-child) {
+			margin-right: 16px !important;
+		}
 	}
 	
 	&__img {
 		display: block;
 		height: 100%;
 		object-fit: cover;
-		
+		aspect-ratio: 1/1 !important;
 		&--fixed {
 			object-fit: cover;
 			aspect-ratio: 1/1;
 		}
+
 		
-		&:not(nth-last-child) {
-			margin-right: 16px;
-		}
 	}
 	
 	&__footer {

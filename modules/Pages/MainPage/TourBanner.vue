@@ -12,7 +12,7 @@ import TelegramIcon from "~/modules/Listing/icons/TelegramIcon.vue";
 				Полностью организуем ваш отдых: от встречи в аэропорту до проживания и экскурсий.
 				Подпишитесь на наш Телеграм-канал, чтобы первыми узнавать о новых турах и предложениях.
 			</p>
-			<v-btn elevation="0" href="https://t.me/laura_tour" target="_blank" itemprop="url">
+			<v-btn elevation="0" href="https://t.me/laura_tour" target="_blank" external itemprop="url">
 				<template #prepend>
 					<TelegramIcon/>
 				</template>
@@ -48,8 +48,8 @@ import TelegramIcon from "~/modules/Listing/icons/TelegramIcon.vue";
 	@media screen and (max-width: 560px) {
 		
 		height: auto;
-		background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.1)), url("/main-page/tour-bg-mobile.webp");
-		padding: 24px 16px;
+		background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3)), url("/main-page/tour-bg-mobile.webp");
+		padding: 32px 18px;
 		
 		p {
 			font-size: 14px;

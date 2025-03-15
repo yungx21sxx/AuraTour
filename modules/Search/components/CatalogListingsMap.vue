@@ -133,6 +133,7 @@
 			mapLoading.value = false
 		}
 	});
+	const coords =  [mapListingsList.value.listings[0].coords.longitude, mapListingsList.value.listings[0].coords.width];
 </script>
 
 <template>
@@ -161,7 +162,7 @@
 					class="map__canvas"
 					:settings="{
 			        location: {
-			          center: [mapListingsList.listings[0].coords.longitude, mapListingsList.listings[0].coords.width],
+			          center: coords,
 			          zoom: 14,
 			        },
 		        }"

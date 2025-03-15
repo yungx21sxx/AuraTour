@@ -22,14 +22,14 @@
 	
 	</swiper>
 	<div class="listings-swiper__footer">
-		
-		<div class="action">
-			<slot name="action"/>
-		</div>
 		<div class="btns" >
 			<v-btn @click="swiperController.slidePrev()" color="#7059FF" :icon="mdiArrowLeft" variant="tonal" aria-label="Влево"></v-btn>
 			<v-btn @click="swiperController.slideNext()" color="#7059FF" :icon="mdiArrowRight" variant="tonal" aria-label="Вправо"></v-btn>
 		</div>
+		<div class="footer__action">
+			<slot name="action"/>
+		</div>
+	
 	</div>
 </template>
 <script setup lang="ts">
@@ -95,6 +95,7 @@
 		
 		
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		gap: 16px;
 		margin-top: 16px;

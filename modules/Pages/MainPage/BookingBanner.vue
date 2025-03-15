@@ -70,7 +70,7 @@ const bonusProgramInfo = ref(false);
 .banner {
 	height: 650px;
 	background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1)),
-	url("/main-page/banner.webp");
+		url("/main-page/banner.webp");
 	background-size: cover;
 	background-position: center;
 	&__menu {

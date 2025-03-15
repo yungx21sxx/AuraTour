@@ -1,25 +1,14 @@
-export function useDebounce() {
-    const debounceTimer = ref<number | null>(null);
 
-    function debounce<T extends (...args: any[]) => void>(fn: T, delay: number = 500): (...args: Parameters<T>) => void {
-        return (...args: Parameters<T>) => {
-            if (debounceTimer.value !== null) {
-                clearTimeout(debounceTimer.value);
-            }
-            debounceTimer.value = window.setTimeout(() => {
-                fn(...args);
-                debounceTimer.value = null;
-            }, delay);
-        };
-    }
+export function useDebounce<T extends (...args: any[]) => void>(fn: T, delay = 500) {
+    let debounceTimer = ref<number | null>(null);
 
-    onBeforeUnmount(() => {
+    return (...args: Parameters<T>) => {
         if (debounceTimer.value) {
             clearTimeout(debounceTimer.value);
         }
-    });
-
-    return {
-        debounce,
+        debounceTimer.value = setTimeout(() => {
+            fn(...args);
+            debounceTimer.value = null;
+        }, delay);
     };
 }

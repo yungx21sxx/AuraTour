@@ -39,7 +39,10 @@
 	<v-dialog fullscreen v-model="burgerMenuIsOpen">
 		<v-card class="nav">
 			<div class="toolbar">
-				<MainLogo :variant="'dark'" class="toolbar__logo"/>
+				<NuxtLink to="/" external style="display: flex; align-items: center">
+					<MainLogo :variant="'dark'" class="toolbar__logo"/>
+				</NuxtLink>
+				
 				<v-icon :icon="mdiClose" @click="close"></v-icon>
 			</div>
 			<div>

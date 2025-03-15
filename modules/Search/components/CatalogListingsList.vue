@@ -70,7 +70,7 @@ if (initialError.value) {
 
 
 // Инициализируем данные
-if (initialData.value) {
+if (initialData.value && listingsList.value.listings.length === 0) {
 	listingsList.value.listings = initialData.value.listings;
 	listingsList.value.count = initialData.value.count;
 	currentPage.value = 2; // Устанавливаем следующую страницу для загрузки

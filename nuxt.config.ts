@@ -67,6 +67,7 @@ export default defineNuxtConfig({
             if (id.includes('node_modules')) {
               if (id.includes('vuetify')) return 'vuetify'
               if (id.includes('@videojs-player/vue') || id.includes('video.js')) return 'video'
+              if (id.includes('apexcharts') || id.includes('vue3-apexcharts')) return 'charts'
               if (id.includes('v-calendar') || id.includes('@popperjs/core')) return 'calendar'
               if (id.includes('libphonenumber-js')) return 'phone-utils'
               if (id.includes('vue-draggable-next')) return 'vue-draggable-next'
@@ -77,9 +78,9 @@ export default defineNuxtConfig({
         }
       }
     },
-    optimizeDeps: {
-      include: ['vuetify', 'libphonenumber-js', '@videojs-player/vue', 'apexcharts', 'vue3-apexcharts', 'v-calendar', 'video.js', '@popperjs/core', 'vue-draggable-next', 'vue-yandex-maps']
-    },
+    // optimizeDeps: {
+    //   include: ['vuetify', 'libphonenumber-js', '@videojs-player/vue', 'apexcharts', 'vue3-apexcharts', 'v-calendar', 'video.js', '@popperjs/core', 'vue-draggable-next', 'vue-yandex-maps']
+    // },
     css: {
       preprocessorOptions: {
         scss: {
@@ -187,7 +188,9 @@ export default defineNuxtConfig({
       styles: { configFile: '/assets/scss/settings.scss' }
     }
   },
-
+  experimental: {
+    inlineRouteRules: true,
+  },
   nitro: {
     minify: true,
     serveStatic: false,

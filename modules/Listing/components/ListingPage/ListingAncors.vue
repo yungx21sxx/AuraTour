@@ -157,6 +157,8 @@ onBeforeUnmount(() => {
 	margin: 0;
 	-ms-overflow-style: none;
 	scrollbar-width: none;
+	flex-wrap: nowrap;
+	overflow-x: auto;
 }
 
 .navigation-list::-webkit-scrollbar {
@@ -198,9 +200,6 @@ onBeforeUnmount(() => {
 	overflow-x: auto;
 }
 
-.navigation-list:not(.mobile) {
-	flex-wrap: wrap;
-}
 
 @media (min-width: 769px) {
 	.navigation-list {

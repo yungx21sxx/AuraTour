@@ -163,13 +163,14 @@ useHead({
 		<h2 class="types__title">Лучшие предложения</h2>
 		<HousingTypes :housing-types="housingTypes" v-if="loaded"/>
 		<HousingTypesLoader v-else/>
-		
 	</div>
-	<CallBackForm/>
+	<div class="bg-gray">
+		<CallBackForm/>
+	</div>
+
 	<div class="wrapper">
 		<PassListingBanner/>
 	</div>
-
     <Advantages />
 
 </template>
@@ -187,5 +188,13 @@ useHead({
 			
 		}
 	}
+}
+
+.about-text {
+	text-align: center;
+	max-width: 800px;
+	font-size: 18px;
+	font-weight: 500;
+	color: $text-main;
 }
 </style>

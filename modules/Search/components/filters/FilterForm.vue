@@ -8,22 +8,20 @@
 	import useMapCatalog from "~/modules/Search/composables/useMapCatalog";
 	import useSearch from "~/modules/Booking/composables/useSearch";
 	import {mdiChevronDown, mdiChevronUp} from "@mdi/js";
-	
-	const {target = 'catalog'} = defineProps<{
-		target?: 'modal' | 'catalog'
-	}>();
+	import {useDebounce} from "~/modules/Search/composables/useDebounce";
 	
 	
+	const {isFiltering} = useCatalog()
 	const {
 		chosenFilters,
 		filtersInitData,
 		performNavigation
 	} = useFilters();
 	
+	const debouncedPerformNavigation = useDebounce(performNavigation, 500);
 	watch(chosenFilters, async () => {
-		if (target === 'catalog') {
-			await performNavigation()
-		}
+		isFiltering.value = true;
+		debouncedPerformNavigation();
 	}, {
 		deep: true
 	})

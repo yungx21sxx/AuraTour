@@ -13,14 +13,17 @@
                  type: 'fraction',
              }"
 			@swiper="getSwiperInstance"
-			:modules="[Pagination, Navigation, Scrollbar, Thumbs]"
+			:modules="[Pagination, Navigation, Scrollbar, Thumbs, Virtual]"
+			:virtual="true"
 			class="main-slider"
 			:lazy="true"
 		>
 			<swiper-slide
-				v-for="photo of listing.photos"
+				v-for="(photo, index) in listing.photos"
+				:key="photo.id"
 				class="main-slider__slide"
 				@click="openGalleryModal(photo.id)"
+				:virtualIndex="index"
 			>
 				<img
 					loading="lazy"
@@ -45,7 +48,7 @@
 <script setup lang="ts">
 // Import Swiper Vue.js components
 import { Swiper, SwiperSlide  } from 'swiper/vue';
-import { Scrollbar, FreeMode, Thumbs, Pagination, Navigation } from 'swiper/modules';
+import {Scrollbar, FreeMode, Thumbs, Pagination, Navigation, Virtual} from 'swiper/modules';
 
 import {mdiFullscreen, mdiImage} from "@mdi/js";
 
@@ -54,6 +57,7 @@ import 'swiper/css';
 import 'swiper/css/free-mode';
 import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
+import 'swiper/css/virtual';
 import useGallery from "~/modules/Listing/composables/useGallery";
 import useListing from "~/modules/Listing/composables/useListing";
 import BtnPrimary from "~/modules/Common/UI/BtnPrimary.vue";
@@ -77,11 +81,11 @@ const getSwiperInstance = (swiper) => {
 
 
 //Срабаьывает в момент открытия и закрытия модального окна
-watch(currentPhoto, () => {
-	swiperController.value.slideTo(currentPhoto.value.index, 0)
-}, {
-	deep: true
-})
+watch(() => currentPhoto.value.index, (newIndex) => {
+	if (swiperController.value && newIndex !== null) {
+		swiperController.value.slideTo(newIndex);
+	}
+});
 
 
 

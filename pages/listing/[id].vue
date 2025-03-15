@@ -44,7 +44,13 @@
 	
 	const bookingQuery: IQueryBooking = parseBookingRouteQuery(query)
 	
-	await initListingData(parseInt(id as string), bookingQuery);
+	const {data, error} = await useFetch(`/api/listing/${parseInt(id as string)}`);
+	
+	if (error.value) {
+		throw new Error('Объект не найден')
+	}
+	
+	await initListingData(data.value, bookingQuery);
 	setListingBookingInfo(bookingQuery);
 	
 	const dates = computed(() => {
@@ -211,6 +217,10 @@
 		]
 	})
 	
+	defineRouteRules({
+		robots: hasRooms,
+	})
+	
 </script>
 
 <template>
@@ -224,9 +234,8 @@
 				<ListingAdminPanel v-if="shouldLoadAdminPanel"/>
 			</client-only>
 			<ListingHeader/>
-			<GalleryDesktopPreviews v-if="!isMobileOrTablet && listing.photos.length > 0" id="gallery"/>
-			<GalleryMainSlider v-else-if="listing.photos.length > 0 && isMobileOrTablet" id="gallery" />
-			
+			<GalleryDesktopPreviews v-if="!isMobileOrTablet" id="gallery"/>
+			<GalleryMainSlider v-else id="gallery" />
 		</div>
 		
 		<main class="listing wrapper">
@@ -235,7 +244,7 @@
 					<VideoUploader v-if="access.fullAccess || access.isListingOwner"/>
 					<ListingVideoPlayer v-else-if="listing.videos.length > 0"/>
 				</client-only>
-				<ListingBookingForm target="sidebar" v-if="isMobileOrTablet"/>
+				<ListingBookingForm target="sidebar" class="form-mobile"/>
 				<ListingRooms id="rooms" />
 				<ListingDescription id="about"/>
 				<ListingRules id="rules"/>
@@ -244,7 +253,10 @@
 				<ListingReviews id="reviews"/>
 			</div>
 			<div class="listing__sidebar booking" v-if="!isMobileOrTablet">
-				<ListingBookingForm target="sidebar"/>
+				<div class="sidebar-sticky">
+					<ListingBookingForm target="sidebar"/>
+				</div>
+				
 			</div>
 		</main>
 		<div class="wrapper">
@@ -259,6 +271,11 @@
 </template>
 
 <style scoped lang="scss">
+
+	.sidebar-sticky {
+		position: sticky;
+		top: 80px;
+	}
 	.menu-main {
 		background: #fff; padding: 4px 0; margin-bottom: 32px;
 		
@@ -301,7 +318,13 @@
 		}
 		
 	}
+	.form-mobile {
+		display: none;
+	}
 	@media screen and (max-width: 1100px) {
+		.form-mobile {
+			display: block;
+		}
 		.listing {
 			display: block !important;
 			&__sidebar {

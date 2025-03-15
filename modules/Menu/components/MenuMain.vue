@@ -211,6 +211,19 @@ h4 {
         &__link {
             display: none;
         }
+	    &__btn {
+		    display: none;
+	    }
+	    &__burger {
+		    display: block;
+		    margin-left: auto;
+		    margin-right: -8px;
+		    
+		    svg {
+			    height: 30px;
+			    width: auto;
+		    }
+	    }
 	    
     }
     @media screen and (max-width: 730px) {
@@ -221,16 +234,6 @@ h4 {
         &__logo {
             height: 25px;
             width: auto;
-        }
-        &__burger {
-            display: block;
-            margin-left: auto;
-            margin-right: -8px;
-	        
-	        svg {
-		        height: 30px;
-		        width: auto;
-	        }
         }
     }
 	@media screen and (max-width: 500px) {

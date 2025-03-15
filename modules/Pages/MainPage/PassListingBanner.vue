@@ -45,8 +45,8 @@ const landLordModal = useLandLordModal()
 	
 	@media screen and (max-width: 560px) {
 		height: auto;
-		background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1)), url("/main-page/pass-background-mob.webp");
-		padding: 24px 16px;
+		background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url("/main-page/pass-background-mob.webp");
+		padding: 40px 16px;
 	}
 }
 

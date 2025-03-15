@@ -102,9 +102,8 @@ export default () => {
 		hasMore.value = true;
 	}
 
-	const { debounce } = useDebounce();
 
-	const debouncedRefreshListingList = debounce(async () => {
+	const debouncedRefreshListingList = useDebounce(async () => {
 		refreshListingList();
 		try {
 			const {count, listings} = await fetchCatalog();
@@ -136,6 +135,7 @@ export default () => {
 			loadingError.value = error.data.message;
 		} finally {
 			isLoading.value = false;
+			isFiltering.value = false;
 		}
 	}
 

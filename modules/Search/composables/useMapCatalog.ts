@@ -33,10 +33,10 @@ export default () => {
     }
 
 
-    const { debounce } = useDebounce();
 
 
-    const debouncedRefreshListingList = debounce(async () => {
+
+    const debouncedRefreshListingList = useDebounce(async () => {
         mapListingsList.value.listings = []
         await loadListingsForMap();
     }, 400);

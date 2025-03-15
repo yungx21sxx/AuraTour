@@ -47,9 +47,13 @@ async function copyToClipboard() {
 .nav {
 	display: flex;
 	justify-content: space-between;
+	gap: 16px;
 	&__actions {
 		display: flex;
 		align-items: center;
+		//@media screen and (max-width: 770px){
+		//	display: none;
+		//}
 	}
 }
 

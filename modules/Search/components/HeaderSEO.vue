@@ -107,7 +107,7 @@
 		v-if="seoPage"
 		class="header"
 		:style="{
-			backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.1)), url(${seoPage.photoUrl})`,
+			backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.4)), url(${seoPage.photoUrl})`,
 	    }"
 	>
 		<MenuMain variant="light" class="header__menu"/>
@@ -152,7 +152,7 @@
 		
 		&__types {
 			color: white;
-			margin-top: 24px;
+			margin-top: 32px;
 		}
 		
 		&__menu {
@@ -163,26 +163,35 @@
 		
 		&__breadcrumbs {
 			color: #fff;
-			margin-bottom: 8px;
+			margin-bottom: 24px !important;
 		}
 		
 		&__title {
 			font-size: 42px;
 			color: #fff;
-			margin-bottom: 24px;
+			margin-bottom: 32px;
 		}
 		
 		@media screen and (max-width: 950px) {
 			height: 600px;
 			
+			&__breadcrumbs {
+				color: #fff;
+			}
+			
 			&__title {
 				font-size: 32px;
+				margin-bottom: 24px;
+			}
+			&__types {
+				color: white;
+				margin-top: 20px;
 			}
 		}
 		
 		@media screen and (max-width: 440px) {
-			height: 600px;
-			
+			height: fit-content;
+			padding: 100px 0;
 			&__title {
 				font-size: 28px;
 			}

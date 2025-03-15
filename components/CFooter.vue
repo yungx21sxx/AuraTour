@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import {mdiEmailOutline, mdiInstagram, mdiMail, mdiMailbox, mdiMapMarkerOutline, mdiPhoneOutline} from "@mdi/js";
+import {
+	mdiEmailOutline,
+	mdiInstagram,
+	mdiMail,
+	mdiMailbox,
+	mdiMapMarkerOutline,
+	mdiPhoneOutline,
+	mdiWrenchCogOutline
+} from "@mdi/js";
 import MainLogo from "~/modules/Menu/icons/MainLogo.vue";
 import InstIcon from "~/modules/Pages/MainPage/Icons/InstIcon.vue";
 import TelegaIcon from "~/modules/Pages/MainPage/Icons/TelegaIcon.vue";
@@ -41,6 +49,17 @@ const gotToLK = async () => {
 							<span>Telegram</span>
 						</NuxtLink>
 					</div>
+					<v-chip
+						href="https://wa.me/79288514084"
+						external
+						color="orange"
+						variant="tonal"
+						class="mt-1 mb-4"
+						:prepend-icon="mdiWrenchCogOutline"
+						rel="nofollow"
+					>
+						Создание сайта
+					</v-chip>
 				</div>
 				
 			</div>
@@ -49,7 +68,7 @@ const gotToLK = async () => {
 				<div class="footer__links">
 					<NuxtLink to="/" class="footer__link">Главная</NuxtLink>
 					<NuxtLink to="/search" class="footer__link">Поиск</NuxtLink>
-					<NuxtLink to="/favorites" class="footer__link">Избранное</NuxtLink>
+					<NuxtLink rel="nofollow" to="/favorites" class="footer__link">Избранное</NuxtLink>
 					<NuxtLink to="/help" class="footer__link">Помощь</NuxtLink>
 					<NuxtLink to="/contacts" class="footer__link">Контакты и реквизиты</NuxtLink>
 					<p @click="gotToLK" class="footer__link">Личный кабинет</p>
@@ -57,7 +76,7 @@ const gotToLK = async () => {
 				
 			</div>
 			<div class="footer__contacts">
-				<NuxtLink class="contact" to="tel:/+79409976702">
+				<NuxtLink class="contact" external to="tel:/+79409976702">
 					<v-icon class="contact__icon" color="#7059FF" :icon="mdiPhoneOutline"></v-icon>
 					<div class="contact__body">
 						<div class="contact__desc">Служба поддержки</div>
@@ -71,7 +90,7 @@ const gotToLK = async () => {
 						<div class="contact__text">г. Гудаута, Очамчирская 90</div>
 					</div>
 				</div>
-				<NuxtLink class="contact" to="mailto:lana.2015lana@mail.ru">
+				<NuxtLink class="contact" external to="mailto:lana.2015lana@mail.ru">
 					<v-icon class="contact__icon" color="#7059FF" :icon="mdiEmailOutline"></v-icon>
 					<div class="contact__body">
 						<div class="contact__desc">Почта</div>
@@ -114,6 +133,17 @@ const gotToLK = async () => {
 						<span>Telegram</span>
 					</NuxtLink>
 				</div>
+				<v-chip
+					href="https://wa.me/79288514084"
+					external
+					color="orange"
+					variant="tonal"
+					class="mt-1 mb-4"
+					:prepend-icon="mdiWrenchCogOutline"
+					rel="nofollow"
+				>
+					Создание сайта
+				</v-chip>
 			</div>
 			
 			<div class="footer__contacts">
@@ -145,7 +175,7 @@ const gotToLK = async () => {
 				<div class="footer__links">
 					<NuxtLink to="/" class="footer__link">Главная</NuxtLink>
 					<NuxtLink to="/search" class="footer__link">Поиск</NuxtLink>
-					<NuxtLink to="/favorites" class="footer__link">Избранное</NuxtLink>
+					<NuxtLink to="/favorites" rel="nofollow" class="footer__link">Избранное</NuxtLink>
 					<NuxtLink to="/help" class="footer__link">Помощь</NuxtLink>
 					<NuxtLink to="/contacts" class="footer__link">Контакты и реквизиты</NuxtLink>
 					<p  @click="gotToLK" class="footer__link">Личный кабинет</p>
@@ -196,7 +226,7 @@ const gotToLK = async () => {
 		display: flex;
 		align-items: center;
 		gap: 16px;
-		margin-bottom: 32px;
+		margin-bottom: 24px;
 	}
 
 	.footer_desktop {

@@ -23,12 +23,15 @@
 						:lazy="true"
 						@swiper="getSwiperInstance"
 						:thumbs="{ swiper: thumbsSwiper }"
-						:modules="[Zoom, Pagination, Navigation, Scrollbar, Thumbs]"
+						:modules="[Zoom, Pagination, Navigation, Scrollbar, Thumbs, Virtual]"
+						:virtual="true"
 						class="img-preview"
 					>
 						<swiper-slide
-							v-for="photo of photos"
+							v-for="(photo, index) in  photos"
+							:key="photo.id"
 							class="img-preview__slide"
+							:virtualIndex="index"
 						>
 							<div class="swiper-zoom-container">
 								<img
@@ -67,7 +70,7 @@ import {mdiChevronLeft, mdiHeartOutline, mdiShareVariant} from "@mdi/js";
 import GalleryToolbar from "~/modules/Listing/components/Gallery/GalleryToolbar.vue";
 import useListing from "~/modules/Listing/composables/useListing";
 import { Swiper, SwiperSlide  } from 'swiper/vue';
-import { Scrollbar, FreeMode, Thumbs, Pagination, Navigation, Zoom } from 'swiper/modules';
+import {Scrollbar, FreeMode, Thumbs, Pagination, Navigation, Zoom, Virtual} from 'swiper/modules';
 
 
 import 'swiper/css';
@@ -75,6 +78,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
 import 'swiper/css/zoom';
+import 'swiper/css/virtual';
 
 
 const {currentPhoto} = useGallery()
